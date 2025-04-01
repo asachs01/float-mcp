@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+prompt_logs/
+plans/
+coverage/
+
+# Build
+build/
+dist/
+*.tsbuildinfo
+
+# Test
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/ 
