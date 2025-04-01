@@ -1,17 +1,25 @@
+import { jest } from '@jest/globals';
 import { config } from 'dotenv';
+import { stopCleanup } from '../src/services/float-api.js';
 
-// Load environment variables from .env.test if it exists
-config({ path: '.env.test' });
+// Load environment variables
+config();
 
-// Set default timeout for all tests
+// Set longer timeout for tests
 jest.setTimeout(10000);
 
-// Global test setup
+// Mock fetch globally
+global.fetch = jest.fn() as jest.Mock;
+
 beforeAll(() => {
-  // Add any global setup here
+  // Initialize any test setup
 });
 
-// Global test cleanup
 afterAll(() => {
-  // Add any global cleanup here
+  // Clean up rate limiting interval
+  stopCleanup();
+});
+
+beforeEach(() => {
+  jest.resetAllMocks();
 }); 
