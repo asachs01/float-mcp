@@ -1,8 +1,9 @@
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
-import { PeopleTool } from '../../../src/tools/people';
+import { listPeople, getPerson, createPerson, updatePerson, deletePerson } from '../../../src/tools/people';
 import { Person } from '../../../src/types/float';
 
-jest.mock('../../../src/services/float-api.js', () => ({
+// Mock the floatApi instance
+jest.mock('../../../src/services/float-api', () => ({
   floatApi: {
     get: jest.fn(),
     post: jest.fn(),
@@ -11,11 +12,11 @@ jest.mock('../../../src/services/float-api.js', () => ({
   },
 }));
 
-describe('PeopleTool', () => {
-  let peopleTool: PeopleTool;
+import { floatApi } from '../../../src/services/float-api';
 
+describe('People Tools', () => {
   beforeEach(() => {
-    peopleTool = new PeopleTool();
+    jest.clearAllMocks();
   });
 
   describe('listPeople', () => {
@@ -23,34 +24,31 @@ describe('PeopleTool', () => {
       const mockPeople: Person[] = [
         {
           id: '1',
-          name: 'Test Person',
-          email: 'test@example.com',
-          job_title: 'Developer',
-          department: 'Engineering',
-          contractor: false,
+          name: 'John Doe',
+          email: 'john@example.com',
+          department_id: 'dept1',
+          role: 'Developer',
+          auto_email: true,
+          employee_type: 'employee',
           active: true,
+          start_date: '2024-01-01',
           created_at: '2024-01-01T00:00:00Z',
           updated_at: '2024-01-01T00:00:00Z',
-          avatar_url: 'https://example.com/avatar.jpg',
-          notes: 'Test person notes',
-          people_type_id: '1',
-          work_days_hours: 40,
-          timezone: 'UTC',
         },
       ];
 
-      floatApi.get.mockResolvedValueOnce({ people: mockPeople });
+      (floatApi.get as jest.Mock).mockResolvedValueOnce({ people: mockPeople });
 
-      const result = await peopleTool.listPeople();
+      const result = await listPeople.handler({});
 
       expect(result).toEqual(mockPeople);
-      expect(floatApi.get).toHaveBeenCalledWith('/people');
+      expect(floatApi.get).toHaveBeenCalledWith('/people?', expect.any(Object));
     });
 
     it('should handle API errors', async () => {
-      floatApi.get.mockRejectedValueOnce(new Error('API Error'));
+      (floatApi.get as jest.Mock).mockRejectedValueOnce(new Error('API Error'));
 
-      await expect(peopleTool.listPeople()).rejects.toThrow('API Error');
+      await expect(listPeople.handler({})).rejects.toThrow('API Error');
     });
   });
 
@@ -58,129 +56,122 @@ describe('PeopleTool', () => {
     it('should get person details', async () => {
       const mockPerson: Person = {
         id: '1',
-        name: 'Test Person',
-        email: 'test@example.com',
-        job_title: 'Developer',
-        department: 'Engineering',
-        contractor: false,
+        name: 'John Doe',
+        email: 'john@example.com',
+        department_id: 'dept1',
+        role: 'Developer',
+        auto_email: true,
+        employee_type: 'employee',
         active: true,
+        start_date: '2024-01-01',
         created_at: '2024-01-01T00:00:00Z',
         updated_at: '2024-01-01T00:00:00Z',
-        avatar_url: 'https://example.com/avatar.jpg',
-        notes: 'Test person notes',
-        people_type_id: '1',
-        work_days_hours: 40,
-        timezone: 'UTC',
       };
 
-      floatApi.get.mockResolvedValueOnce({ person: mockPerson });
+      (floatApi.get as jest.Mock).mockResolvedValueOnce(mockPerson);
 
-      const result = await peopleTool.getPerson('1');
+      const result = await getPerson.handler({ id: '1' });
 
       expect(result).toEqual(mockPerson);
-      expect(floatApi.get).toHaveBeenCalledWith('/people/1');
+      expect(floatApi.get).toHaveBeenCalledWith('/people/1', expect.any(Object));
     });
 
     it('should handle non-existent person', async () => {
-      floatApi.get.mockRejectedValueOnce(new Error('Person not found'));
+      (floatApi.get as jest.Mock).mockRejectedValueOnce(new Error('Person not found'));
 
-      await expect(peopleTool.getPerson('999')).rejects.toThrow('Person not found');
+      await expect(getPerson.handler({ id: '999' })).rejects.toThrow('Person not found');
     });
   });
 
   describe('createPerson', () => {
     it('should create a new person', async () => {
-      const newPerson: Omit<Person, 'id' | 'created_at' | 'updated_at'> = {
-        name: 'New Person',
-        email: 'new@example.com',
-        job_title: 'Developer',
-        department: 'Engineering',
-        contractor: false,
-        active: true,
-        avatar_url: 'https://example.com/avatar.jpg',
-        notes: 'New person notes',
-        people_type_id: '1',
-        work_days_hours: 40,
-        timezone: 'UTC',
+      const newPerson = {
+        name: 'Jane Doe',
+        email: 'jane@example.com',
+        department_id: 'dept1',
+        role: 'Designer',
+        employee_type: 'employee' as const,
+        start_date: '2024-01-01',
       };
 
       const mockResponse: Person = {
         id: '1',
         ...newPerson,
+        auto_email: true,
+        active: true,
         created_at: '2024-01-01T00:00:00Z',
         updated_at: '2024-01-01T00:00:00Z',
       };
 
-      floatApi.post.mockResolvedValueOnce({ person: mockResponse });
+      (floatApi.post as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-      const result = await peopleTool.createPerson(newPerson);
+      const result = await createPerson.handler(newPerson);
 
       expect(result).toEqual(mockResponse);
-      expect(floatApi.post).toHaveBeenCalledWith('/people', newPerson);
+      expect(floatApi.post).toHaveBeenCalledWith('/people', newPerson, expect.any(Object));
     });
 
     it('should handle validation errors', async () => {
       const invalidPerson = {
         name: '', // Invalid: empty name
         email: 'invalid-email', // Invalid email format
-        active: true,
+        employee_type: 'employee',
       };
 
-      await expect(peopleTool.createPerson(invalidPerson)).rejects.toThrow();
+      await expect(createPerson.handler(invalidPerson)).rejects.toThrow();
     });
   });
 
   describe('updatePerson', () => {
     it('should update an existing person', async () => {
       const updateData = {
-        name: 'Updated Person',
+        id: '1',
+        name: 'John Smith',
       };
 
       const mockResponse: Person = {
         id: '1',
-        name: 'Updated Person',
-        email: 'test@example.com',
-        job_title: 'Developer',
-        department: 'Engineering',
-        contractor: false,
+        name: 'John Smith',
+        email: 'john@example.com',
+        department_id: 'dept1',
+        role: 'Developer',
+        auto_email: true,
+        employee_type: 'employee',
         active: true,
+        start_date: '2024-01-01',
         created_at: '2024-01-01T00:00:00Z',
         updated_at: '2024-01-01T00:00:00Z',
-        avatar_url: 'https://example.com/avatar.jpg',
-        notes: 'Test person notes',
-        people_type_id: '1',
-        work_days_hours: 40,
-        timezone: 'UTC',
       };
 
-      floatApi.put.mockResolvedValueOnce({ person: mockResponse });
+      (floatApi.put as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-      const result = await peopleTool.updatePerson('1', updateData);
+      const result = await updatePerson.handler(updateData);
 
       expect(result).toEqual(mockResponse);
-      expect(floatApi.put).toHaveBeenCalledWith('/people/1', updateData);
+      expect(floatApi.put).toHaveBeenCalledWith('/people/1', { name: 'John Smith' }, expect.any(Object));
     });
 
     it('should handle update errors', async () => {
-      floatApi.put.mockRejectedValueOnce(new Error('Update failed'));
+      (floatApi.put as jest.Mock).mockRejectedValueOnce(new Error('Update failed'));
 
-      await expect(peopleTool.updatePerson('1', { name: 'Test' })).rejects.toThrow('Update failed');
+      await expect(updatePerson.handler({ id: '1', name: 'Test' })).rejects.toThrow('Update failed');
     });
   });
 
   describe('deletePerson', () => {
     it('should delete a person', async () => {
-      floatApi.delete.mockResolvedValueOnce(undefined);
+      (floatApi.delete as jest.Mock).mockResolvedValueOnce({ success: true });
 
-      await peopleTool.deletePerson('1');
+      const result = await deletePerson.handler({ id: '1' });
 
+      expect(result).toEqual({ success: true });
       expect(floatApi.delete).toHaveBeenCalledWith('/people/1');
     });
 
     it('should handle deletion errors', async () => {
-      floatApi.delete.mockRejectedValueOnce(new Error('Delete failed'));
+      (floatApi.delete as jest.Mock).mockRejectedValueOnce(new Error('Delete failed'));
 
-      await expect(peopleTool.deletePerson('1')).rejects.toThrow('Delete failed');
+      await expect(deletePerson.handler({ id: '1' })).rejects.toThrow('Delete failed');
     });
   });
 });

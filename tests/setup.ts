@@ -1,6 +1,5 @@
 import { jest } from '@jest/globals';
 import { config } from 'dotenv';
-import { stopCleanup } from '../src/services/float-api.js';
 
 // Load environment variables
 config();
@@ -16,8 +15,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  // Clean up rate limiting interval
-  stopCleanup();
+  // Clean up any resources
 });
 
 beforeEach(() => {
