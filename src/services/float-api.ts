@@ -1,9 +1,6 @@
 import { logger } from '../utils/logger.js';
+import { appConfig } from '../config/index.js';
 import { z } from 'zod';
-
-// Rate limiting configuration
-const RATE_LIMIT_WINDOW_MS = parseInt(process.env.RATE_LIMIT_WINDOW_MS || '60000', 10);
-const RATE_LIMIT_MAX_REQUESTS = parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10);
 
 // Request queue for rate limiting
 let requestQueue: number[] = [];
@@ -14,7 +11,9 @@ const startCleanup = () => {
   if (cleanupInterval) return;
   cleanupInterval = setInterval(() => {
     const now = Date.now();
-    requestQueue = requestQueue.filter((timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS);
+    requestQueue = requestQueue.filter(
+      (timestamp) => now - timestamp < appConfig.rateLimitWindowMs
+    );
   }, 1000);
 };
 
@@ -29,7 +28,7 @@ export const stopCleanup = () => {
 // Wait for rate limit
 const waitForRateLimit = async (): Promise<void> => {
   startCleanup();
-  while (requestQueue.length >= RATE_LIMIT_MAX_REQUESTS) {
+  while (requestQueue.length >= appConfig.rateLimitMaxRequests) {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
   requestQueue.push(Date.now());
@@ -50,9 +49,9 @@ export class FloatApi {
   private baseURL: string;
   private apiKey: string;
 
-  constructor(apiKey: string, baseURL = 'https://api.float.com/v3') {
-    this.apiKey = apiKey;
-    this.baseURL = baseURL;
+  constructor(apiKey?: string, baseURL?: string) {
+    this.apiKey = apiKey || appConfig.floatApiKey;
+    this.baseURL = baseURL || appConfig.floatApiBaseUrl;
   }
 
   private async makeRequest<T>(
@@ -64,7 +63,7 @@ export class FloatApi {
     await waitForRateLimit();
 
     const headers = {
-      'Authorization': `Bearer ${this.apiKey}`,
+      Authorization: `Bearer ${this.apiKey}`,
       'Content-Type': 'application/json',
     };
 
@@ -138,4 +137,4 @@ export class FloatApi {
 }
 
 // Create and export a default instance
-export const floatApi = new FloatApi(process.env.FLOAT_API_KEY || ''); 
+export const floatApi = new FloatApi();

@@ -183,4 +183,4 @@ describe('PeopleTool', () => {
       await expect(peopleTool.deletePerson('1')).rejects.toThrow('Delete failed');
     });
   });
-}); 
+});

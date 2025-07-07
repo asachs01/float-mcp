@@ -150,7 +150,9 @@ describe('AllocationsTool', () => {
     it('should handle update errors', async () => {
       floatApi.put.mockRejectedValueOnce(new Error('Update failed'));
 
-      await expect(allocationsTool.updateAllocation('1', { hours: 45 })).rejects.toThrow('Update failed');
+      await expect(allocationsTool.updateAllocation('1', { hours: 45 })).rejects.toThrow(
+        'Update failed'
+      );
     });
   });
 
@@ -169,4 +171,4 @@ describe('AllocationsTool', () => {
       await expect(allocationsTool.deleteAllocation('1')).rejects.toThrow('Delete failed');
     });
   });
-}); 
+});

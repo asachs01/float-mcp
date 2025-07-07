@@ -1,0 +1,148 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Project Repository and Initial Configuration",
+        "description": "Initialize the project repository and configure basic project structure and environment.",
+        "details": "Clone the repository, install Node.js 22.x or later, and Docker. Copy .env.example to .env and update with Float.com API key. Use npm for dependency management. Recommended: Node.js 22.2.0, Docker 24.0.6, npm 10.7.0.",
+        "testStrategy": "Verify repository setup by running git status and checking Node.js/Docker versions. Validate .env file exists and contains required keys.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Implement Core API Server",
+        "description": "Set up a Node.js server to handle HTTP requests and serve as the MCP server foundation.",
+        "details": "Use Express.js (v4.18.2) for routing and middleware. Initialize server with basic health check endpoint. Structure code for modularity and future expansion. Use dotenv (v16.3.1) for environment variables.",
+        "testStrategy": "Test server starts and responds to health check endpoint. Use curl or Postman to verify.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Integrate Float.com API Client",
+        "description": "Implement client logic to interact with Float.com API for project and task management.",
+        "details": "Use axios (v1.6.7) for HTTP requests. Implement authentication with Float.com API key from .env. Create service layer for project, task, and people management endpoints. Handle rate limiting and retries.",
+        "testStrategy": "Mock Float.com API responses with nock (v13.5.0) or similar. Test successful and failed API calls.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement Project Management Endpoints",
+        "description": "Expose RESTful endpoints for project CRUD operations.",
+        "details": "Create Express routes for project management. Use service layer from task 3. Validate input and output. Use joi (v17.12.0) for request validation.",
+        "testStrategy": "Write integration tests for all project endpoints. Test with valid and invalid data.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Implement Task Management Endpoints",
+        "description": "Expose RESTful endpoints for task CRUD operations.",
+        "details": "Create Express routes for task management. Use service layer from task 3. Validate input and output. Use joi for request validation.",
+        "testStrategy": "Write integration tests for all task endpoints. Test with valid and invalid data.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Implement People Management Endpoints",
+        "description": "Expose RESTful endpoints for people management.",
+        "details": "Create Express routes for people management. Use service layer from task 3. Validate input and output. Use joi for request validation.",
+        "testStrategy": "Write integration tests for all people endpoints. Test with valid and invalid data.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Add Natural Language Processing (NLP) Integration",
+        "description": "Integrate NLP to process natural language commands for project and task management.",
+        "details": "Use a lightweight NLP library such as natural (v5.2.3) or integrate with OpenAI API (v4.0.0) for advanced parsing. Parse user input and map to project/task actions. Implement rate limiting for NLP endpoints.",
+        "testStrategy": "Test NLP parsing with sample commands. Verify correct mapping to project/task actions. Mock external API calls if needed.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Implement Structured Logging and Health Checks",
+        "description": "Add structured logging and health check endpoints.",
+        "details": "Use winston (v3.11.0) for structured logging. Add health check endpoint to monitor server status. Log API requests, errors, and system events.",
+        "testStrategy": "Verify logs are generated for API requests and errors. Test health check endpoint.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Dockerize Application and CI/CD Setup",
+        "description": "Containerize the application and set up CI/CD pipeline.",
+        "details": "Write Dockerfile for Node.js 22.x. Use multi-stage builds for efficiency. Set up GitHub Actions or similar for automated testing and deployment. Use docker-compose for local development.",
+        "testStrategy": "Build and run Docker image locally. Verify CI/CD pipeline runs tests and deploys successfully.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement Rate Limiting and Security Best Practices",
+        "description": "Add rate limiting and security middleware.",
+        "details": "Use express-rate-limit (v7.1.0) for API rate limiting. Add helmet (v7.1.0) for security headers. Validate all user input. Use environment variables for sensitive data.",
+        "testStrategy": "Test rate limiting by exceeding request limits. Verify security headers are present. Test input validation.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-07T17:54:42.691Z",
+      "updated": "2025-07-07T17:54:42.691Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

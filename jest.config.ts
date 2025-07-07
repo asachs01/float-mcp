@@ -5,9 +5,12 @@ const config: Config = {
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1.ts',
-    '^(\\.{1,2}/.*)\\.jsx$': '$1.tsx',
-    '^(\\.{1,2}/.*)\\.cjs$': '$1.cjs',
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^(\\.{1,2}/.*)\\.jsx$': '$1',
+    '^(\\.{1,2}/.*)\\.cjs$': '$1',
+    '^react-is$': 'react-is/cjs/react-is.development.js',
+    '^react-is/(.*)$': 'react-is/cjs/$1',
+    '^@babel/helper-validator-identifier$': '@babel/helper-validator-identifier/lib/index.js',
   },
   transform: {
     '^.+\\.tsx?$': [
@@ -36,7 +39,7 @@ const config: Config = {
     url: 'http://localhost',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(react-is|pretty-format)/)',
+    'node_modules/(?!(react-is|pretty-format|@jest/expect|@jest/globals|@babel/helper-validator-identifier)/)',
   ],
 };
 

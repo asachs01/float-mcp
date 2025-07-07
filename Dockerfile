@@ -23,8 +23,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install production dependencies only
-RUN npm ci --production
+# Install production dependencies only, skip scripts to avoid husky
+RUN npm ci --omit=dev --ignore-scripts
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
@@ -32,9 +32,10 @@ COPY --from=builder /app/dist ./dist
 # Expose port
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s \
-  CMD curl -f http://localhost:3000/health || exit 1
+# Create non-root user
+RUN groupadd -r floatmcp && useradd -r -g floatmcp floatmcp
+RUN chown -R floatmcp:floatmcp /app
+USER floatmcp
 
 # Start the application
-CMD ["npm", "start"] 
+CMD ["node", "dist/index.js"] 

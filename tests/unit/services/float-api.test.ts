@@ -31,7 +31,7 @@ describe('FloatApi', () => {
         expect.objectContaining({
           method: 'GET',
           headers: {
-            'Authorization': 'Bearer test-token',
+            Authorization: 'Bearer test-token',
             'Content-Type': 'application/json',
           },
         })
@@ -66,7 +66,7 @@ describe('FloatApi', () => {
         expect.objectContaining({
           method: 'POST',
           headers: {
-            'Authorization': 'Bearer test-token',
+            Authorization: 'Bearer test-token',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(requestBody),
@@ -92,7 +92,7 @@ describe('FloatApi', () => {
         expect.objectContaining({
           method: 'PUT',
           headers: {
-            'Authorization': 'Bearer test-token',
+            Authorization: 'Bearer test-token',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(requestBody),
@@ -115,7 +115,7 @@ describe('FloatApi', () => {
         expect.objectContaining({
           method: 'DELETE',
           headers: {
-            'Authorization': 'Bearer test-token',
+            Authorization: 'Bearer test-token',
             'Content-Type': 'application/json',
           },
         })
@@ -132,14 +132,16 @@ describe('FloatApi', () => {
       });
 
       // Make multiple requests in quick succession
-      const requests = Array(5).fill(null).map(() => api.get('/test'));
+      const requests = Array(5)
+        .fill(null)
+        .map(() => api.get('/test'));
       const results = await Promise.all(requests);
 
       expect(results).toHaveLength(5);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result).toEqual(mockResponse);
       });
       expect(mockFetch).toHaveBeenCalledTimes(5);
     });
   });
-}); 
+});

@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { projectSchema, taskSchema, personSchema } from '../../src/types/float.js';
 
 export const mockProject = {
   id: '1',
@@ -42,16 +41,16 @@ export const mockPerson = {
   updated_at: '2024-01-01T00:00:00Z',
 };
 
-export const mockResponse = <T>(data: T) => ({
+export const mockResponse = <T>(data: T): { success: boolean; data: T } => ({
   success: true,
   data,
 });
 
-export const mockErrorResponse = (error: string) => ({
+export const mockErrorResponse = (error: string): { success: boolean; error: string } => ({
   success: false,
   error,
 });
 
 export const validateSchema = <T>(schema: z.ZodType<T>, data: unknown): T => {
   return schema.parse(data);
-}; 
+};

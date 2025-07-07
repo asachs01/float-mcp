@@ -19,12 +19,14 @@ export interface ToolResponse<T> {
 
 export const createTool = <T, P extends z.ZodType>(
   name: string,
+  description: string,
   schema: P,
   handler: (params: z.infer<P>) => Promise<T>
 ) => {
   return {
     name,
-    schema,
+    description,
+    inputSchema: schema,
     handler: async (params: unknown): Promise<ToolResponse<T>> => {
       try {
         const validatedParams = schema.parse(params);
@@ -39,4 +41,4 @@ export const createTool = <T, P extends z.ZodType>(
       }
     },
   };
-}; 
+};

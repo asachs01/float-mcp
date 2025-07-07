@@ -22,4 +22,4 @@ afterAll(() => {
 
 beforeEach(() => {
   jest.resetAllMocks();
-}); 
+});

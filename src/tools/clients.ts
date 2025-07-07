@@ -1,55 +1,71 @@
-import { BaseTool } from './base.js';
-import { Client, clientSchema, ClientsResponse } from '../types/float.js';
+import { z } from 'zod';
+import { createTool } from './base.js';
+import { floatApi } from '../services/float-api.js';
+import { clientSchema, clientsResponseSchema } from '../types/float.js';
 
-export class ClientsTool extends BaseTool {
-  async listClients(): Promise<Client[]> {
-    try {
-      const response = await this.api.get<ClientsResponse>('/clients');
-      return response.clients;
-    } catch (error) {
-      this.logger.error('Error in list-clients tool:', error);
-      throw error;
-    }
+// List clients
+export const listClients = createTool(
+  'list-clients',
+  'List all clients',
+  z.object({}),
+  async () => {
+    const response = await floatApi.get('/clients', clientsResponseSchema);
+    return response.clients;
   }
+);
 
-  async getClient(id: string): Promise<Client> {
-    try {
-      const response = await this.api.get<{ client: Client }>(`/clients/${id}`);
-      return response.client;
-    } catch (error) {
-      this.logger.error('Error in get-client tool:', error);
-      throw error;
-    }
+// Get client details
+export const getClient = createTool(
+  'get-client',
+  'Get detailed information about a specific client',
+  z.object({
+    id: z.string().describe('The client ID'),
+  }),
+  async (params) => {
+    const client = await floatApi.get(`/clients/${params.id}`, clientSchema);
+    return client;
   }
+);
 
-  async createClient(data: Omit<Client, 'id' | 'created_at' | 'updated_at'>): Promise<Client> {
-    try {
-      const validatedData = clientSchema.omit({ id: true, created_at: true, updated_at: true }).parse(data);
-      const response = await this.api.post<{ client: Client }>('/clients', validatedData);
-      return response.client;
-    } catch (error) {
-      this.logger.error('Error in create-client tool:', error);
-      throw error;
-    }
+// Create client
+export const createClient = createTool(
+  'create-client',
+  'Create a new client',
+  z.object({
+    name: z.string().describe('Client name'),
+    notes: z.string().optional().describe('Client notes'),
+  }),
+  async (params) => {
+    const client = await floatApi.post('/clients', params, clientSchema);
+    return client;
   }
+);
 
-  async updateClient(id: string, data: Partial<Omit<Client, 'id' | 'created_at' | 'updated_at'>>): Promise<Client> {
-    try {
-      const validatedData = clientSchema.omit({ id: true, created_at: true, updated_at: true }).partial().parse(data);
-      const response = await this.api.put<{ client: Client }>(`/clients/${id}`, validatedData);
-      return response.client;
-    } catch (error) {
-      this.logger.error('Error in update-client tool:', error);
-      throw error;
-    }
+// Update client
+export const updateClient = createTool(
+  'update-client',
+  'Update an existing client',
+  z.object({
+    id: z.string().describe('The client ID'),
+    name: z.string().optional().describe('Client name'),
+    notes: z.string().optional().describe('Client notes'),
+  }),
+  async (params) => {
+    const { id, ...updateData } = params;
+    const client = await floatApi.put(`/clients/${id}`, updateData, clientSchema);
+    return client;
   }
+);
 
-  async deleteClient(id: string): Promise<void> {
-    try {
-      await this.api.delete(`/clients/${id}`);
-    } catch (error) {
-      this.logger.error('Error in delete-client tool:', error);
-      throw error;
-    }
+// Delete client
+export const deleteClient = createTool(
+  'delete-client',
+  'Delete a client',
+  z.object({
+    id: z.string().describe('The client ID'),
+  }),
+  async (params) => {
+    await floatApi.delete(`/clients/${params.id}`);
+    return { success: true };
   }
-} 
+);

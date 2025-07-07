@@ -6,12 +6,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "start": "node dist/index.js",
     "build": "tsc",
     "dev": "tsc -w",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint src tests --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "prepare": "husky install"
   },
@@ -24,7 +25,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.1.0",
+    "@modelcontextprotocol/sdk": "^1.8.0",
     "dotenv": "^16.4.5",
     "pino": "^8.19.0",
     "zod": "^3.22.4"

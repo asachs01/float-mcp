@@ -153,7 +153,9 @@ describe('ProjectsTool', () => {
     it('should handle update errors', async () => {
       floatApi.put.mockRejectedValueOnce(new Error('Update failed'));
 
-      await expect(projectsTool.updateProject('1', { name: 'Test' })).rejects.toThrow('Update failed');
+      await expect(projectsTool.updateProject('1', { name: 'Test' })).rejects.toThrow(
+        'Update failed'
+      );
     });
   });
 
@@ -172,4 +174,4 @@ describe('ProjectsTool', () => {
       await expect(projectsTool.deleteProject('1')).rejects.toThrow('Delete failed');
     });
   });
-}); 
+});

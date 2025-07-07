@@ -1,21 +1,28 @@
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
-import { TasksTool } from '../../../src/tools/tasks';
+import { listTasks, getTask, createTask, updateTask, deleteTask } from '../../../src/tools/tasks';
 import { Task } from '../../../src/types/float';
+import { FloatApi } from '../../../src/services/float-api.js';
 
-jest.mock('../../../src/services/float-api.js', () => ({
-  floatApi: {
+// Mock the FloatApi class
+jest.mock('../../../src/services/float-api.js', () => {
+  const mockFloatApi = {
     get: jest.fn(),
     post: jest.fn(),
     put: jest.fn(),
     delete: jest.fn(),
-  },
-}));
+  };
 
-describe('TasksTool', () => {
-  let tasksTool: TasksTool;
+  return {
+    FloatApi: jest.fn().mockImplementation(() => mockFloatApi),
+    floatApi: mockFloatApi,
+  };
+});
+
+describe('Tasks Tools', () => {
+  let floatApi: jest.Mocked<FloatApi>;
 
   beforeEach(() => {
-    tasksTool = new TasksTool();
+    floatApi = new FloatApi('test-api-key') as jest.Mocked<FloatApi>;
   });
 
   describe('listTasks', () => {
@@ -39,7 +46,7 @@ describe('TasksTool', () => {
 
       floatApi.get.mockResolvedValueOnce({ tasks: mockTasks });
 
-      const result = await tasksTool.listTasks();
+      const result = await listTasks({});
 
       expect(result).toEqual(mockTasks);
       expect(floatApi.get).toHaveBeenCalledWith('/tasks');
@@ -48,7 +55,7 @@ describe('TasksTool', () => {
     it('should handle API errors', async () => {
       floatApi.get.mockRejectedValueOnce(new Error('API Error'));
 
-      await expect(tasksTool.listTasks()).rejects.toThrow('API Error');
+      await expect(listTasks({})).rejects.toThrow('API Error');
     });
   });
 
@@ -71,7 +78,7 @@ describe('TasksTool', () => {
 
       floatApi.get.mockResolvedValueOnce({ task: mockTask });
 
-      const result = await tasksTool.getTask('1');
+      const result = await getTask({ id: '1' });
 
       expect(result).toEqual(mockTask);
       expect(floatApi.get).toHaveBeenCalledWith('/tasks/1');
@@ -80,34 +87,35 @@ describe('TasksTool', () => {
     it('should handle non-existent task', async () => {
       floatApi.get.mockRejectedValueOnce(new Error('Task not found'));
 
-      await expect(tasksTool.getTask('999')).rejects.toThrow('Task not found');
+      await expect(getTask({ id: '999' })).rejects.toThrow('Task not found');
     });
   });
 
   describe('createTask', () => {
     it('should create a new task', async () => {
-      const newTask: Omit<Task, 'id' | 'created_at' | 'updated_at'> = {
-        name: 'New Task',
+      const newTask = {
         project_id: 'project1',
+        name: 'New Task',
         start_date: '2024-01-01',
         end_date: '2024-12-31',
-        status: 'active',
         notes: 'New task notes',
-        hours_per_day: 8,
-        total_hours: 160,
+        estimated_hours: 160,
         priority: 1,
       };
 
       const mockResponse: Task = {
         id: '1',
         ...newTask,
+        status: 'active',
         created_at: '2024-01-01T00:00:00Z',
         updated_at: '2024-01-01T00:00:00Z',
+        hours_per_day: 8,
+        total_hours: 160,
       };
 
       floatApi.post.mockResolvedValueOnce({ task: mockResponse });
 
-      const result = await tasksTool.createTask(newTask);
+      const result = await createTask(newTask);
 
       expect(result).toEqual(mockResponse);
       expect(floatApi.post).toHaveBeenCalledWith('/tasks', newTask);
@@ -115,19 +123,19 @@ describe('TasksTool', () => {
 
     it('should handle validation errors', async () => {
       const invalidTask = {
-        name: '', // Invalid: empty name
         project_id: 'project1',
+        name: '', // Invalid: empty name
         start_date: '2024-01-01',
-        status: 'active',
       };
 
-      await expect(tasksTool.createTask(invalidTask)).rejects.toThrow();
+      await expect(createTask(invalidTask)).rejects.toThrow();
     });
   });
 
   describe('updateTask', () => {
     it('should update an existing task', async () => {
       const updateData = {
+        id: '1',
         name: 'Updated Task',
       };
 
@@ -148,16 +156,16 @@ describe('TasksTool', () => {
 
       floatApi.put.mockResolvedValueOnce({ task: mockResponse });
 
-      const result = await tasksTool.updateTask('1', updateData);
+      const result = await updateTask(updateData);
 
       expect(result).toEqual(mockResponse);
-      expect(floatApi.put).toHaveBeenCalledWith('/tasks/1', updateData);
+      expect(floatApi.put).toHaveBeenCalledWith('/tasks/1', { name: 'Updated Task' });
     });
 
     it('should handle update errors', async () => {
       floatApi.put.mockRejectedValueOnce(new Error('Update failed'));
 
-      await expect(tasksTool.updateTask('1', { name: 'Test' })).rejects.toThrow('Update failed');
+      await expect(updateTask({ id: '1', name: 'Test' })).rejects.toThrow('Update failed');
     });
   });
 
@@ -165,7 +173,7 @@ describe('TasksTool', () => {
     it('should delete a task', async () => {
       floatApi.delete.mockResolvedValueOnce(undefined);
 
-      await tasksTool.deleteTask('1');
+      await deleteTask({ id: '1' });
 
       expect(floatApi.delete).toHaveBeenCalledWith('/tasks/1');
     });
@@ -173,7 +181,7 @@ describe('TasksTool', () => {
     it('should handle deletion errors', async () => {
       floatApi.delete.mockRejectedValueOnce(new Error('Delete failed'));
 
-      await expect(tasksTool.deleteTask('1')).rejects.toThrow('Delete failed');
+      await expect(deleteTask({ id: '1' })).rejects.toThrow('Delete failed');
     });
   });
-}); 
+});

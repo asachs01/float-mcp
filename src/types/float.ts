@@ -91,4 +91,4 @@ export type ProjectsResponse = z.infer<typeof projectsResponseSchema>;
 export type TasksResponse = z.infer<typeof tasksResponseSchema>;
 export type PeopleResponse = z.infer<typeof peopleResponseSchema>;
 export type AllocationsResponse = z.infer<typeof allocationsResponseSchema>;
-export type ClientsResponse = z.infer<typeof clientsResponseSchema>; 
+export type ClientsResponse = z.infer<typeof clientsResponseSchema>;

@@ -1,23 +1,77 @@
 import pino from 'pino';
-import pinoPretty from 'pino-pretty';
+import { appConfig } from '../config/index.js';
 
-const logLevel = process.env.LOG_LEVEL || 'info';
-const logFormat = process.env.LOG_FORMAT || 'json';
+// Detect if we're running as an MCP server (Claude Desktop communication)
+// Check for explicit --mcp flag or typical MCP environment (piped stdin/stdout)
+const isMCPServer = process.argv.includes('--mcp') || (!process.stdin.isTTY && !process.stdout.isTTY);
 
-const transport = pinoPretty({
-  colorize: true,
-  translateTime: 'SYS:standard',
-  ignore: 'pid,hostname',
-});
+// Conditionally create transport only when needed and available
+let transport: any = undefined;
 
-export const logger = pino(
-  {
-    level: logLevel,
-    formatters: {
-      level: (label) => {
-        return { level: label };
+if (appConfig.logFormat === 'pretty' && !isMCPServer) {
+  try {
+    transport = pino.transport({
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        translateTime: 'SYS:standard',
+        ignore: 'pid,hostname',
+        destination: process.stderr, // Always use stderr for MCP compatibility
       },
+    });
+  } catch (error) {
+    // If pino-pretty is not available (e.g., in production), fall back to JSON
+    console.warn('pino-pretty not available, falling back to JSON logging');
+    transport = undefined;
+  }
+}
+
+// Create logger configuration
+const loggerConfig: any = {
+  level: isMCPServer ? 'silent' : appConfig.logLevel, // Disable logging for MCP server
+  formatters: {
+    level: (label: string) => {
+      return { level: label };
     },
   },
-  logFormat === 'pretty' ? transport : undefined
-); 
+};
+
+// If not using pretty transport and not MCP server, configure for stderr
+if (!transport && !isMCPServer) {
+  loggerConfig.transport = {
+    target: 'pino/file',
+    options: {
+      destination: process.stderr.fd,
+    },
+  };
+}
+
+export const logger = pino.default(loggerConfig, transport);
+
+// Health check function
+export const healthCheck = async (): Promise<{ status: string; timestamp: string }> => {
+  return {
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+  };
+};
+
+// Start periodic health checks
+export const startHealthChecks = (): (() => void) => {
+  // Skip health checks when running as MCP server to avoid noise
+  if (isMCPServer) {
+    return () => {}; // No-op cleanup function
+  }
+
+  const interval = setInterval(async () => {
+    try {
+      const health = await healthCheck();
+      logger.debug('Health check:', health);
+    } catch (error) {
+      logger.error('Health check failed:', error);
+    }
+  }, appConfig.healthCheckInterval);
+
+  // Cleanup function
+  return () => clearInterval(interval);
+};

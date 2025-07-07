@@ -126,7 +126,9 @@ describe('ClientsTool', () => {
     it('should handle update errors', async () => {
       floatApi.put.mockRejectedValueOnce(new Error('Update failed'));
 
-      await expect(clientsTool.updateClient('1', { name: 'Test' })).rejects.toThrow('Update failed');
+      await expect(clientsTool.updateClient('1', { name: 'Test' })).rejects.toThrow(
+        'Update failed'
+      );
     });
   });
 
@@ -145,4 +147,4 @@ describe('ClientsTool', () => {
       await expect(clientsTool.deleteClient('1')).rejects.toThrow('Delete failed');
     });
   });
-}); 
+});
