@@ -10,8 +10,8 @@ try {
 }
 
 const configSchema = z.object({
-  // Float API Configuration
-  floatApiKey: z.string().min(1, 'FLOAT_API_KEY is required'),
+  // Float API Configuration - Allow empty in test environment
+  floatApiKey: z.string().default('test-api-key'),
   floatApiBaseUrl: z.string().url().default('https://api.float.com/v3'),
 
   // Server Configuration
@@ -44,7 +44,7 @@ function parseConfig(): Config {
   }
 
   try {
-    return configSchema.parse({
+    const config = configSchema.parse({
       floatApiKey: process.env.FLOAT_API_KEY,
       floatApiBaseUrl: process.env.FLOAT_API_BASE_URL,
       port: process.env.PORT,
@@ -56,18 +56,25 @@ function parseConfig(): Config {
       healthCheckInterval: process.env.HEALTH_CHECK_INTERVAL,
       healthCheckTimeout: process.env.HEALTH_CHECK_TIMEOUT,
     });
+
+    // Validate API key is set in production and when not running tests
+    if (
+      config.nodeEnv !== 'test' &&
+      (!process.env.FLOAT_API_KEY || config.floatApiKey === 'test-api-key')
+    ) {
+      throw new Error(
+        `Configuration validation failed:\n- Missing: FLOAT_API_KEY (get this from your Float.com account settings)\n\nFor Claude Desktop, ensure your config includes:\n{\n  "env": {\n    "FLOAT_API_KEY": "your_actual_api_key"\n  }\n}`
+      );
+    }
+
+    return config;
   } catch (error) {
     if (error instanceof z.ZodError) {
       const errorMessages = error.errors.map((err) => {
-        if (err.path.includes('floatApiKey')) {
-          return `- Missing: FLOAT_API_KEY (get this from your Float.com account settings)`;
-        }
         return `- Missing: ${err.path.join('.')}`;
       });
 
-      throw new Error(
-        `Configuration validation failed:\n${errorMessages.join('\n')}\n\nFor Claude Desktop, ensure your config includes:\n{\n  "env": {\n    "FLOAT_API_KEY": "your_actual_api_key"\n  }\n}`
-      );
+      throw new Error(`Configuration validation failed:\n${errorMessages.join('\n')}`);
     }
     throw error;
   }
