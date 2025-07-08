@@ -47,8 +47,15 @@ function parseConfig(): Config {
         .filter((err) => err.code === 'too_small')
         .map((err) => err.path.join('.'));
 
+      const errorMessages = error.errors.map((err) => {
+        if (err.path.includes('floatApiKey')) {
+          return `- Missing: FLOAT_API_KEY (get this from your Float.com account settings)`;
+        }
+        return `- Missing: ${err.path.join('.')}`;
+      });
+
       throw new Error(
-        `Configuration validation failed:\n${missingFields.map((field) => `- Missing: ${field}`).join('\n')}`
+        `Configuration validation failed:\n${errorMessages.join('\n')}\n\nFor Claude Desktop, ensure your config includes:\n{\n  "env": {\n    "FLOAT_API_KEY": "your_actual_api_key"\n  }\n}`
       );
     }
     throw error;

@@ -84,12 +84,14 @@ Add this configuration to your Claude Desktop config file:
         "ghcr.io/asachs01/float-mcp:latest"
       ],
       "env": {
-        "FLOAT_API_KEY": "your_float_api_key_here"
+        "FLOAT_API_KEY": "your_actual_float_api_key_from_float_account"
       }
     }
   }
 }
 ```
+
+> **⚠️ Important**: Replace `your_actual_float_api_key_from_float_account` with your real Float.com API key from your Float account settings. The server will not start without this.
 
 **Optional environment variables** (add to `env` section if needed):
 ```json
@@ -266,7 +268,29 @@ npm run dev
 
 ### Common Issues
 
-#### 1. "Float MCP server is disabled" in Claude Desktop
+#### 1. "Configuration validation failed: Missing FLOAT_API_KEY"
+
+**Cause**: The Float.com API key is not set in your Claude Desktop configuration.
+
+**Solution**: 
+1. Get your API key from Float.com account settings
+2. Add it to your Claude Desktop config:
+   ```json
+   {
+     "mcpServers": {
+       "float-mcp": {
+         "command": "docker",
+         "args": ["run", "--rm", "-i", "ghcr.io/asachs01/float-mcp:latest"],
+         "env": {
+           "FLOAT_API_KEY": "your_actual_api_key_here"
+         }
+       }
+     }
+   }
+   ```
+3. Restart Claude Desktop
+
+#### 2. "Float MCP server is disabled" in Claude Desktop
 
 **Cause**: Node.js path issues or configuration errors.
 
@@ -276,7 +300,7 @@ npm run dev
 - Verify the file paths in your configuration
 - Check Claude Desktop logs for specific errors
 
-#### 2. "Configuration validation failed"
+#### 3. "Configuration validation failed"
 
 **Cause**: Missing or invalid environment variables.
 
@@ -286,7 +310,7 @@ cp .env.example .env
 # Edit .env with your actual values
 ```
 
-#### 3. Docker build fails
+#### 4. Docker build fails
 
 **Cause**: Missing dependencies or build issues.
 
@@ -298,7 +322,7 @@ docker compose build --no-cache
 docker compose up -d
 ```
 
-#### 4. API connection issues
+#### 5. API connection issues
 
 **Cause**: Invalid API key or network connectivity.
 
