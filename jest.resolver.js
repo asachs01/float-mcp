@@ -6,15 +6,15 @@ module.exports = (request, options) => {
   if ((request.startsWith('./') || request.startsWith('../')) && request.endsWith('.js')) {
     const tsRequest = request.replace(/\.js$/, '.ts');
     const tsPath = path.resolve(options.basedir, tsRequest);
-    
+
     // Check if the .ts file exists
     if (fs.existsSync(tsPath)) {
       return tsPath;
     }
   }
-  
+
   // Use the default resolver for everything else
   return require.resolve(request, {
     paths: [options.basedir],
   });
-}; 
+};
