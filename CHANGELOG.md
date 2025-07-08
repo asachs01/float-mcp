@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2025-07-07
+
+### Added
+- Debug logging to troubleshoot environment variable issues in MCP contexts
+- Better error handling for dotenv loading in Docker containers
+
+### Fixed
+- Made dotenv loading optional to work properly in Docker/MCP environments
+- Improved environment variable debugging for Claude Desktop integration
+
 ## [0.2.1] - 2025-07-07
 
 ### Fixed

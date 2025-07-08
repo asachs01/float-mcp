@@ -16,7 +16,7 @@ const isMCPServer = process.argv.includes('--mcp') || (!process.stdin.isTTY && !
 // Only log startup info if not running as MCP server
 if (!isMCPServer) {
   logger.info('Starting Float MCP Server', {
-    version: '0.2.1',
+    version: '0.2.2',
     nodeEnv: appConfig.nodeEnv,
     logLevel: appConfig.logLevel,
   });
@@ -26,7 +26,7 @@ if (!isMCPServer) {
 const server = new Server(
   {
     name: 'float-mcp',
-    version: '0.2.1',
+    version: '0.2.2',
   },
   {
     capabilities: {
