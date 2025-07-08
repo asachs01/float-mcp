@@ -1,7 +1,13 @@
 import { z } from 'zod';
 import { config } from 'dotenv';
 
-config();
+// Only load .env file if it exists (for local development)
+// In Docker/MCP, environment variables are passed directly
+try {
+  config();
+} catch (error) {
+  // Ignore dotenv errors - environment variables may be passed directly
+}
 
 const configSchema = z.object({
   // Float API Configuration
@@ -28,6 +34,12 @@ const configSchema = z.object({
 export type Config = z.infer<typeof configSchema>;
 
 function parseConfig(): Config {
+  // Debug: Log environment variables for troubleshooting
+  console.error('DEBUG: Environment variables check:');
+  console.error(`FLOAT_API_KEY: ${process.env.FLOAT_API_KEY ? '[SET]' : '[NOT SET]'}`);
+  console.error(`NODE_ENV: ${process.env.NODE_ENV || '[NOT SET]'}`);
+  console.error(`LOG_LEVEL: ${process.env.LOG_LEVEL || '[NOT SET]'}`);
+  
   try {
     return configSchema.parse({
       floatApiKey: process.env.FLOAT_API_KEY,
@@ -43,10 +55,6 @@ function parseConfig(): Config {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const missingFields = error.errors
-        .filter((err) => err.code === 'too_small')
-        .map((err) => err.path.join('.'));
-
       const errorMessages = error.errors.map((err) => {
         if (err.path.includes('floatApiKey')) {
           return `- Missing: FLOAT_API_KEY (get this from your Float.com account settings)`;
