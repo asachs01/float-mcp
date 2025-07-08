@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.0] - 2024-12-19
+## [0.2.0] - 2025-07-07
 
 ### Changed
 - **BREAKING**: Simplified Docker usage for Claude Desktop integration
@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Streamlined Docker configuration removes complexity and potential setup errors
 - Launch script now uses simplified Docker command
 
-## [0.1.1] - 2024-12-19
+## [0.1.1] - 2025-07-07
 
 ### Fixed
 - Updated Docker image references from placeholder to actual repository
@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Pre-built Docker images available on GitHub Container Registry
 
-## [0.1.0] - 2024-12-19
+## [0.1.0] - 2025-07-07
 
 ### Added
 - Initial release of Float.com MCP Integration
