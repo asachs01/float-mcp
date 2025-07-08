@@ -47,7 +47,7 @@ if (!transport && !isMCPServer) {
   };
 }
 
-export const logger = pino.default(loggerConfig, transport);
+export const logger = pino(loggerConfig, transport);
 
 // Health check function
 export const healthCheck = async (): Promise<{ status: string; timestamp: string }> => {
