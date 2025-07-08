@@ -341,7 +341,7 @@ echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | \
 
 ## License
 
-[Insert your license here]
+[LICENSE](LICENSE)
 
 ## Support
 
