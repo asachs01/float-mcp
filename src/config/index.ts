@@ -34,11 +34,14 @@ const configSchema = z.object({
 export type Config = z.infer<typeof configSchema>;
 
 function parseConfig(): Config {
-  // Debug: Log environment variables for troubleshooting
-  console.error('DEBUG: Environment variables check:');
-  console.error(`FLOAT_API_KEY: ${process.env.FLOAT_API_KEY ? '[SET]' : '[NOT SET]'}`);
-  console.error(`NODE_ENV: ${process.env.NODE_ENV || '[NOT SET]'}`);
-  console.error(`LOG_LEVEL: ${process.env.LOG_LEVEL || '[NOT SET]'}`);
+  // Debug: Log environment variables for troubleshooting (only in development or debug mode)
+  const shouldDebug = process.env.NODE_ENV === 'development' || process.env.LOG_LEVEL === 'debug';
+  if (shouldDebug) {
+    console.error('DEBUG: Environment variables check:');
+    console.error(`FLOAT_API_KEY: ${process.env.FLOAT_API_KEY ? '[SET]' : '[NOT SET]'}`);
+    console.error(`NODE_ENV: ${process.env.NODE_ENV || '[NOT SET]'}`);
+    console.error(`LOG_LEVEL: ${process.env.LOG_LEVEL || '[NOT SET]'}`);
+  }
   
   try {
     return configSchema.parse({
