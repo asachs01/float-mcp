@@ -1,5 +1,4 @@
-import { jest } from '@jest/globals';
-import { config } from 'dotenv';
+const { config } = require('dotenv');
 
 // Load environment variables
 config();
@@ -8,7 +7,7 @@ config();
 jest.setTimeout(10000);
 
 // Mock fetch globally
-global.fetch = jest.fn() as jest.Mock;
+global.fetch = jest.fn();
 
 beforeAll(() => {
   // Initialize any test setup

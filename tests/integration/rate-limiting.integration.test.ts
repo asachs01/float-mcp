@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
-import { executeToolWithRetry, executeTool, executeBatch, sleep } from './utils/test-helpers.js';
-import { TEST_CONFIG } from './setup.js';
+import { executeToolWithRetry, executeTool, executeBatch, sleep } from './utils/test-helpers.ts';
+import { TEST_CONFIG } from './setup.ts';
 
 describe('Rate Limiting Integration Tests', () => {
   // Skip rate limiting tests if not using real API

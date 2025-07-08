@@ -32,9 +32,8 @@ jobs:
       - name: Format check
         run: npx prettier --check .
 
-      # Temporarily disabled until Jest ESM configuration is fixed
-      # - name: Test
-      #   run: npm test
+      - name: Test
+        run: npm test
 
       - name: Build
         run: npm run build

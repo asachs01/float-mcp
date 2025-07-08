@@ -1,5 +1,5 @@
-import { logger } from '../../../src/utils/logger.js';
-import { executeTool } from './test-helpers.js';
+import { logger } from '../../../src/utils/logger.ts';
+import { executeTool } from './test-helpers.ts';
 
 // Error test scenarios
 export interface ErrorTestScenario {

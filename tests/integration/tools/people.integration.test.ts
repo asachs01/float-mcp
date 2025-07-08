@@ -3,10 +3,10 @@ import {
   executeToolWithRetry,
   generateTestPersonData,
   cleanupTestData,
-} from '../utils/test-helpers.js';
-import { entitySchemaValidator } from '../utils/schema-validator.js';
-import { ErrorTestUtils, createErrorTestCases } from '../utils/error-handling.js';
-import { TEST_CONFIG } from '../setup.js';
+} from '../utils/test-helpers.ts';
+import { entitySchemaValidator } from '../utils/schema-validator.ts';
+import { ErrorTestUtils, createErrorTestCases } from '../utils/error-handling.ts';
+import { TEST_CONFIG } from '../setup.ts';
 
 describe('People Tools Integration Tests', () => {
   const createdPeople: number[] = [];

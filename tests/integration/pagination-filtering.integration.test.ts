@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
-import { executeToolWithRetry, executeTool } from './utils/test-helpers.js';
-import { TEST_CONFIG } from './setup.js';
+import { executeToolWithRetry, executeTool } from './utils/test-helpers.ts';
+import { TEST_CONFIG } from './setup.ts';
 
 describe('Pagination and Filtering Integration Tests', () => {
   describe('Pagination Tests', () => {

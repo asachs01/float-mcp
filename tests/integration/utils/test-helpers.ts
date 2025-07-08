@@ -2,9 +2,9 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 // import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { tools } from '../../../src/tools/index.js';
-import { TEST_CONFIG, sleep, retryOperation } from '../setup.js';
-import { logger } from '../../../src/utils/logger.js';
+import { tools } from '../../../src/tools/index.ts';
+import { TEST_CONFIG, sleep, retryOperation } from '../setup.ts';
+import { logger } from '../../../src/utils/logger.ts';
 import { z } from 'zod';
 
 // Test server instance

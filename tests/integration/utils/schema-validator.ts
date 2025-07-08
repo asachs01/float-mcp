@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { logger } from '../../../src/utils/logger.js';
+import { logger } from '../../../src/utils/logger.ts';
 import {
   projectSchema,
   personSchema,
@@ -17,7 +17,7 @@ import {
   accountSchema,
   roleSchema,
   projectTaskSchema,
-} from '../../../src/types/float.js';
+} from '../../../src/types/float.ts';
 
 // Schema validation results
 export interface ValidationResult {
