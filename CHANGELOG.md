@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2025-07-07
+
+### Fixed
+- Improved error handling and messaging when FLOAT_API_KEY is missing
+- Enhanced configuration validation with clearer guidance for Claude Desktop users
+- Better troubleshooting documentation with specific error scenarios
+
+### Added
+- Dedicated troubleshooting section for missing API key errors
+- More helpful error messages that guide users to their Claude Desktop configuration
+
 ## [0.2.0] - 2025-07-07
 
 ### Changed

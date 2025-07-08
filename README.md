@@ -135,7 +135,7 @@ Pre-built Docker images are available from GitHub Container Registry:
 docker pull ghcr.io/asachs01/float-mcp:latest
 
 # Specific version
-docker pull ghcr.io/asachs01/float-mcp:v0.2.0
+docker pull ghcr.io/asachs01/float-mcp:v0.2.1
 ```
 
 ### Building Locally
