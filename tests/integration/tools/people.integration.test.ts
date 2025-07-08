@@ -1,7 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
 import {
   executeToolWithRetry,
-
   generateTestPersonData,
   cleanupTestData,
 } from '../utils/test-helpers.js';

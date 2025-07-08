@@ -1,7 +1,4 @@
 import { logger } from '../../../src/utils/logger.js';
-import {
-  FloatUnexpectedError
-} from '../../../src/services/float-api.js';
 import { executeTool } from './test-helpers.js';
 
 // Error test scenarios

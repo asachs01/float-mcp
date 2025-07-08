@@ -196,8 +196,6 @@ export const generateTestClientData = (overrides: Partial<any> = {}) => {
 };
 
 export const generateTestAllocationData = (overrides: Partial<any> = {}) => {
-  const timestamp = Date.now();
-
   return {
     person_id: 1,
     project_id: 1,
