@@ -104,18 +104,29 @@ export class FloatApi {
 
   private async handleResponse<T>(response: Response, schema?: z.ZodType<T>): Promise<T> {
     if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new FloatApiError(
-        `Request failed with status code ${response.status}`,
-        response.status,
-        error
-      );
+      const errorData = await response.json();
+      throw new FloatApiError(`Request failed with status code ${response.status}`, response.status, errorData);
     }
 
     const data = await response.json();
+    
+    // Debug logging for response data
+    console.error(`DEBUG: API Response status: ${response.status}`);
+    console.error(`DEBUG: API Response data type:`, typeof data);
+    console.error(`DEBUG: API Response is array:`, Array.isArray(data));
+    console.error(`DEBUG: API Response data:`, JSON.stringify(data, null, 2));
+
     if (schema) {
+      try {
       return schema.parse(data);
+      } catch (error) {
+        console.error(`DEBUG: Schema validation failed:`, error);
+        console.error(`DEBUG: Expected schema:`, schema);
+        console.error(`DEBUG: Received data:`, data);
+        throw error;
+      }
     }
+
     return data as T;
   }
 

@@ -1,0 +1,228 @@
+# Float MCP Server - Python Rewrite using FastMCP
+
+## Project Overview
+Complete rewrite of the Float MCP server from TypeScript/Node.js to Python using the FastMCP framework. The original TypeScript implementation had persistent issues with Claude Desktop integration due to Docker configuration complexity and environment variable handling.
+
+## Business Context
+Float.com is a resource planning and time tracking platform. This MCP server provides Claude Desktop users with tools to interact with Float's API for project management, resource allocation, and time tracking operations.
+
+## Float API Documentation
+**Base URL**: https://api.float.com/v3  
+**Authentication**: Bearer token (obtained from Float Account Settings → Integrations)  
+**Data Formats**: JSON (preferred) and XML  
+**Documentation**: https://developer.float.com
+
+### API Features
+- RESTful design with standard HTTP methods
+- Pagination (max 200 items per page)
+- Field filtering and sorting
+- Date range filtering
+- Department/project/people filtering
+- Bearer token authentication
+- Rate limiting
+
+### Key API Endpoints
+- **Accounts**: Account information and settings
+- **Departments**: Organizational departments
+- **People**: Team members and users
+- **Roles**: User roles and permissions
+- **Statuses**: Task and project statuses
+- **Time Off**: Time off requests and approvals
+- **Time Off Types**: Categories of time off
+- **Public Holidays**: Company-wide holidays
+- **Team Holidays**: Team-specific holidays
+- **Clients**: Client organizations
+- **Projects**: Projects and project data
+- **Phases**: Project phases
+- **Project Tasks**: Individual tasks within projects
+- **Milestones**: Project milestones
+- **Allocations**: Resource allocation and scheduling
+- **Logged Time**: Time tracking entries
+- **Reports**: Analytics and reporting data
+
+## Core Requirements
+
+### 1. FastMCP Python Implementation
+- Use FastMCP 2.0 framework (https://gofastmcp.com/)
+- Clean, Pythonic implementation with decorators
+- Proper error handling and validation
+- Type hints throughout
+
+### 2. Existing Tools to Implement (25 Total)
+The original TypeScript implementation provided 25 tools across 5 categories:
+
+#### Project Tools (5 tools)
+- `list_projects`: Get all projects with filtering options
+- `get_project`: Get specific project details by ID
+- `create_project`: Create new project
+- `update_project`: Update existing project
+- `delete_project`: Delete project
+
+#### Task Tools (5 tools)
+- `list_tasks`: Get all tasks with date range and filtering
+- `get_task`: Get specific task details by ID
+- `create_task`: Create new task
+- `update_task`: Update existing task
+- `delete_task`: Delete task
+
+#### People Tools (5 tools)
+- `list_people`: Get all team members
+- `get_person`: Get specific person details by ID
+- `create_person`: Add new team member
+- `update_person`: Update person information
+- `delete_person`: Remove team member
+
+#### Client Tools (5 tools)
+- `list_clients`: Get all clients
+- `get_client`: Get specific client details by ID
+- `create_client`: Create new client
+- `update_client`: Update client information
+- `delete_client`: Delete client
+
+#### Allocation Tools (5 tools)
+- `list_allocations`: Get resource allocations with filtering
+- `get_allocation`: Get specific allocation details by ID
+- `create_allocation`: Create new allocation
+- `update_allocation`: Update existing allocation
+- `delete_allocation`: Delete allocation
+
+### 3. Authentication & Configuration
+- Bearer token authentication using FLOAT_API_KEY environment variable
+- Base URL: https://api.float.com/v3
+- Proper error handling for authentication failures
+- Configuration validation on startup
+
+### 4. Docker Integration
+- Single Dockerfile with Python runtime
+- Default to MCP mode for Claude Desktop
+- Environment variable passing without complex Docker args
+- Multi-platform support (linux/amd64, linux/arm64)
+
+### 5. GitHub Actions Workflow
+Maintain existing CI/CD pipeline with these jobs:
+
+#### Build and Push Job
+- Checkout repository
+- Setup Node.js (replace with Python 3.11+)
+- Install dependencies (requirements.txt)
+- Run tests (pytest)
+- Build application
+- Docker Buildx setup
+- GitHub Container Registry login
+- Extract metadata for tags
+- Build and push multi-platform Docker image
+- Security scanning with Trivy
+- Upload SARIF results
+
+#### Test Docker Image Job
+- Test image availability and propagation
+- Functional testing of MCP server
+- Verify all 25 tools are available
+- Docker Compose integration testing
+
+#### Release Process
+- Tag-based releases (v1.0.0, v1.1.0, etc.)
+- Automatic changelog updates following keepachangelog.com format
+- GitHub Container Registry publishing
+- GitHub Releases with release notes
+
+### 6. Claude Desktop Integration
+- Simplified configuration requiring only Docker image name
+- No complex environment variable passing in args
+- Support for `env` section in Claude Desktop config
+- Debug logging for troubleshooting
+
+## Technical Architecture
+
+### 1. Project Structure
+```
+float_mcp/
+├── src/
+│   ├── __init__.py
+│   ├── server.py          # FastMCP server setup
+│   ├── config.py          # Configuration and validation
+│   ├── auth.py            # Authentication handling
+│   ├── client.py          # Float API client
+│   └── tools/
+│       ├── __init__.py
+│       ├── projects.py    # Project tools
+│       ├── tasks.py       # Task tools
+│       ├── people.py      # People tools
+│       ├── clients.py     # Client tools
+│       └── allocations.py # Allocation tools
+├── tests/                 # Comprehensive test suite
+├── requirements.txt       # Python dependencies
+├── Dockerfile            # Single-stage Python container
+├── docker-compose.yml    # Local development
+└── README.md             # Updated documentation
+```
+
+### 2. Error Handling
+- Comprehensive exception handling for API failures
+- Proper HTTP status code responses
+- Detailed error messages for troubleshooting
+- Graceful degradation for network issues
+
+### 3. Logging & Monitoring
+- Structured logging with configurable levels
+- Debug mode for troubleshooting Claude Desktop integration
+- Health checks for container orchestration
+
+### 4. Performance
+- Async/await for API calls where possible
+- Connection pooling for HTTP requests
+- Proper rate limiting respect
+- Efficient data serialization
+
+## Migration Strategy
+
+### Phase 1: Foundation
+1. Setup FastMCP Python project structure
+2. Implement basic authentication and configuration
+3. Create Float API client with error handling
+
+### Phase 2: Core Tools
+4. Implement Project tools (5 tools)
+5. Implement Task tools (5 tools)
+6. Implement People tools (5 tools)
+7. Implement Client tools (5 tools)
+8. Implement Allocation tools (5 tools)
+
+### Phase 3: Integration
+9. Docker container setup and testing
+10. GitHub Actions workflow migration
+11. Claude Desktop configuration testing
+12. Documentation and examples
+
+### Phase 4: Release
+13. Comprehensive testing and validation
+14. Performance optimization
+15. Release v1.0.0 with migration guide
+
+## Success Criteria
+- All 25 tools functional and tested
+- Seamless Claude Desktop integration
+- Simplified Docker configuration
+- Comprehensive documentation
+- Automated CI/CD pipeline
+- Performance equal or better than TypeScript version
+
+## Timeline
+- Phase 1: 1-2 days
+- Phase 2: 3-4 days  
+- Phase 3: 2-3 days
+- Phase 4: 1-2 days
+- **Total: 7-11 days**
+
+## Risks & Mitigation
+- **FastMCP Learning Curve**: Start with simple tools, reference FastMCP docs
+- **API Compatibility**: Test against Float API thoroughly
+- **Docker Issues**: Use official Python base images, test multi-platform
+- **Claude Desktop Integration**: Implement comprehensive debug logging
+
+## References
+- Float API Documentation: https://developer.float.com
+- FastMCP Documentation: https://gofastmcp.com/
+- Original TypeScript Implementation: Current codebase
+- Keep a Changelog: https://keepachangelog.com/
+- Semantic Versioning: https://semver.org/ 

@@ -16,8 +16,11 @@ export const listTasks = createTool(
     if (params.project_id) queryParams.append('project_id', params.project_id);
     if (params.status) queryParams.append('status', params.status);
 
-    const response = await floatApi.get(`/tasks?${queryParams.toString()}`, tasksResponseSchema);
-    return response.tasks;
+    const response = await floatApi.get(
+      `/tasks?${queryParams.toString()}`,
+      tasksResponseSchema
+    );
+    return response; // Now response is directly an array of tasks
   }
 );
 

@@ -20,7 +20,7 @@ export const listProjects = createTool(
       `/projects?${queryParams.toString()}`,
       projectsResponseSchema
     );
-    return response.projects;
+    return response;
   }
 );
 

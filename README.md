@@ -96,10 +96,10 @@ Add this configuration to your Claude Desktop config file:
 **Optional environment variables** (add to `env` section if needed):
 ```json
 {
-  "FLOAT_API_BASE_URL": "https://api.float.com/v3",
-  "NODE_ENV": "production", 
-  "LOG_LEVEL": "error",
-  "LOG_FORMAT": "json"
+        "FLOAT_API_BASE_URL": "https://api.float.com/v3",
+        "NODE_ENV": "production",
+        "LOG_LEVEL": "error",
+        "LOG_FORMAT": "json"
 }
 ```
 

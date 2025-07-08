@@ -16,8 +16,11 @@ export const listPeople = createTool(
     if (params.status) queryParams.append('status', params.status);
     if (params.department) queryParams.append('department', params.department);
 
-    const response = await floatApi.get(`/people?${queryParams.toString()}`, peopleResponseSchema);
-    return response.people;
+    const response = await floatApi.get(
+      `/people?${queryParams.toString()}`,
+      peopleResponseSchema
+    );
+    return response;
   }
 );
 

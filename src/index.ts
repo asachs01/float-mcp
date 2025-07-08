@@ -1,7 +1,15 @@
 import { config } from 'dotenv';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { 
+  CallToolRequestSchema, 
+  ListToolsRequestSchema,
+  ListResourcesRequestSchema,
+  ListPromptsRequestSchema,
+  ReadResourceRequestSchema,
+  GetPromptRequestSchema
+} from '@modelcontextprotocol/sdk/types.js';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 import { logger, startHealthChecks } from './utils/logger.js';
 import { tools } from './tools/index.js';
 import { appConfig } from './config/index.js';
@@ -31,6 +39,8 @@ const server = new Server(
   {
     capabilities: {
       tools: {},
+      resources: {},
+      prompts: {},
     },
   }
 );
@@ -41,7 +51,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: tools.map((tool) => ({
       name: tool.name,
       description: tool.description,
-      inputSchema: tool.inputSchema,
+      inputSchema: zodToJsonSchema(tool.inputSchema),
     })),
   };
 });
@@ -57,11 +67,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
   try {
     const result = await tool.handler(request.params.arguments || {});
+    
+    // Return the data directly, not wrapped in additional structure
+    // If the result has a data property (from ToolResponse), extract it
+    const responseData = result && typeof result === 'object' && 'data' in result ? result.data : result;
+    
     return {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(result, null, 2),
+          text: JSON.stringify(responseData, null, 2),
         },
       ],
     };
@@ -72,6 +87,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
     throw error;
   }
+});
+
+// Register resources list handler (empty for now)
+server.setRequestHandler(ListResourcesRequestSchema, async () => {
+  return {
+    resources: [],
+  };
+});
+
+// Register prompts list handler (empty for now)
+server.setRequestHandler(ListPromptsRequestSchema, async () => {
+  return {
+    prompts: [],
+  };
 });
 
 // Only log registration if not MCP server

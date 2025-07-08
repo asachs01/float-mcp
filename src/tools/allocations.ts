@@ -24,7 +24,7 @@ export const listAllocations = createTool(
       `/allocations?${queryParams.toString()}`,
       allocationsResponseSchema
     );
-    return response.allocations;
+    return response;
   }
 );
 

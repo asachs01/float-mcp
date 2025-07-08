@@ -2,138 +2,224 @@
   "master": {
     "tasks": [
       {
-        "id": 1,
-        "title": "Setup Project Repository and Initial Configuration",
-        "description": "Initialize the project repository and configure basic project structure and environment.",
-        "details": "Clone the repository, install Node.js 22.x or later, and Docker. Copy .env.example to .env and update with Float.com API key. Use npm for dependency management. Recommended: Node.js 22.2.0, Docker 24.0.6, npm 10.7.0.",
-        "testStrategy": "Verify repository setup by running git status and checking Node.js/Docker versions. Validate .env file exists and contains required keys.",
+        "id": 11,
+        "title": "Project Setup and FastMCP Integration",
+        "description": "Initialize the Python project structure and integrate the FastMCP 2.0 framework",
+        "details": "1. Create a new Python project with proper directory structure\n2. Set up virtual environment using Python 3.11+\n3. Install FastMCP 2.0 from https://gofastmcp.com/ (pip install fastmcp==2.0.*)\n4. Install required dependencies: requests>=2.31.0, pydantic>=2.4.2, pytest>=7.4.0\n5. Create basic project files: README.md, requirements.txt, .gitignore\n6. Initialize FastMCP application structure:\n   - Create main.py as entry point\n   - Set up FastMCP decorators for tool registration\n   - Implement basic MCP protocol handlers\n7. Create configuration module for environment variable management\n8. Set up logging with configurable levels using Python's built-in logging module\n9. Implement a simple test tool to verify FastMCP integration",
+        "testStrategy": "1. Verify project structure follows Python best practices\n2. Run basic FastMCP test to ensure the framework is properly integrated\n3. Test environment variable loading mechanism\n4. Verify logging configuration works at different levels\n5. Run a simple end-to-end test with the test tool to confirm MCP protocol implementation",
         "priority": "high",
         "dependencies": [],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 2,
-        "title": "Implement Core API Server",
-        "description": "Set up a Node.js server to handle HTTP requests and serve as the MCP server foundation.",
-        "details": "Use Express.js (v4.18.2) for routing and middleware. Initialize server with basic health check endpoint. Structure code for modularity and future expansion. Use dotenv (v16.3.1) for environment variables.",
-        "testStrategy": "Test server starts and responds to health check endpoint. Use curl or Postman to verify.",
+        "id": 12,
+        "title": "Float API Client Implementation",
+        "description": "Create a Python client for the Float.com REST API with authentication, rate limiting, and error handling",
+        "details": "1. Create a dedicated `float_api` module\n2. Implement a FloatAPIClient class using requests library\n3. Add JWT authentication using the FLOAT_API_KEY environment variable\n4. Set up proper request headers: {'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'}\n5. Implement rate limiting with exponential backoff (use time.sleep and track 429 responses)\n6. Create error handling for common HTTP status codes (401, 403, 404, 429, 500)\n7. Implement pagination handling for list endpoints (Float API uses page-based pagination)\n8. Add request/response logging with sensitive data redaction\n9. Create base methods for GET, POST, PUT, DELETE operations\n10. Implement connection pooling for performance\n11. Add timeout handling and retry logic\n12. Create data models using Pydantic for API responses",
+        "testStrategy": "1. Unit tests for API client methods with mocked responses\n2. Test authentication mechanism with invalid/valid tokens\n3. Verify rate limiting behavior with simulated 429 responses\n4. Test pagination handling with multi-page responses\n5. Verify error handling for different HTTP status codes\n6. Integration tests with Float API sandbox environment (if available)",
         "priority": "high",
         "dependencies": [
-          1
+          11
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 3,
-        "title": "Integrate Float.com API Client",
-        "description": "Implement client logic to interact with Float.com API for project and task management.",
-        "details": "Use axios (v1.6.7) for HTTP requests. Implement authentication with Float.com API key from .env. Create service layer for project, task, and people management endpoints. Handle rate limiting and retries.",
-        "testStrategy": "Mock Float.com API responses with nock (v13.5.0) or similar. Test successful and failed API calls.",
+        "id": 13,
+        "title": "Project Management Tools Implementation",
+        "description": "Implement MCP tools for project management operations including listing, creating, updating, and archiving projects",
+        "details": "1. Create a `tools/projects.py` module\n2. Implement the following FastMCP tools with proper decorators:\n   - list_projects: Get all projects with optional filtering\n   - get_project_details: Get detailed information for a specific project\n   - create_project: Create a new project with required fields\n   - update_project: Update an existing project\n   - archive_project: Archive a project\n   - restore_project: Restore an archived project\n3. Use Pydantic models for request/response validation\n4. Implement proper error handling and user-friendly error messages\n5. Add pagination support for list operations\n6. Include filtering options (active/archived, date ranges, etc.)\n7. Add sorting capabilities\n8. Implement field selection to optimize response size\n\nExample tool implementation:\n```python\nfrom fastmcp import tool\nfrom pydantic import BaseModel, Field\n\nclass ProjectResponse(BaseModel):\n    id: int\n    name: str\n    # other fields\n\n@tool(\"list_projects\")\nasync def list_projects(status: str = \"active\", page: int = 1, per_page: int = 20):\n    \"\"\"List all projects in Float\"\"\"\n    client = get_float_client()\n    response = client.get(f\"/projects\", params={\"status\": status, \"page\": page, \"per_page\": per_page})\n    return [ProjectResponse(**project) for project in response.get(\"projects\", [])]\n```",
+        "testStrategy": "1. Unit tests for each project management tool\n2. Test with various input parameters and edge cases\n3. Verify proper error handling for invalid inputs\n4. Test pagination and filtering functionality\n5. Integration tests with actual Float API (using test data)\n6. Verify response format matches expected MCP protocol",
         "priority": "high",
         "dependencies": [
-          1,
-          2
+          12
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 4,
-        "title": "Implement Project Management Endpoints",
-        "description": "Expose RESTful endpoints for project CRUD operations.",
-        "details": "Create Express routes for project management. Use service layer from task 3. Validate input and output. Use joi (v17.12.0) for request validation.",
-        "testStrategy": "Write integration tests for all project endpoints. Test with valid and invalid data.",
-        "priority": "medium",
+        "id": 14,
+        "title": "People & Resources Tools Implementation",
+        "description": "Implement MCP tools for managing people, departments, and roles in Float",
+        "details": "1. Create a `tools/people.py` module\n2. Implement the following FastMCP tools:\n   - list_people: Get all people with optional filtering\n   - get_person_details: Get detailed information for a specific person\n   - create_person: Create a new person record\n   - update_person: Update an existing person's details\n   - list_departments: Get all departments\n   - create_department: Create a new department\n   - update_department: Update department details\n   - list_roles: Get all roles\n   - create_role: Create a new role\n   - update_role: Update role details\n3. Use Pydantic models for request/response validation\n4. Implement proper error handling with user-friendly messages\n5. Add pagination support for list operations\n6. Include filtering options (active/inactive, department, role, etc.)\n7. Add sorting capabilities\n\nExample implementation for person creation:\n```python\nfrom fastmcp import tool\nfrom pydantic import BaseModel, Field\n\nclass PersonCreate(BaseModel):\n    name: str = Field(..., description=\"Person's full name\")\n    email: str = Field(..., description=\"Person's email address\")\n    job_title: str = Field(None, description=\"Person's job title\")\n    department_id: int = Field(None, description=\"Department ID\")\n    role_id: int = Field(None, description=\"Role ID\")\n\n@tool(\"create_person\")\nasync def create_person(person_data: PersonCreate):\n    \"\"\"Create a new person in Float\"\"\"\n    client = get_float_client()\n    response = client.post(\"/people\", json=person_data.dict(exclude_none=True))\n    return response\n```",
+        "testStrategy": "1. Unit tests for each people management tool\n2. Test with various input parameters and edge cases\n3. Verify proper error handling for invalid inputs\n4. Test pagination and filtering functionality\n5. Integration tests with actual Float API (using test data)\n6. Verify response format matches expected MCP protocol\n7. Test department and role management functionality",
+        "priority": "high",
         "dependencies": [
-          2,
-          3
+          12
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 5,
-        "title": "Implement Task Management Endpoints",
-        "description": "Expose RESTful endpoints for task CRUD operations.",
-        "details": "Create Express routes for task management. Use service layer from task 3. Validate input and output. Use joi for request validation.",
-        "testStrategy": "Write integration tests for all task endpoints. Test with valid and invalid data.",
-        "priority": "medium",
+        "id": 15,
+        "title": "Time Tracking Tools Implementation",
+        "description": "Implement MCP tools for time tracking operations including logging, retrieving, and managing time entries",
+        "details": "1. Create a `tools/time_tracking.py` module\n2. Implement the following FastMCP tools:\n   - log_time_entry: Create a new time entry\n   - get_time_entries: Retrieve time entries with filtering\n   - update_time_entry: Update an existing time entry\n   - delete_time_entry: Remove a time entry\n   - get_time_summary: Get summary of logged time\n3. Use Pydantic models for request/response validation\n4. Implement date range filtering for time entries\n5. Add person and project filtering options\n6. Include validation for time entry data (e.g., prevent overlapping entries)\n7. Implement proper error handling with user-friendly messages\n\nExample implementation:\n```python\nfrom fastmcp import tool\nfrom pydantic import BaseModel, Field\nfrom datetime import date\n\nclass TimeEntryCreate(BaseModel):\n    project_id: int = Field(..., description=\"Project ID\")\n    person_id: int = Field(..., description=\"Person ID\")\n    date: date = Field(..., description=\"Date of time entry\")\n    hours: float = Field(..., description=\"Hours logged\")\n    notes: str = Field(None, description=\"Notes for the time entry\")\n\n@tool(\"log_time_entry\")\nasync def log_time_entry(entry: TimeEntryCreate):\n    \"\"\"Log a new time entry in Float\"\"\"\n    client = get_float_client()\n    response = client.post(\"/time-entries\", json=entry.dict(exclude_none=True))\n    return response\n```",
+        "testStrategy": "1. Unit tests for each time tracking tool\n2. Test with various input parameters and edge cases\n3. Verify proper error handling for invalid inputs\n4. Test date range filtering functionality\n5. Integration tests with actual Float API (using test data)\n6. Verify response format matches expected MCP protocol\n7. Test validation logic for time entries",
+        "priority": "high",
         "dependencies": [
-          2,
-          3
+          12
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 6,
-        "title": "Implement People Management Endpoints",
-        "description": "Expose RESTful endpoints for people management.",
-        "details": "Create Express routes for people management. Use service layer from task 3. Validate input and output. Use joi for request validation.",
-        "testStrategy": "Write integration tests for all people endpoints. Test with valid and invalid data.",
+        "id": 16,
+        "title": "Scheduling Tools Implementation",
+        "description": "Implement MCP tools for resource scheduling and capacity planning",
+        "details": "1. Create a `tools/scheduling.py` module\n2. Implement the following FastMCP tools:\n   - list_schedules: Get scheduled assignments with filtering\n   - create_schedule: Create a new schedule assignment\n   - update_schedule: Update an existing schedule\n   - delete_schedule: Remove a scheduled assignment\n   - get_capacity: Get capacity information for people\n   - update_capacity: Update capacity settings\n3. Use Pydantic models for request/response validation\n4. Implement date range filtering for schedules\n5. Add person and project filtering options\n6. Include validation for scheduling data (e.g., prevent overallocation)\n7. Implement proper error handling with user-friendly messages\n\nExample implementation:\n```python\nfrom fastmcp import tool\nfrom pydantic import BaseModel, Field\nfrom datetime import date\n\nclass ScheduleCreate(BaseModel):\n    project_id: int = Field(..., description=\"Project ID\")\n    person_id: int = Field(..., description=\"Person ID\")\n    start_date: date = Field(..., description=\"Start date\")\n    end_date: date = Field(..., description=\"End date\")\n    hours_per_day: float = Field(..., description=\"Hours per day\")\n    notes: str = Field(None, description=\"Notes for the schedule\")\n\n@tool(\"create_schedule\")\nasync def create_schedule(schedule: ScheduleCreate):\n    \"\"\"Create a new schedule assignment in Float\"\"\"\n    client = get_float_client()\n    response = client.post(\"/schedules\", json=schedule.dict(exclude_none=True))\n    return response\n```",
+        "testStrategy": "1. Unit tests for each scheduling tool\n2. Test with various input parameters and edge cases\n3. Verify proper error handling for invalid inputs\n4. Test date range filtering functionality\n5. Integration tests with actual Float API (using test data)\n6. Verify response format matches expected MCP protocol\n7. Test validation logic for scheduling",
         "priority": "medium",
         "dependencies": [
-          2,
-          3
+          12
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 7,
-        "title": "Add Natural Language Processing (NLP) Integration",
-        "description": "Integrate NLP to process natural language commands for project and task management.",
-        "details": "Use a lightweight NLP library such as natural (v5.2.3) or integrate with OpenAI API (v4.0.0) for advanced parsing. Parse user input and map to project/task actions. Implement rate limiting for NLP endpoints.",
-        "testStrategy": "Test NLP parsing with sample commands. Verify correct mapping to project/task actions. Mock external API calls if needed.",
+        "id": 17,
+        "title": "Reporting Tools Implementation",
+        "description": "Implement MCP tools for generating reports on time tracking, resource utilization, and project progress",
+        "details": "1. Create a `tools/reporting.py` module\n2. Implement the following FastMCP tools:\n   - generate_time_report: Create time tracking reports\n   - generate_utilization_report: Create resource utilization reports\n   - generate_project_progress: Create project progress reports\n   - export_report_data: Export report data in various formats (CSV, JSON)\n3. Use Pydantic models for request/response validation\n4. Implement date range filtering for reports\n5. Add grouping options (by person, project, department, etc.)\n6. Include various aggregation methods (sum, average, etc.)\n7. Implement proper error handling with user-friendly messages\n8. Add data visualization options where appropriate\n\nExample implementation:\n```python\nfrom fastmcp import tool\nfrom pydantic import BaseModel, Field\nfrom datetime import date\nfrom enum import Enum\n\nclass ReportFormat(str, Enum):\n    json = \"json\"\n    csv = \"csv\"\n\nclass TimeReportRequest(BaseModel):\n    start_date: date = Field(..., description=\"Start date for report\")\n    end_date: date = Field(..., description=\"End date for report\")\n    group_by: str = Field(\"person\", description=\"Group by: person, project, department\")\n    project_ids: list[int] = Field(None, description=\"Filter by project IDs\")\n    person_ids: list[int] = Field(None, description=\"Filter by person IDs\")\n    format: ReportFormat = Field(ReportFormat.json, description=\"Report format\")\n\n@tool(\"generate_time_report\")\nasync def generate_time_report(report_params: TimeReportRequest):\n    \"\"\"Generate a time tracking report\"\"\"\n    client = get_float_client()\n    params = report_params.dict(exclude_none=True)\n    format_type = params.pop(\"format\")\n    response = client.get(\"/reports/time\", params=params)\n    \n    if format_type == ReportFormat.csv:\n        # Convert to CSV format\n        return {\"content\": convert_to_csv(response), \"format\": \"csv\"}\n    return response\n```",
+        "testStrategy": "1. Unit tests for each reporting tool\n2. Test with various input parameters and edge cases\n3. Verify proper error handling for invalid inputs\n4. Test date range filtering and grouping functionality\n5. Integration tests with actual Float API (using test data)\n6. Verify response format matches expected MCP protocol\n7. Test data export functionality in different formats",
         "priority": "medium",
         "dependencies": [
-          2,
-          3,
-          4,
-          5,
-          6
+          12,
+          15,
+          16
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 8,
-        "title": "Implement Structured Logging and Health Checks",
-        "description": "Add structured logging and health check endpoints.",
-        "details": "Use winston (v3.11.0) for structured logging. Add health check endpoint to monitor server status. Log API requests, errors, and system events.",
-        "testStrategy": "Verify logs are generated for API requests and errors. Test health check endpoint.",
+        "id": 18,
+        "title": "Search and Filtering Tools Implementation",
+        "description": "Implement MCP tools for searching and filtering Float data across projects, people, and time entries",
+        "details": "1. Create a `tools/search.py` module\n2. Implement the following FastMCP tools:\n   - search_projects: Search for projects with advanced filtering\n   - search_people: Search for people with advanced filtering\n   - search_time_entries: Search for time entries with advanced filtering\n   - search_schedules: Search for schedules with advanced filtering\n3. Use Pydantic models for request/response validation\n4. Implement comprehensive filtering options\n5. Add sorting capabilities\n6. Include pagination support\n7. Implement proper error handling with user-friendly messages\n\nExample implementation:\n```python\nfrom fastmcp import tool\nfrom pydantic import BaseModel, Field\nfrom typing import Optional, List\nfrom datetime import date\n\nclass ProjectSearchParams(BaseModel):\n    name: Optional[str] = Field(None, description=\"Search by project name\")\n    client_ids: Optional[List[int]] = Field(None, description=\"Filter by client IDs\")\n    statuses: Optional[List[str]] = Field(None, description=\"Filter by statuses\")\n    created_after: Optional[date] = Field(None, description=\"Created after date\")\n    created_before: Optional[date] = Field(None, description=\"Created before date\")\n    page: int = Field(1, description=\"Page number\")\n    per_page: int = Field(20, description=\"Items per page\")\n\n@tool(\"search_projects\")\nasync def search_projects(search_params: ProjectSearchParams):\n    \"\"\"Search for projects with advanced filtering\"\"\"\n    client = get_float_client()\n    params = search_params.dict(exclude_none=True)\n    response = client.get(\"/projects\", params=params)\n    return response\n```",
+        "testStrategy": "1. Unit tests for each search tool\n2. Test with various search parameters and edge cases\n3. Verify proper error handling for invalid inputs\n4. Test pagination functionality\n5. Integration tests with actual Float API (using test data)\n6. Verify response format matches expected MCP protocol\n7. Test complex filtering scenarios",
         "priority": "medium",
         "dependencies": [
-          2
+          12,
+          13,
+          14,
+          15,
+          16
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 9,
-        "title": "Dockerize Application and CI/CD Setup",
-        "description": "Containerize the application and set up CI/CD pipeline.",
-        "details": "Write Dockerfile for Node.js 22.x. Use multi-stage builds for efficiency. Set up GitHub Actions or similar for automated testing and deployment. Use docker-compose for local development.",
-        "testStrategy": "Build and run Docker image locally. Verify CI/CD pipeline runs tests and deploys successfully.",
-        "priority": "medium",
+        "id": 19,
+        "title": "Docker Configuration",
+        "description": "Create Docker configuration for the Float MCP server with simple setup for Claude Desktop integration",
+        "details": "1. Create a Dockerfile with Python 3.11 base image\n2. Configure the container to run in MCP mode (stdio transport)\n3. Set up proper environment variable handling for FLOAT_API_KEY\n4. Optimize Docker image size using multi-stage builds\n5. Configure proper Python environment inside container\n6. Set up entrypoint to run the FastMCP server\n7. Add health check\n8. Configure logging to stdout/stderr\n\nExample Dockerfile:\n```dockerfile\nFROM python:3.11-slim AS builder\n\nWORKCOPY requirements.txt /app/\nWORKDIR /app\n\nRUN pip install --no-cache-dir --upgrade pip && \\\n    pip install --no-cache-dir -r requirements.txt\n\nFROM python:3.11-slim\n\nWORKDIR /app\n\nCOPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages\nCOPY . /app/\n\nENV PYTHONUNBUFFERED=1\n\nENTRYPOINT [\"python\", \"-m\", \"float_mcp\"]\n```\n\nExample docker-compose.yml for development:\n```yaml\nversion: '3'\nservices:\n  float-mcp:\n    build: .\n    environment:\n      - FLOAT_API_KEY=${FLOAT_API_KEY}\n    stdin_open: true\n    tty: true\n```",
+        "testStrategy": "1. Build Docker image and verify it runs correctly\n2. Test with valid and invalid FLOAT_API_KEY values\n3. Verify MCP protocol works through Docker container\n4. Test integration with Claude Desktop\n5. Measure and optimize Docker image size\n6. Verify logging works correctly in containerized environment\n7. Test container restart behavior",
+        "priority": "high",
         "dependencies": [
-          1,
-          2
+          11,
+          12
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 10,
-        "title": "Implement Rate Limiting and Security Best Practices",
-        "description": "Add rate limiting and security middleware.",
-        "details": "Use express-rate-limit (v7.1.0) for API rate limiting. Add helmet (v7.1.0) for security headers. Validate all user input. Use environment variables for sensitive data.",
-        "testStrategy": "Test rate limiting by exceeding request limits. Verify security headers are present. Test input validation.",
+        "id": 20,
+        "title": "Claude Desktop Integration",
+        "description": "Configure and test the Float MCP server integration with Claude Desktop",
+        "details": "1. Create a sample claude_desktop_config.json file\n2. Configure the MCP server to work with Claude Desktop\n3. Test the integration with Claude Desktop\n4. Document the integration process\n5. Create example prompts for Claude Desktop users\n6. Verify all tools are accessible from Claude Desktop\n7. Test error handling and user feedback\n\nExample claude_desktop_config.json:\n```json\n{\n  \"mcpServers\": {\n    \"float\": {\n      \"command\": \"docker\",\n      \"args\": [\"run\", \"--rm\", \"-i\", \"-e\", \"FLOAT_API_KEY=<token>\", \"ghcr.io/asachs01/float-mcp:latest\"]\n    }\n  }\n}\n```\n\nExample prompts for testing:\n1. \"List all active projects in Float\"\n2. \"Show me time entries for the last week\"\n3. \"Create a new project called 'Website Redesign'\"\n4. \"Generate a time report for October 2023\"",
+        "testStrategy": "1. Test integration with Claude Desktop using sample config\n2. Verify all tools appear correctly in Claude Desktop\n3. Test each tool category with sample prompts\n4. Verify error messages are properly displayed in Claude Desktop\n5. Test with invalid configuration to ensure proper error handling\n6. Verify tool documentation and help text appears correctly",
+        "priority": "high",
+        "dependencies": [
+          19,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 21,
+        "title": "Error Handling and Validation",
+        "description": "Implement comprehensive error handling and input validation throughout the application",
+        "details": "1. Create a centralized error handling module\n2. Implement custom exception classes for different error types\n3. Add input validation using Pydantic models\n4. Create user-friendly error messages\n5. Implement proper HTTP status code handling\n6. Add validation for environment variables\n7. Implement graceful degradation for API failures\n8. Add request/response logging for debugging\n\nExample implementation:\n```python\nfrom fastmcp import tool, ToolError\nfrom pydantic import BaseModel, Field, ValidationError\n\nclass FloatAPIError(Exception):\n    def __init__(self, status_code, message, details=None):\n        self.status_code = status_code\n        self.message = message\n        self.details = details\n        super().__init__(self.message)\n\ndef handle_api_error(func):\n    async def wrapper(*args, **kwargs):\n        try:\n            return await func(*args, **kwargs)\n        except FloatAPIError as e:\n            if e.status_code == 401:\n                raise ToolError(\"Authentication failed. Please check your FLOAT_API_KEY.\")\n            elif e.status_code == 403:\n                raise ToolError(\"You don't have permission to perform this action.\")\n            elif e.status_code == 404:\n                raise ToolError(\"The requested resource was not found.\")\n            elif e.status_code == 429:\n                raise ToolError(\"Rate limit exceeded. Please try again later.\")\n            else:\n                raise ToolError(f\"API error: {e.message}\")\n        except ValidationError as e:\n            raise ToolError(f\"Invalid input: {str(e)}\")\n        except Exception as e:\n            raise ToolError(f\"An unexpected error occurred: {str(e)}\")\n    return wrapper\n```",
+        "testStrategy": "1. Unit tests for error handling with various error scenarios\n2. Test input validation with valid and invalid inputs\n3. Verify error messages are user-friendly and informative\n4. Test API error handling with mocked API responses\n5. Verify environment variable validation\n6. Test error logging functionality\n7. Verify error handling in Claude Desktop integration",
+        "priority": "high",
+        "dependencies": [
+          11,
+          12
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 22,
+        "title": "Logging and Monitoring",
+        "description": "Implement comprehensive logging and monitoring throughout the application",
+        "details": "1. Set up structured logging using Python's logging module\n2. Configure different log levels (DEBUG, INFO, WARNING, ERROR)\n3. Implement request/response logging with sensitive data redaction\n4. Add performance monitoring for API calls\n5. Create log formatters for different environments (development, production)\n6. Implement log rotation for file-based logging\n7. Add context information to logs (request ID, tool name, etc.)\n8. Configure Docker logs to capture application logs\n\nExample implementation:\n```python\nimport logging\nimport json\nimport time\nfrom functools import wraps\n\nlogger = logging.getLogger(\"float_mcp\")\n\ndef setup_logging(level=logging.INFO):\n    handler = logging.StreamHandler()\n    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')\n    handler.setFormatter(formatter)\n    logger.addHandler(handler)\n    logger.setLevel(level)\n\ndef log_api_call(func):\n    @wraps(func)\n    async def wrapper(*args, **kwargs):\n        start_time = time.time()\n        method = func.__name__\n        try:\n            result = await func(*args, **kwargs)\n            duration = time.time() - start_time\n            logger.info(f\"API call {method} completed in {duration:.2f}s\")\n            return result\n        except Exception as e:\n            duration = time.time() - start_time\n            logger.error(f\"API call {method} failed after {duration:.2f}s: {str(e)}\")\n            raise\n    return wrapper\n```",
+        "testStrategy": "1. Verify logs are generated at appropriate levels\n2. Test log formatting in different environments\n3. Verify sensitive data is properly redacted\n4. Test performance monitoring for API calls\n5. Verify log capture in Docker environment\n6. Test log rotation functionality\n7. Verify context information is properly included in logs",
         "priority": "medium",
         "dependencies": [
-          2
+          11
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 23,
+        "title": "GitHub Container Registry Setup",
+        "description": "Configure GitHub Actions for building and publishing the Docker image to GitHub Container Registry",
+        "details": "1. Create GitHub Actions workflow file (.github/workflows/docker-publish.yml)\n2. Configure authentication to GitHub Container Registry\n3. Set up Docker build and push steps\n4. Configure versioning for Docker images\n5. Add automated testing before publishing\n6. Configure caching for faster builds\n7. Set up release tagging\n8. Add documentation for the publishing process\n\nExample GitHub Actions workflow:\n```yaml\nname: Docker Build and Publish\n\non:\n  push:\n    branches: [ main ]\n    tags: [ 'v*' ]\n  pull_request:\n    branches: [ main ]\n\njobs:\n  build-and-push:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: read\n      packages: write\n\n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v3\n\n      - name: Set up Docker Buildx\n        uses: docker/setup-buildx-action@v2\n\n      - name: Login to GitHub Container Registry\n        uses: docker/login-action@v2\n        with:\n          registry: ghcr.io\n          username: ${{ github.actor }}\n          password: ${{ secrets.GITHUB_TOKEN }}\n\n      - name: Extract metadata\n        id: meta\n        uses: docker/metadata-action@v4\n        with:\n          images: ghcr.io/asachs01/float-mcp\n          tags: |\n            type=semver,pattern={{version}}\n            type=ref,event=branch\n            type=sha,format=short\n\n      - name: Build and push\n        uses: docker/build-push-action@v4\n        with:\n          context: .\n          push: ${{ github.event_name != 'pull_request' }}\n          tags: ${{ steps.meta.outputs.tags }}\n          labels: ${{ steps.meta.outputs.labels }}\n          cache-from: type=gha\n          cache-to: type=gha,mode=max\n```",
+        "testStrategy": "1. Test GitHub Actions workflow with test repository\n2. Verify Docker image is built and published correctly\n3. Test image versioning with different git tags\n4. Verify image can be pulled from GitHub Container Registry\n5. Test Docker image functionality after pulling from registry\n6. Verify caching improves build performance\n7. Test release tagging process",
+        "priority": "medium",
+        "dependencies": [
+          19
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 24,
+        "title": "Documentation",
+        "description": "Create comprehensive documentation for the Float MCP server",
+        "details": "1. Create README.md with project overview and setup instructions\n2. Document all available tools with examples\n3. Create API documentation for the Float API client\n4. Document Docker setup and configuration\n5. Create Claude Desktop integration guide\n6. Add troubleshooting section\n7. Document environment variables and configuration options\n8. Create examples for common use cases\n9. Add development setup instructions\n10. Document testing procedures\n\nExample README.md structure:\n```markdown\n# Float MCP Server\n\nA Python implementation of the Float MCP server using FastMCP framework.\n\n## Overview\n\nThis project provides Claude Desktop users with tools to interact with Float's API for project management, resource allocation, and time tracking operations.\n\n## Installation\n\n### Using Docker (Recommended)\n\n```bash\ndocker run --rm -i -e FLOAT_API_KEY=<your-api-key> ghcr.io/asachs01/float-mcp:latest\n```\n\n### Claude Desktop Integration\n\nAdd the following to your Claude Desktop configuration:\n\n```json\n{\n  \"mcpServers\": {\n    \"float\": {\n      \"command\": \"docker\",\n      \"args\": [\"run\", \"--rm\", \"-i\", \"-e\", \"FLOAT_API_KEY=<token>\", \"ghcr.io/asachs01/float-mcp:latest\"]\n    }\n  }\n}\n```\n\n## Available Tools\n\n### Project Management\n- `list_projects`: List all projects\n- `get_project_details`: Get details for a specific project\n- ...\n\n### People & Resources\n- `list_people`: List all people\n- `get_person_details`: Get details for a specific person\n- ...\n\n## Development\n\n### Setup\n\n1. Clone the repository\n2. Install dependencies: `pip install -r requirements.txt`\n3. Set environment variables: `export FLOAT_API_KEY=<your-api-key>`\n4. Run the server: `python -m float_mcp`\n\n### Testing\n\nRun tests with pytest:\n\n```bash\npytest\n```\n```",
+        "testStrategy": "1. Verify all documentation is accurate and up-to-date\n2. Test setup instructions to ensure they work as documented\n3. Verify tool documentation matches actual implementation\n4. Test Claude Desktop integration instructions\n5. Verify troubleshooting section addresses common issues\n6. Test examples to ensure they work as documented\n7. Verify development setup instructions are accurate",
+        "priority": "medium",
+        "dependencies": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 25,
+        "title": "Testing and Quality Assurance",
+        "description": "Implement comprehensive testing and quality assurance for the Float MCP server",
+        "details": "1. Set up pytest for unit testing\n2. Create test fixtures for API responses\n3. Implement integration tests with mocked API\n4. Add end-to-end tests for Docker deployment\n5. Set up GitHub Actions for automated testing\n6. Implement code coverage reporting\n7. Add linting with flake8 and black\n8. Implement type checking with mypy\n9. Create test cases for all tools\n10. Add performance testing for API client\n\nExample test setup:\n```python\nimport pytest\nfrom unittest.mock import patch, MagicMock\nfrom float_mcp.api.client import FloatAPIClient\n\n@pytest.fixture\ndef mock_float_client():\n    with patch('float_mcp.api.client.FloatAPIClient') as mock_client:\n        client_instance = MagicMock()\n        mock_client.return_value = client_instance\n        yield client_instance\n\ndef test_list_projects(mock_float_client):\n    from float_mcp.tools.projects import list_projects\n    \n    # Setup mock response\n    mock_response = {\n        \"projects\": [\n            {\"id\": 1, \"name\": \"Project 1\"},\n            {\"id\": 2, \"name\": \"Project 2\"}\n        ]\n    }\n    mock_float_client.get.return_value = mock_response\n    \n    # Call the function\n    result = list_projects()\n    \n    # Assertions\n    mock_float_client.get.assert_called_once_with(\"/projects\", params={\"status\": \"active\", \"page\": 1, \"per_page\": 20})\n    assert len(result) == 2\n    assert result[0][\"id\"] == 1\n    assert result[0][\"name\"] == \"Project 1\"\n```\n\nGitHub Actions workflow for testing:\n```yaml\nname: Tests\n\non:\n  push:\n    branches: [ main ]\n  pull_request:\n    branches: [ main ]\n\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v3\n      - name: Set up Python\n        uses: actions/setup-python@v4\n        with:\n          python-version: '3.11'\n      - name: Install dependencies\n        run: |\n          python -m pip install --upgrade pip\n          pip install -r requirements-dev.txt\n      - name: Lint with flake8\n        run: flake8 .\n      - name: Check types with mypy\n        run: mypy .\n      - name: Test with pytest\n        run: pytest --cov=float_mcp\n      - name: Upload coverage to Codecov\n        uses: codecov/codecov-action@v3\n```",
+        "testStrategy": "1. Verify all unit tests pass\n2. Check code coverage meets minimum threshold (e.g., 80%)\n3. Verify linting passes with no errors\n4. Test type checking with mypy\n5. Run integration tests with mocked API\n6. Verify end-to-end tests with Docker deployment\n7. Test GitHub Actions workflow for automated testing\n8. Verify performance tests meet requirements",
+        "priority": "high",
+        "dependencies": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
         ],
         "status": "pending",
         "subtasks": []
@@ -141,7 +227,7 @@
     ],
     "metadata": {
       "created": "2025-07-07T17:54:42.691Z",
-      "updated": "2025-07-07T17:54:42.691Z",
+      "updated": "2025-07-08T02:18:53.831Z",
       "description": "Tasks for master context"
     }
   }

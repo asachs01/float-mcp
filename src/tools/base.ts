@@ -29,10 +29,16 @@ export const createTool = <T, P extends z.ZodType>(
     inputSchema: schema,
     handler: async (params: unknown): Promise<ToolResponse<T>> => {
       try {
+        // Debug logging
+        console.error(`DEBUG: Tool "${name}" received params:`, JSON.stringify(params));
+        console.error(`DEBUG: Params type:`, typeof params);
+        console.error(`DEBUG: Params is array:`, Array.isArray(params));
+        
         const validatedParams = schema.parse(params);
         const result = await handler(validatedParams);
         return { success: true, data: result };
       } catch (error) {
+        console.error(`DEBUG: Validation error in ${name}:`, error);
         logger.error(`Error in ${name} tool:`, error);
         return {
           success: false,

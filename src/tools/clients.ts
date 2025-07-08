@@ -8,9 +8,9 @@ export const listClients = createTool(
   'list-clients',
   'List all clients',
   z.object({}),
-  async () => {
+  async (params) => {
     const response = await floatApi.get('/clients', clientsResponseSchema);
-    return response.clients;
+    return response;
   }
 );
 
