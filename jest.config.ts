@@ -1,16 +1,21 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-  preset: 'ts-jest',
+  preset: 'ts-jest/presets/default-esm',
+  extensionsToTreatAsEsm: ['.ts'],
   testEnvironment: 'node',
   moduleNameMapper: {
-    // Map our source file .js imports to .ts
-    '^(\\.{1,2}/.*)\\.js$': '$1.ts',
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   roots: ['<rootDir>/tests', '<rootDir>/src'],
   testMatch: ['**/tests/**/*.test.ts', '**/tests/**/*.integration.test.ts'],
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.ts$': [
+      'ts-jest',
+      {
+        useESM: true,
+      },
+    ],
   },
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/types/**/*.ts'],
