@@ -1,13 +1,13 @@
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals';
 import {
   executeToolWithRetry,
-  executeTool,
+
   generateTestProjectData,
   cleanupTestData,
 } from '../utils/test-helpers.js';
 import { entitySchemaValidator } from '../utils/schema-validator.js';
 import { ErrorTestUtils, createErrorTestCases } from '../utils/error-handling.js';
-import { TEST_CONFIG, testDataTracker } from '../setup.js';
+import { TEST_CONFIG } from '../setup.js';
 
 describe('Project Tools Integration Tests', () => {
   const createdProjects: number[] = [];

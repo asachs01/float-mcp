@@ -1,7 +1,6 @@
 import { config } from 'dotenv';
 import { beforeAll, afterAll, beforeEach, afterEach } from '@jest/globals';
 import { logger } from '../../src/utils/logger.js';
-import { appConfig } from '../../src/config/index.js';
 import { stopCleanup } from '../../src/services/float-api.js';
 
 // Load test environment variables

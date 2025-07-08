@@ -9,14 +9,14 @@ export interface ProductionConfig {
     readonly requestsPerSecond: number;
     readonly burstLimit: number;
   };
-  
+
   // Logging Configuration
   readonly logging: {
     readonly level: 'error' | 'warn' | 'info' | 'debug';
     readonly enableRequestLogging: boolean;
     readonly enableErrorTracking: boolean;
   };
-  
+
   // Validation Configuration
   readonly validation: {
     readonly strictMode: boolean;
@@ -58,4 +58,4 @@ export const DEVELOPMENT_CONFIG: ProductionConfig = {
 export function getConfig(): ProductionConfig {
   const isDevelopment = process.env.NODE_ENV === 'development';
   return isDevelopment ? DEVELOPMENT_CONFIG : PRODUCTION_CONFIG;
-} 
+}

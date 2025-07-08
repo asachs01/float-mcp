@@ -1,11 +1,6 @@
 import { logger } from '../../../src/utils/logger.js';
 import {
-  FloatApiError,
-  FloatRateLimitError,
-  FloatAuthError,
-  FloatAuthorizationError,
-  FloatValidationError,
-  FloatNotFoundError,
+  FloatUnexpectedError
 } from '../../../src/services/float-api.js';
 import { executeTool } from './test-helpers.js';
 
@@ -62,7 +57,7 @@ export class ErrorTestUtils {
     originalApiKey?: string
   ): Promise<void> {
     // Temporarily override API key
-    const backupApiKey = process.env.FLOAT_API_KEY;
+    // const backupApiKey = process.env.FLOAT_API_KEY;
     process.env.FLOAT_API_KEY = 'invalid_api_key';
 
     try {
