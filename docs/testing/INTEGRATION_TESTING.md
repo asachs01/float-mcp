@@ -42,6 +42,7 @@ tests/
 Tests for all tool categories covering CRUD operations:
 
 #### Project Tools (5 tools)
+
 - `list-projects` - List all projects with filtering
 - `get-project` - Get project details
 - `create-project` - Create new project
@@ -49,6 +50,7 @@ Tests for all tool categories covering CRUD operations:
 - `delete-project` - Archive project
 
 #### People Tools (5 tools)
+
 - `list-people` - List all people with filtering
 - `get-person` - Get person details
 - `create-person` - Create new person
@@ -56,6 +58,7 @@ Tests for all tool categories covering CRUD operations:
 - `delete-person` - Archive person
 
 #### Task Tools (5 tools)
+
 - `list-tasks` - List all tasks with filtering
 - `get-task` - Get task details
 - `create-task` - Create new task
@@ -63,6 +66,7 @@ Tests for all tool categories covering CRUD operations:
 - `delete-task` - Delete task
 
 #### Client Tools (5 tools)
+
 - `list-clients` - List all clients
 - `get-client` - Get client details
 - `create-client` - Create new client
@@ -70,6 +74,7 @@ Tests for all tool categories covering CRUD operations:
 - `delete-client` - Delete client
 
 #### Allocation Tools (5 tools)
+
 - `list-allocations` - List all allocations with filtering
 - `get-allocation` - Get allocation details
 - `create-allocation` - Create new allocation
@@ -77,6 +82,7 @@ Tests for all tool categories covering CRUD operations:
 - `delete-allocation` - Delete allocation
 
 #### Department Tools (5 tools)
+
 - `list-departments` - List all departments
 - `get-department` - Get department details
 - `create-department` - Create new department
@@ -84,6 +90,7 @@ Tests for all tool categories covering CRUD operations:
 - `delete-department` - Delete department
 
 #### Status Tools (8 tools)
+
 - `list-statuses` - List all statuses
 - `get-status` - Get status details
 - `create-status` - Create new status
@@ -94,11 +101,13 @@ Tests for all tool categories covering CRUD operations:
 - `get-statuses-by-type` - Get statuses by type
 
 #### Report Tools (3 tools)
+
 - `get-time-report` - Generate time reports
 - `get-project-report` - Generate project reports
 - `get-people-utilization-report` - Generate utilization reports
 
 #### Phase Tools (8 tools)
+
 - `list-phases` - List all phases
 - `get-phase` - Get phase details
 - `create-phase` - Create new phase
@@ -110,25 +119,32 @@ Tests for all tool categories covering CRUD operations:
 - `get-phase-schedule` - Get phase schedule
 
 #### Holiday Tools (13 tools)
+
 - Public holidays (5 tools)
 - Team holidays (8 tools)
 
 #### Account Tools (11 tools)
+
 - Account management and permissions
 
 #### Milestone Tools (9 tools)
+
 - Milestone management and tracking
 
 #### Time Off Tools (10 tools)
+
 - Time off requests and management
 
 #### Time Off Type Tools (5 tools)
+
 - Time off type configuration
 
 #### Role Tools (9 tools)
+
 - Role management and permissions
 
 #### Project Task Tools (11 tools)
+
 - Project task management
 
 ### 2. Schema Validation Tests
@@ -183,6 +199,7 @@ Ensuring acceptable performance:
 ## Test Modes
 
 ### Mock Mode (Default)
+
 - Uses mocked API responses
 - Fast execution
 - No real API calls
@@ -193,6 +210,7 @@ npm run test:integration:mock
 ```
 
 ### Real API Mode
+
 - Makes actual Float API calls
 - Requires valid API key
 - Slower execution
@@ -203,6 +221,7 @@ npm run test:integration:real
 ```
 
 ### Performance Mode
+
 - Includes slow-running tests
 - Measures actual performance
 - Rate limiting validation
@@ -282,14 +301,14 @@ docker run -e FLOAT_API_KEY=your_key float-mcp-test npm run test:integration
 
 ### Current Coverage Targets
 
-| Category | Target | Status |
-|----------|--------|--------|
-| Core API Tools | 100% | ✅ |
-| Schema Validation | 100% | ✅ |
-| Error Handling | 95% | ✅ |
-| Pagination/Filtering | 90% | ✅ |
-| Rate Limiting | 80% | ✅ |
-| Performance | 70% | ✅ |
+| Category             | Target | Status |
+| -------------------- | ------ | ------ |
+| Core API Tools       | 100%   | ✅     |
+| Schema Validation    | 100%   | ✅     |
+| Error Handling       | 95%    | ✅     |
+| Pagination/Filtering | 90%    | ✅     |
+| Rate Limiting        | 80%    | ✅     |
+| Performance          | 70%    | ✅     |
 
 ### Coverage Reports
 
@@ -302,25 +321,25 @@ Coverage reports are generated for:
 
 ### Tool Coverage Matrix
 
-| Tool Category | List | Get | Create | Update | Delete | Special |
-|---------------|------|-----|--------|--------|--------|---------|
-| Projects | ✅ | ✅ | ✅ | ✅ | ✅ | - |
-| People | ✅ | ✅ | ✅ | ✅ | ✅ | - |
-| Tasks | ✅ | ✅ | ✅ | ✅ | ✅ | - |
-| Clients | ✅ | ✅ | ✅ | ✅ | ✅ | - |
-| Allocations | ✅ | ✅ | ✅ | ✅ | ✅ | - |
-| Departments | ✅ | ✅ | ✅ | ✅ | ✅ | - |
-| Statuses | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Reports | - | ✅ | - | - | - | ✅ |
-| Phases | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Public Holidays | ✅ | ✅ | ✅ | ✅ | ✅ | - |
-| Team Holidays | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Accounts | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Milestones | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Time Off | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Time Off Types | ✅ | ✅ | ✅ | ✅ | ✅ | - |
-| Roles | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Project Tasks | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Tool Category   | List | Get | Create | Update | Delete | Special |
+| --------------- | ---- | --- | ------ | ------ | ------ | ------- |
+| Projects        | ✅   | ✅  | ✅     | ✅     | ✅     | -       |
+| People          | ✅   | ✅  | ✅     | ✅     | ✅     | -       |
+| Tasks           | ✅   | ✅  | ✅     | ✅     | ✅     | -       |
+| Clients         | ✅   | ✅  | ✅     | ✅     | ✅     | -       |
+| Allocations     | ✅   | ✅  | ✅     | ✅     | ✅     | -       |
+| Departments     | ✅   | ✅  | ✅     | ✅     | ✅     | -       |
+| Statuses        | ✅   | ✅  | ✅     | ✅     | ✅     | ✅      |
+| Reports         | -    | ✅  | -      | -      | -      | ✅      |
+| Phases          | ✅   | ✅  | ✅     | ✅     | ✅     | ✅      |
+| Public Holidays | ✅   | ✅  | ✅     | ✅     | ✅     | -       |
+| Team Holidays   | ✅   | ✅  | ✅     | ✅     | ✅     | ✅      |
+| Accounts        | ✅   | ✅  | ✅     | ✅     | ✅     | ✅      |
+| Milestones      | ✅   | ✅  | ✅     | ✅     | ✅     | ✅      |
+| Time Off        | ✅   | ✅  | ✅     | ✅     | ✅     | ✅      |
+| Time Off Types  | ✅   | ✅  | ✅     | ✅     | ✅     | -       |
+| Roles           | ✅   | ✅  | ✅     | ✅     | ✅     | ✅      |
+| Project Tasks   | ✅   | ✅  | ✅     | ✅     | ✅     | ✅      |
 
 ## Best Practices
 
@@ -352,27 +371,35 @@ Coverage reports are generated for:
 ### Common Issues
 
 #### Authentication Errors
+
 ```
 Error: authentication failed
 ```
+
 **Solution**: Verify FLOAT_API_KEY is set correctly
 
 #### Rate Limiting
+
 ```
 Error: rate limit exceeded
 ```
+
 **Solution**: Increase delays between requests or reduce batch size
 
 #### Timeout Errors
+
 ```
 Error: timeout exceeded
 ```
+
 **Solution**: Increase TEST_TIMEOUT or improve network connection
 
 #### Schema Validation Failures
+
 ```
 Error: schema validation failed
 ```
+
 **Solution**: Update schemas to match API response format
 
 ### Debugging Tests

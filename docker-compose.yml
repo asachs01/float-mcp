@@ -13,7 +13,6 @@ services:
     restart: unless-stopped
     stdin_open: true
     tty: true
-
 #  float-mcp-dev:
 #    build:
 #      context: .
@@ -30,4 +29,4 @@ services:
 #      - /app/node_modules
 #    command: npm run dev
 #    stdin_open: true
-#    tty: true 
+#    tty: true

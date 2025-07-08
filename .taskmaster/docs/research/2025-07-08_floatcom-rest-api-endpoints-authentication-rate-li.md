@@ -1,6 +1,6 @@
 ---
 title: Research Session
-query: "Float.com REST API endpoints, authentication, rate limiting, projects, people, time tracking, scheduling, reporting capabilities"
+query: 'Float.com REST API endpoints, authentication, rate limiting, projects, people, time tracking, scheduling, reporting capabilities'
 date: 7/8/2025
 time: 12:29:01 PM
 timestamp: 2025-07-08T16:29:01.995Z
@@ -24,6 +24,7 @@ The Float.com REST API is designed to provide programmatic access to Float's dat
 To use the Float API, you need to authenticate your requests. The Float API uses API tokens for authentication, which can be created and managed by logging into the Float app as an administrator and navigating to the "Developers" section under "Business Settings" in the settings menu[4]. Once you have an API token, you can include it in your API requests using the `Authorization` header with a `Bearer` token.
 
 **Example Authentication Header:**
+
 ```http
 Authorization: Bearer YOUR_API_TOKEN
 ```
@@ -33,6 +34,7 @@ Authorization: Bearer YOUR_API_TOKEN
 While specific Float API endpoints for projects, people, time tracking, and scheduling are not detailed in the provided search results, you can access detailed documentation on the Float API endpoints through the official Float API documentation[4]. Typically, APIs for such platforms include endpoints for:
 
 - **Projects:**
+
   - `GET /projects`: Retrieve a list of all projects.
   - `GET /projects/{id}`: Get details of a specific project.
   - `POST /projects`: Create a new project.
@@ -40,6 +42,7 @@ While specific Float API endpoints for projects, people, time tracking, and sche
   - `DELETE /projects/{id}`: Delete a project.
 
 - **People:**
+
   - `GET /people`: Retrieve a list of all people.
   - `GET /people/{id}`: Get details of a specific person.
   - `POST /people`: Create a new person record.
@@ -47,6 +50,7 @@ While specific Float API endpoints for projects, people, time tracking, and sche
   - `DELETE /people/{id}`: Delete a person record.
 
 - **Time Tracking:**
+
   - `POST /time_entries`: Log a new time entry.
   - `GET /time_entries`: Retrieve time entries with optional filtering.
   - `PUT /time_entries/{id}`: Update an existing time entry.
@@ -63,6 +67,7 @@ While specific Float API endpoints for projects, people, time tracking, and sche
 APIs often implement rate limiting to prevent abuse and ensure fair usage. While specific details on Float's rate limiting are not provided, it's common for APIs to return a `429 Too Many Requests` status code when the limit is exceeded. Implementing exponential backoff in your client can help handle such scenarios by waiting longer between retries[2][4].
 
 **Example Rate Limiting Handling in Python:**
+
 ```python
 import time
 import requests
@@ -126,6 +131,7 @@ print(projects)
 For **Task 25: Testing and Quality Assurance**, ensure that your tests cover all aspects of the API client and tools implementation. This includes unit tests for each method, integration tests with mocked API responses, and end-to-end tests with actual API calls. Use tools like `pytest` for unit testing and `requests_mock` for mocking API responses.
 
 **Example Test Setup:**
+
 ```python
 import pytest
 from unittest.mock import patch, MagicMock
@@ -149,32 +155,41 @@ def test_get_projects(client):
 For **Task 24: Documentation**, ensure that your README includes clear setup instructions for the Float API client, examples of how to use the client for different operations, and troubleshooting tips. Document all available tools with examples and provide detailed API documentation for the Float API client.
 
 **Example README Structure:**
-```markdown
+
+````markdown
 # Float MCP Server Documentation
 
 ## Overview
+
 This project provides a Python client for the Float.com REST API, enabling integration with project management tools.
 
 ## Setup Instructions
+
 1. Install required packages: `pip install requests`
 2. Set up your Float API token: Follow instructions in the Float app.
 3. Use the client: Import and instantiate the `FloatAPIClient` class.
 
 ## API Documentation
+
 ### Endpoints
+
 - `GET /projects`: Retrieve all projects.
 - `GET /projects/{id}`: Get a specific project.
 
 ### Examples
+
 ```python
 client = FloatAPIClient("YOUR_API_TOKEN")
 projects = client.get_projects()
 print(projects)
 ```
+````
 
 ## Troubleshooting
+
 - **Rate Limiting:** If you encounter a `429` status code, wait a bit before retrying.
-```
+
+````
 
 ### Docker Setup and Configuration
 
@@ -198,7 +213,7 @@ COPY . .
 
 # Run command when container launches
 CMD ["python", "main.py"]
-```
+````
 
 ### Claude Desktop Integration Guide
 
@@ -229,6 +244,7 @@ Create a comprehensive troubleshooting section that addresses common issues enco
 For **Task 22: Logging and Monitoring**, set up structured logging using Python's logging module. Configure different log levels and implement request/response logging with sensitive data redaction. Add performance monitoring for API calls and create log formatters for different environments.
 
 **Example Logging Setup:**
+
 ```python
 import logging
 
@@ -247,6 +263,7 @@ logger.info("API call successful")
 Implement performance testing for the API client to ensure it can handle a high volume of requests efficiently. Use tools like `locust` for load testing.
 
 **Example Performance Test:**
+
 ```python
 from locust import HttpLocust, TaskSet, task
 
@@ -263,8 +280,7 @@ class FloatAPILocust(HttpLocust):
 
 By following these guidelines and implementing these features, you can create a robust and well-documented Float MCP server that effectively integrates with the Float API for project management, people management, time tracking, and scheduling operations.
 
-
 ---
 
-*Generated by Task Master Research Command*  
-*Timestamp: 2025-07-08T16:29:01.995Z*
+_Generated by Task Master Research Command_  
+_Timestamp: 2025-07-08T16:29:01.995Z_

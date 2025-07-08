@@ -10,27 +10,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.2] - 2025-07-07
 
 ### Added
+
 - Debug logging to troubleshoot environment variable issues in MCP contexts
 - Better error handling for dotenv loading in Docker containers
 
 ### Fixed
+
 - Made dotenv loading optional to work properly in Docker/MCP environments
 - Improved environment variable debugging for Claude Desktop integration
 
 ## [0.2.1] - 2025-07-07
 
 ### Fixed
+
 - Improved error handling and messaging when FLOAT_API_KEY is missing
 - Enhanced configuration validation with clearer guidance for Claude Desktop users
 - Better troubleshooting documentation with specific error scenarios
 
 ### Added
+
 - Dedicated troubleshooting section for missing API key errors
 - More helpful error messages that guide users to their Claude Desktop configuration
 
 ## [0.2.0] - 2025-07-07
 
 ### Changed
+
 - **BREAKING**: Simplified Docker usage for Claude Desktop integration
 - Docker container now defaults to MCP mode (`--mcp` flag)
 - Simplified Claude Desktop configuration to just require the Docker image name
@@ -38,26 +43,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated README with much simpler Docker setup instructions
 
 ### Added
+
 - Created `.env.example` file for easier environment setup
 - Added optional environment variables documentation
 
 ### Fixed
+
 - Streamlined Docker configuration removes complexity and potential setup errors
 - Launch script now uses simplified Docker command
 
 ## [0.1.1] - 2025-07-07
 
 ### Fixed
+
 - Updated Docker image references from placeholder to actual repository
 - Fixed inconsistent GitHub Container Registry URLs in documentation
 - Corrected version references in README
 
 ### Added
+
 - Pre-built Docker images available on GitHub Container Registry
 
 ## [0.1.0] - 2025-07-07
 
 ### Added
+
 - Initial release of Float.com MCP Integration
 - 25 tools for managing Float.com resources:
   - Project Management (create, read, update, delete, list)
@@ -79,4 +89,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased]: https://github.com/asachs01/float-mcp/compare/v0.2.0...HEAD
 [0.2.0]: https://github.com/asachs01/float-mcp/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/asachs01/float-mcp/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/asachs01/float-mcp/releases/tag/v0.1.0 
+[0.1.0]: https://github.com/asachs01/float-mcp/releases/tag/v0.1.0

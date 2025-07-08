@@ -24,9 +24,7 @@
             "id": 2,
             "title": "Implement listAccounts with Pagination",
             "description": "Develop the endpoint to retrieve a paginated list of accounts, supporting query parameters for page number and page size.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Include pagination metadata in the response, such as total count and current page, following RESTful best practices.",
             "status": "done",
             "testStrategy": ""
@@ -35,9 +33,7 @@
             "id": 3,
             "title": "Implement getAccount by ID",
             "description": "Create the endpoint to fetch a single account by its unique identifier.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Ensure proper handling of not-found cases and return a consistent response structure.",
             "status": "done",
             "testStrategy": ""
@@ -46,10 +42,7 @@
             "id": 4,
             "title": "Implement updateAccount",
             "description": "Develop the endpoint to update account details, supporting partial updates where applicable.",
-            "dependencies": [
-              1,
-              3
-            ],
+            "dependencies": [1, 3],
             "details": "Validate input, handle nullable fields, and ensure only allowed fields are updated.",
             "status": "done",
             "testStrategy": ""
@@ -58,10 +51,7 @@
             "id": 5,
             "title": "Implement manageAccountPermissions",
             "description": "Add functionality to manage permissions for accounts, including assigning and revoking roles or access levels.",
-            "dependencies": [
-              1,
-              3
-            ],
+            "dependencies": [1, 3],
             "details": "Ensure permission changes are auditable and follow security best practices.",
             "status": "done",
             "testStrategy": ""
@@ -70,12 +60,7 @@
             "id": 6,
             "title": "Add Error Handling for 401 and 429",
             "description": "Implement robust error handling for unauthorized (401) and rate-limited (429) responses across all account endpoints.",
-            "dependencies": [
-              2,
-              3,
-              4,
-              5
-            ],
+            "dependencies": [2, 3, 4, 5],
             "details": "Return consistent error formats with appropriate HTTP status codes and descriptive messages.",
             "status": "done",
             "testStrategy": ""
@@ -84,13 +69,7 @@
             "id": 7,
             "title": "Write Unit and Integration Tests",
             "description": "Develop comprehensive unit and integration tests for all account endpoints and related logic.",
-            "dependencies": [
-              2,
-              3,
-              4,
-              5,
-              6
-            ],
+            "dependencies": [2, 3, 4, 5, 6],
             "details": "Ensure tests cover success, failure, edge cases, and error handling scenarios.",
             "status": "done",
             "testStrategy": ""
@@ -104,9 +83,7 @@
         "details": "Extend the FloatApi service to add role-related methods. Create Zod schemas in src/schemas/roles.ts for validation. Implement the following functions:\n\n1. listRoles: Fetch all roles with pagination\n2. getRole: Get details for a specific role\n3. createRole: Create a new role\n4. updateRole: Update an existing role\n5. deleteRole: Remove a role\n\nThe roles schema should handle Float's specific role structure:\n```typescript\nexport const roleSchema = z.object({\n  role_id: z.union([z.string(), z.number()]),\n  name: z.string(),\n  permissions: z.array(z.string()).nullable(),\n  // Add additional fields from Float API\n});\n\nexport const rolesListSchema = z.array(roleSchema);\n\n// In tools file\nexport const createRoleTool = createTool({\n  name: 'createRole',\n  description: 'Create a new role in Float',\n  parameters: z.object({\n    name: z.string().describe('The name of the role'),\n    permissions: z.array(z.string()).optional().describe('List of permissions for this role')\n    // Add other required parameters\n  }),\n  execute: async (params) => {\n    const floatApi = new FloatApi();\n    return await floatApi.post('/roles', params);\n  }\n});\n```\nEnsure proper handling of role-based access control integration with existing Float API patterns.",
         "testStrategy": "1. Unit test each role endpoint function with mocked API responses\n2. Test CRUD operations for roles with various permission combinations\n3. Verify schema validation for role objects\n4. Test error cases including duplicate role names\n5. Integration test with actual Float API in a test environment\n6. Verify role-based access control works correctly",
         "priority": "high",
-        "dependencies": [
-          27
-        ],
+        "dependencies": [27],
         "status": "done",
         "subtasks": [
           {
@@ -122,9 +99,7 @@
             "id": 2,
             "title": "Implement listRoles Endpoint with Pagination",
             "description": "Develop the API endpoint to list roles, supporting pagination parameters such as page number and page size.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Ensure the endpoint returns roles in a consistent order and includes metadata for total count and current page. Validate pagination inputs.",
             "status": "done",
             "testStrategy": ""
@@ -133,9 +108,7 @@
             "id": 3,
             "title": "Implement getRole Endpoint",
             "description": "Create the API endpoint to retrieve a single role by its unique identifier, returning all relevant role details and permissions.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Handle cases where the role does not exist and return appropriate error responses.",
             "status": "done",
             "testStrategy": ""
@@ -144,9 +117,7 @@
             "id": 4,
             "title": "Implement createRole Endpoint",
             "description": "Develop the API endpoint to create a new role, including validation for required fields and permission assignments.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Ensure role names are unique and permissions are valid. Return the created role object on success.",
             "status": "done",
             "testStrategy": ""
@@ -155,9 +126,7 @@
             "id": 5,
             "title": "Implement updateRole and deleteRole Endpoints",
             "description": "Build endpoints to update existing roles and delete roles by ID, with validation and error handling.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Support partial updates for role fields and ensure roles assigned to users cannot be deleted without reassignment.",
             "status": "done",
             "testStrategy": ""
@@ -166,12 +135,7 @@
             "id": 6,
             "title": "Integrate Role-Based Access Control and Write Tests",
             "description": "Integrate RBAC logic into endpoints, enforcing permissions for each operation, and write comprehensive unit and integration tests.",
-            "dependencies": [
-              2,
-              3,
-              4,
-              5
-            ],
+            "dependencies": [2, 3, 4, 5],
             "details": "Ensure only authorized users can perform role management actions. Cover edge cases and permission boundaries in tests.",
             "status": "done",
             "testStrategy": ""
@@ -185,9 +149,7 @@
         "details": "Extend the FloatApi service to add status-related methods. Create Zod schemas in src/schemas/statuses.ts for validation. Implement the following functions:\n\n1. listStatuses: Fetch all statuses with pagination\n2. getStatus: Get details for a specific status\n3. createStatus: Create a new custom status\n4. updateStatus: Update an existing status\n5. deleteStatus: Remove a status\n\nThe status schema should handle Float's status structure:\n```typescript\nexport const statusSchema = z.object({\n  status_id: z.union([z.string(), z.number()]),\n  name: z.string(),\n  color: z.string().nullable(),\n  is_default: z.boolean().nullable(),\n  // Add additional fields from Float API\n});\n\nexport const statusesListSchema = z.array(statusSchema);\n\n// In tools file\nexport const listStatusesTool = createTool({\n  name: 'listStatuses',\n  description: 'List all statuses in Float',\n  parameters: z.object({\n    type: z.enum(['project', 'task']).optional().describe('Filter statuses by type')\n    // Add pagination parameters\n  }),\n  execute: async (params) => {\n    const floatApi = new FloatApi();\n    return await floatApi.getPaginated('/statuses', params);\n  }\n});\n```\nEnsure proper handling of status types (project vs task) and default status indicators.",
         "testStrategy": "1. Unit test each status endpoint function with mocked API responses\n2. Test CRUD operations for statuses with various configurations\n3. Verify schema validation for status objects\n4. Test filtering by status type\n5. Test handling of default statuses\n6. Integration test with actual Float API in a test environment",
         "priority": "medium",
-        "dependencies": [
-          27
-        ],
+        "dependencies": [27],
         "status": "done",
         "subtasks": [
           {
@@ -203,9 +165,7 @@
             "id": 2,
             "title": "Implement listStatuses with Filtering",
             "description": "Develop a function to list statuses with filtering capabilities based on specific criteria.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Use SQL queries with WHERE clauses to filter statuses based on input parameters.",
             "status": "done",
             "testStrategy": ""
@@ -214,9 +174,7 @@
             "id": 3,
             "title": "Implement getStatus",
             "description": "Create a function to retrieve a specific status by its identifier.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Use a SELECT query with a WHERE clause to fetch the status based on its ID.",
             "status": "done",
             "testStrategy": ""
@@ -225,9 +183,7 @@
             "id": 4,
             "title": "Implement create/update/deleteStatus",
             "description": "Develop functions to create, update, and delete statuses while maintaining data integrity.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Use INSERT, UPDATE, and DELETE SQL statements with appropriate validation and error handling.",
             "status": "done",
             "testStrategy": ""
@@ -236,12 +192,7 @@
             "id": 5,
             "title": "Handle Default Status Logic and Write Tests",
             "description": "Implement logic for default status handling and write comprehensive tests for all status operations.",
-            "dependencies": [
-              1,
-              2,
-              3,
-              4
-            ],
+            "dependencies": [1, 2, 3, 4],
             "details": "Ensure default status is applied correctly and write unit tests for CRUD operations and filtering.",
             "status": "done",
             "testStrategy": ""
@@ -253,9 +204,7 @@
         "title": "Implement Time Off Endpoint",
         "description": "Create a complete implementation of the Time Off endpoint following the Float API v3 specification, including listing time off requests, creating/approving/rejecting time off, time off calendar integration, and bulk time off operations.",
         "status": "done",
-        "dependencies": [
-          27
-        ],
+        "dependencies": [27],
         "priority": "high",
         "details": "✅ COMPLETED: Comprehensive Time Off endpoint implementation with 11 tools:\n\n**Implemented Tools:**\n1. listTimeOff - Lists all time off entries with filtering by person, type, status, and date range\n2. getTimeOff - Retrieves detailed information about a specific time off entry\n3. createTimeOff - Creates new time off requests\n4. updateTimeOff - Updates existing time off requests\n5. deleteTimeOff - Deletes time off entries\n6. bulkCreateTimeOff - Creates multiple time off requests simultaneously with error handling\n7. approveTimeOff - Approves pending time off requests\n8. rejectTimeOff - Rejects pending time off requests\n9. listTimeOffTypes - Lists available time off types\n10. getTimeOffCalendar - Provides calendar view of time off entries for date ranges\n11. getPersonTimeOffSummary - Generates time off summary including balance and usage by person\n\n**Key Features Implemented:**\n✅ Proper Zod schemas in types/float.ts (timeOffSchema, timeOffTypeSchema)\n✅ Error handling and validation with structured responses\n✅ Approval/rejection workflows with dedicated tools and timestamps\n✅ Date range filtering with start_date and end_date support\n✅ Multi-dimensional filtering (person, project, status, type)\n✅ Bulk operations with individual error tracking\n✅ Calendar integration with date-grouped entries\n✅ Float API v3 compliance (timeoff_id, people_id field names)\n✅ Proper TypeScript types and exported interfaces\n✅ Integration following existing codebase patterns\n✅ Support for full day and partial day time off\n✅ Status tracking (pending, approved, rejected)\n✅ Repeating time off support (repeat_state, repeat_end)\n✅ Comprehensive person-level summaries with year-based filtering\n\n**Files Modified:**\n- Created: `/src/tools/timeoff.ts` (main implementation)\n- Updated: `/src/tools/index.ts` (exports)\n- Updated: `/src/types/float.ts` (schemas)\n\nAll 11 time off tools are now available for MCP tool consumption and compile successfully.",
         "testStrategy": "✅ COMPLETED: All time off functionality has been implemented and is ready for testing:\n\n1. ✅ Unit test each time off endpoint function with mocked API responses\n2. ✅ Test CRUD operations for time off with various date ranges\n3. ✅ Test approval/rejection workflows with dedicated tools\n4. ✅ Verify bulk operations work correctly with error handling\n5. ✅ Test date range filtering and pagination\n6. ✅ Integration test with actual Float API in a test environment\n7. ✅ Verify calendar integration with date-based queries\n8. ✅ Test person-level summaries and balance calculations\n9. ✅ Verify time off type listing functionality\n10. ✅ Test partial day vs full day time off handling\n11. ✅ Verify repeating time off functionality",
@@ -274,9 +223,7 @@
             "title": "Implement List Time Off with Filters",
             "description": "Develop an API endpoint to list time off requests with filtering capabilities.",
             "status": "completed",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Allow filtering by employee, leave type, and status.",
             "testStrategy": ""
           },
@@ -285,9 +232,7 @@
             "title": "Implement Get Time Off",
             "description": "Create an API endpoint to retrieve a specific time off request by ID.",
             "status": "completed",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Ensure secure access and proper error handling.",
             "testStrategy": ""
           },
@@ -296,9 +241,7 @@
             "title": "Implement Create/Update/Delete Time Off",
             "description": "Develop API endpoints for creating, updating, and deleting time off requests.",
             "status": "completed",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Validate user input and handle errors appropriately.",
             "testStrategy": ""
           },
@@ -307,9 +250,7 @@
             "title": "Implement Bulk Create Time Off",
             "description": "Design an API endpoint to create multiple time off requests simultaneously.",
             "status": "completed",
-            "dependencies": [
-              4
-            ],
+            "dependencies": [4],
             "details": "Ensure efficient processing and error handling for bulk operations.",
             "testStrategy": ""
           },
@@ -318,9 +259,7 @@
             "title": "Approval/Rejection Workflows",
             "description": "Implement workflows for approving or rejecting time off requests, including conditional logic based on leave duration.",
             "status": "completed",
-            "dependencies": [
-              4
-            ],
+            "dependencies": [4],
             "details": "Integrate with HR and manager approval processes.",
             "testStrategy": ""
           },
@@ -329,9 +268,7 @@
             "title": "Calendar Integration",
             "description": "Integrate the time off management system with a calendar to display employee availability.",
             "status": "completed",
-            "dependencies": [
-              4
-            ],
+            "dependencies": [4],
             "details": "Use APIs from calendar services like Google Calendar or Microsoft Outlook.",
             "testStrategy": ""
           },
@@ -340,15 +277,7 @@
             "title": "Write Tests for All Flows",
             "description": "Develop comprehensive tests for all workflows and API endpoints.",
             "status": "done",
-            "dependencies": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7
-            ],
+            "dependencies": [1, 2, 3, 4, 5, 6, 7],
             "details": "Use testing frameworks to ensure robustness and reliability.",
             "testStrategy": ""
           },
@@ -357,9 +286,7 @@
             "title": "Implement Time Off Types Management",
             "description": "Add functionality to list and manage time off types available in Float.",
             "status": "completed",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Implement listTimeOffTypes tool to retrieve available time off categories.",
             "testStrategy": ""
           },
@@ -368,10 +295,7 @@
             "title": "Implement Person Time Off Summary",
             "description": "Create functionality to generate comprehensive time off summaries for individuals.",
             "status": "completed",
-            "dependencies": [
-              2,
-              3
-            ],
+            "dependencies": [2, 3],
             "details": "Implement getPersonTimeOffSummary tool with balance calculations and usage tracking.",
             "testStrategy": ""
           },
@@ -380,9 +304,7 @@
             "title": "Add Support for Repeating Time Off",
             "description": "Implement support for recurring time off patterns with repeat_state and repeat_end fields.",
             "status": "completed",
-            "dependencies": [
-              4
-            ],
+            "dependencies": [4],
             "details": "Extend schemas and tools to handle repeating time off requests.",
             "testStrategy": ""
           }
@@ -395,9 +317,7 @@
         "details": "Extend the FloatApi service to add time-off-type related methods. Create Zod schemas in src/schemas/timeofftypes.ts for validation. Implement the following functions:\n\n1. listTimeOffTypes: Fetch all time off types\n2. getTimeOffType: Get details for a specific time off type\n3. createTimeOffType: Create a new custom time off type\n4. updateTimeOffType: Update an existing time off type\n5. deleteTimeOffType: Remove a time off type\n\nThe time off type schema should handle Float's structure:\n```typescript\nexport const timeOffTypeSchema = z.object({\n  type_id: z.union([z.string(), z.number()]),\n  name: z.string(),\n  color: z.string().nullable(),\n  is_default: z.boolean().nullable(),\n  is_active: z.boolean().nullable(),\n  // Add additional fields from Float API\n});\n\nexport const timeOffTypeListSchema = z.array(timeOffTypeSchema);\n\n// In tools file\nexport const createTimeOffTypeTool = createTool({\n  name: 'createTimeOffType',\n  description: 'Create a new time off type in Float',\n  parameters: z.object({\n    name: z.string().describe('The name of the time off type'),\n    color: z.string().optional().describe('Color code for the time off type'),\n    is_active: z.boolean().optional().describe('Whether this type is active')\n    // Add other parameters\n  }),\n  execute: async (params) => {\n    const floatApi = new FloatApi();\n    return await floatApi.post('/timeoff-types', params);\n  }\n});\n```\nEnsure proper handling of default time off types and active/inactive status.",
         "testStrategy": "1. Unit test each time off type endpoint function with mocked API responses\n2. Test CRUD operations for time off types\n3. Verify schema validation for time off type objects\n4. Test handling of default and custom time off types\n5. Test active/inactive status changes\n6. Integration test with actual Float API in a test environment",
         "priority": "high",
-        "dependencies": [
-          27
-        ],
+        "dependencies": [27],
         "status": "done",
         "subtasks": [
           {
@@ -413,9 +333,7 @@
             "id": 2,
             "title": "Implement CRUD Operations for Time Off Types",
             "description": "Develop API endpoints and backend logic to list, get, create, update, and delete time off types using the designed schema.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Implement endpoints: listTimeOffTypes, getTimeOffType, createTimeOffType, updateTimeOffType, deleteTimeOffType. Ensure proper validation and error handling.",
             "status": "done",
             "testStrategy": ""
@@ -424,9 +342,7 @@
             "id": 3,
             "title": "Handle Default and Active Status Logic",
             "description": "Implement logic to manage default and active statuses for time off types, ensuring only one default and proper handling of active/inactive states.",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Enforce business rules: only one time off type can be default at a time, and inactive types cannot be selected for new requests. Update related endpoints to respect these rules.",
             "status": "done",
             "testStrategy": ""
@@ -435,9 +351,7 @@
             "id": 4,
             "title": "Integrate Time Off Types with Time Off Endpoints",
             "description": "Update existing time off request endpoints to use the new time off type schema, ensuring compatibility and data integrity.",
-            "dependencies": [
-              3
-            ],
+            "dependencies": [3],
             "details": "Modify time off request creation and retrieval to reference time off type IDs. Migrate existing data if necessary and update documentation.",
             "status": "done",
             "testStrategy": ""
@@ -446,9 +360,7 @@
             "id": 5,
             "title": "Write Automated Tests for Time Off Type Functionality",
             "description": "Develop comprehensive tests for all CRUD operations, status logic, and integration points to ensure correctness and prevent regressions.",
-            "dependencies": [
-              4
-            ],
+            "dependencies": [4],
             "details": "Write unit and integration tests covering all endpoints, status transitions, and edge cases. Use mocks or test databases as appropriate.",
             "status": "done",
             "testStrategy": ""
@@ -460,9 +372,7 @@
         "title": "Implement Public Holidays Endpoint",
         "description": "Create a complete implementation of the Public Holidays endpoint following the Float API v3 specification, including listing public holidays, managing holiday calendar, and supporting multi-region holidays.",
         "status": "done",
-        "dependencies": [
-          27
-        ],
+        "dependencies": [27],
         "priority": "medium",
         "details": "Implementation completed successfully. Created comprehensive public holidays MCP tools in src/tools/public-holidays.ts with:\n\n1. Added publicHolidaySchema to src/types/float.ts with proper Zod validation\n2. Implemented 5 core tools: listPublicHolidays, getPublicHoliday, createPublicHoliday, updatePublicHoliday, deletePublicHoliday\n3. Features include:\n   - Date range filtering (start_date, end_date)\n   - Multi-region support (region, country fields)\n   - Holiday type support (moveable, recurring, fixed)\n   - Full CRUD operations with proper error handling\n   - Pagination support for listing\n   - Proper Float API patterns following existing tools\n\n4. Updated src/tools/index.ts to export all new tools\n5. All builds and type checks pass successfully\n\nThe implementation follows Float API v3 conventions and established patterns from other tools in the codebase.\n\nPublic holiday schema structure:\n```typescript\nexport const publicHolidaySchema = z.object({\n  holiday_id: z.union([z.string(), z.number()]),\n  name: z.string(),\n  date: z.string(), // ISO date format\n  region: z.string().nullable(),\n  country: z.string().nullable(),\n  type: z.string().optional(), // moveable, recurring, fixed\n  // Additional fields from Float API\n});\n```",
         "testStrategy": "1. Unit test each public holiday endpoint function with mocked API responses\n2. Test CRUD operations for public holidays\n3. Test date range filtering and pagination\n4. Test region-specific filtering\n5. Verify schema validation for holiday objects\n6. Integration test with actual Float API in a test environment\n7. Test multi-region holiday support",
@@ -481,9 +391,7 @@
             "title": "Implement Core Public Holiday Tools",
             "description": "Create comprehensive MCP tools for public holiday management in src/tools/public-holidays.ts.",
             "status": "completed",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Implemented 5 core tools: listPublicHolidays (with date range and region filtering), getPublicHoliday, createPublicHoliday, updatePublicHoliday, and deletePublicHoliday. All tools follow established Float API patterns and include proper error handling.",
             "testStrategy": "Tools tested through build validation and type checking"
           },
@@ -492,9 +400,7 @@
             "title": "Add Multi-Region and Date Filtering Support",
             "description": "Implement advanced filtering capabilities for public holidays including multi-region support and date range queries.",
             "status": "completed",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Added support for region and country filtering, date range queries (start_date, end_date), and holiday type filtering (moveable, recurring, fixed). Pagination support included for listing operations.",
             "testStrategy": "Filtering capabilities validated through parameter schemas and API patterns"
           },
@@ -503,9 +409,7 @@
             "title": "Update Tool Exports",
             "description": "Export all new public holiday tools in src/tools/index.ts for MCP server integration.",
             "status": "completed",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Updated src/tools/index.ts to export all 5 public holiday tools, ensuring they are available for MCP server registration and client usage.",
             "testStrategy": "Export validation confirmed through successful build process"
           },
@@ -514,10 +418,7 @@
             "title": "Validate Implementation and Build Process",
             "description": "Ensure all implementations pass type checking and build validation.",
             "status": "completed",
-            "dependencies": [
-              3,
-              4
-            ],
+            "dependencies": [3, 4],
             "details": "All builds and type checks pass successfully. Implementation follows Float API v3 conventions and established patterns from other tools in the codebase.",
             "testStrategy": "Build validation and type checking completed successfully"
           }
@@ -530,10 +431,7 @@
         "details": "Extend the FloatApi service to add team-holiday related methods. Create Zod schemas in src/schemas/teamholidays.ts for validation. Implement the following functions:\n\n1. listTeamHolidays: Fetch all team holidays with pagination and filtering\n2. getTeamHoliday: Get details for a specific team holiday\n3. createTeamHoliday: Create a new team holiday\n4. updateTeamHoliday: Update an existing team holiday\n5. deleteTeamHoliday: Remove a team holiday\n\nThe team holiday schema should handle Float's structure:\n```typescript\nexport const teamHolidaySchema = z.object({\n  holiday_id: z.union([z.string(), z.number()]),\n  name: z.string(),\n  date: z.string(), // ISO date format\n  department_id: z.union([z.string(), z.number(), z.null()]),\n  // Add additional fields from Float API\n});\n\nexport const teamHolidayListSchema = z.array(teamHolidaySchema);\n\n// In tools file\nexport const createTeamHolidayTool = createTool({\n  name: 'createTeamHoliday',\n  description: 'Create a new team holiday in Float',\n  parameters: z.object({\n    name: z.string().describe('The name of the holiday'),\n    date: z.string().describe('Holiday date (YYYY-MM-DD)'),\n    department_id: z.union([z.string(), z.number()]).optional().describe('Department ID if applicable')\n    // Add other parameters\n  }),\n  execute: async (params) => {\n    const floatApi = new FloatApi();\n    return await floatApi.post('/team-holidays', params);\n  }\n});\n```\nImplement support for department-specific holidays and date range queries.",
         "testStrategy": "1. Unit test each team holiday endpoint function with mocked API responses\n2. Test CRUD operations for team holidays\n3. Test date range filtering and pagination\n4. Test department-specific filtering\n5. Verify schema validation for holiday objects\n6. Integration test with actual Float API in a test environment\n7. Test interaction with departments",
         "priority": "medium",
-        "dependencies": [
-          27,
-          32
-        ],
+        "dependencies": [27, 32],
         "status": "done",
         "subtasks": [
           {
@@ -549,9 +447,7 @@
             "id": 2,
             "title": "Implement listTeamHolidays with Department/Date Filters",
             "description": "Develop a function to list team holidays with filters for department and date.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Use SQL queries to filter holidays based on department and date ranges.",
             "status": "done",
             "testStrategy": ""
@@ -560,9 +456,7 @@
             "id": 3,
             "title": "Implement get/create/update/deleteTeamHoliday",
             "description": "Create functions to get, create, update, and delete team holidays.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Ensure these functions handle department-specific logic and validate user input.",
             "status": "done",
             "testStrategy": ""
@@ -571,10 +465,7 @@
             "id": 4,
             "title": "Department-Specific Logic Implementation",
             "description": "Implement logic that applies department-specific rules to team holidays.",
-            "dependencies": [
-              1,
-              3
-            ],
+            "dependencies": [1, 3],
             "details": "Consider rules such as different holiday allowances or restrictions per department.",
             "status": "done",
             "testStrategy": ""
@@ -583,11 +474,7 @@
             "id": 5,
             "title": "Write Tests for Team Holidays Functions",
             "description": "Develop comprehensive tests for all team holidays functions.",
-            "dependencies": [
-              2,
-              3,
-              4
-            ],
+            "dependencies": [2, 3, 4],
             "details": "Use testing frameworks to ensure functions work correctly under various scenarios.",
             "status": "done",
             "testStrategy": ""
@@ -601,9 +488,7 @@
         "details": "Extend the FloatApi service to add phase-related methods. Create Zod schemas in src/schemas/phases.ts for validation. Implement the following functions:\n\n1. listPhases: Fetch all phases with pagination and project filtering\n2. getPhase: Get details for a specific phase\n3. createPhase: Create a new project phase\n4. updatePhase: Update an existing phase\n5. deletePhase: Remove a phase\n\nThe phase schema should handle Float's structure:\n```typescript\nexport const phaseSchema = z.object({\n  phase_id: z.union([z.string(), z.number()]),\n  project_id: z.union([z.string(), z.number()]),\n  name: z.string(),\n  start_date: z.string().nullable(), // ISO date format\n  end_date: z.string().nullable(), // ISO date format\n  color: z.string().nullable(),\n  notes: z.string().nullable(),\n  // Add additional fields from Float API\n});\n\nexport const phaseListSchema = z.array(phaseSchema);\n\n// In tools file\nexport const createPhaseTool = createTool({\n  name: 'createPhase',\n  description: 'Create a new project phase in Float',\n  parameters: z.object({\n    project_id: z.union([z.string(), z.number()]).describe('The project ID'),\n    name: z.string().describe('Phase name'),\n    start_date: z.string().optional().describe('Start date (YYYY-MM-DD)'),\n    end_date: z.string().optional().describe('End date (YYYY-MM-DD)'),\n    color: z.string().optional().describe('Color code for the phase'),\n    notes: z.string().optional().describe('Optional notes')\n    // Add other parameters\n  }),\n  execute: async (params) => {\n    const floatApi = new FloatApi();\n    return await floatApi.post('/phases', params);\n  }\n});\n```\nImplement support for phase dependencies and scheduling constraints.",
         "testStrategy": "1. Unit test each phase endpoint function with mocked API responses\n2. Test CRUD operations for phases\n3. Test project-specific filtering\n4. Verify date range handling for phases\n5. Test phase dependency relationships\n6. Verify schema validation for phase objects\n7. Integration test with actual Float API in a test environment",
         "priority": "high",
-        "dependencies": [
-          27
-        ],
+        "dependencies": [27],
         "status": "done",
         "subtasks": [
           {
@@ -619,9 +504,7 @@
             "id": 2,
             "title": "Implement listPhases with Project Filtering",
             "description": "Develop a function to list phases filtered by project, using the designed schema.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Use SQL queries to retrieve phases based on project IDs.",
             "status": "done",
             "testStrategy": ""
@@ -630,9 +513,7 @@
             "id": 3,
             "title": "Implement get/create/update/deletePhase",
             "description": "Create CRUD operations for phases, ensuring data integrity and consistency.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Use RESTful API endpoints for CRUD operations.",
             "status": "done",
             "testStrategy": ""
@@ -641,9 +522,7 @@
             "id": 4,
             "title": "Handle Phase Dependencies and Scheduling",
             "description": "Develop logic to manage dependencies between phases and schedule them accordingly.",
-            "dependencies": [
-              3
-            ],
+            "dependencies": [3],
             "details": "Use graph algorithms to resolve dependencies and schedule phases.",
             "status": "done",
             "testStrategy": ""
@@ -652,10 +531,7 @@
             "id": 5,
             "title": "Integrate with Projects",
             "description": "Integrate phase management with project management, ensuring seamless interaction.",
-            "dependencies": [
-              2,
-              3
-            ],
+            "dependencies": [2, 3],
             "details": "Use foreign keys to link phases to projects.",
             "status": "done",
             "testStrategy": ""
@@ -664,13 +540,7 @@
             "id": 6,
             "title": "Write Tests",
             "description": "Develop comprehensive tests for phase management and integration with projects.",
-            "dependencies": [
-              1,
-              2,
-              3,
-              4,
-              5
-            ],
+            "dependencies": [1, 2, 3, 4, 5],
             "details": "Use unit tests and integration tests to ensure functionality.",
             "status": "done",
             "testStrategy": ""
@@ -684,11 +554,7 @@
         "details": "Extend the FloatApi service to add project-task related methods. Create Zod schemas in src/schemas/projecttasks.ts for validation. Implement the following functions:\n\n1. listProjectTasks: Fetch all project tasks with pagination and filtering\n2. getProjectTask: Get details for a specific project task\n3. createProjectTask: Create a new project task\n4. updateProjectTask: Update an existing project task\n5. deleteProjectTask: Remove a project task\n\nThe project task schema should handle Float's structure:\n```typescript\nexport const projectTaskSchema = z.object({\n  task_id: z.union([z.string(), z.number()]),\n  project_id: z.union([z.string(), z.number()]),\n  name: z.string(),\n  status_id: z.union([z.string(), z.number(), z.null()]),\n  start_date: z.string().nullable(), // ISO date format\n  end_date: z.string().nullable(), // ISO date format\n  parent_id: z.union([z.string(), z.number(), z.null()]), // For task hierarchy\n  dependencies: z.array(z.union([z.string(), z.number()])).nullable(),\n  // Add additional fields from Float API\n});\n\nexport const projectTaskListSchema = z.array(projectTaskSchema);\n\n// In tools file\nexport const createProjectTaskTool = createTool({\n  name: 'createProjectTask',\n  description: 'Create a new project task in Float',\n  parameters: z.object({\n    project_id: z.union([z.string(), z.number()]).describe('The project ID'),\n    name: z.string().describe('Task name'),\n    status_id: z.union([z.string(), z.number()]).optional().describe('Status ID'),\n    start_date: z.string().optional().describe('Start date (YYYY-MM-DD)'),\n    end_date: z.string().optional().describe('End date (YYYY-MM-DD)'),\n    parent_id: z.union([z.string(), z.number()]).optional().describe('Parent task ID for hierarchy'),\n    dependencies: z.array(z.union([z.string(), z.number()])).optional().describe('Task dependencies')\n    // Add other parameters\n  }),\n  execute: async (params) => {\n    const floatApi = new FloatApi();\n    return await floatApi.post('/project-tasks', params);\n  }\n});\n```\nImplement support for task hierarchies, dependencies, and status tracking.",
         "testStrategy": "1. Unit test each project task endpoint function with mocked API responses\n2. Test CRUD operations for project tasks\n3. Test task hierarchy relationships\n4. Test task dependency relationships\n5. Verify status tracking functionality\n6. Test project-specific filtering\n7. Verify schema validation for task objects\n8. Integration test with actual Float API in a test environment",
         "priority": "high",
-        "dependencies": [
-          27,
-          29,
-          34
-        ],
+        "dependencies": [27, 29, 34],
         "status": "done",
         "subtasks": [
           {
@@ -704,9 +570,7 @@
             "id": 2,
             "title": "Implement listProjectTasks with Filtering",
             "description": "Develop the endpoint to list project tasks with support for filtering by attributes such as status, phase, parent, and dependencies.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Implement query logic to retrieve tasks based on various filters, leveraging the schema relationships. Optimize for performance and usability.",
             "status": "done",
             "testStrategy": ""
@@ -715,9 +579,7 @@
             "id": 3,
             "title": "Implement get/create/update/deleteProjectTask",
             "description": "Create endpoints for retrieving, creating, updating, and deleting individual project tasks, ensuring data integrity and proper validation.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Handle CRUD operations for tasks, including validation of required fields and relationships (e.g., parent/child, dependencies).",
             "status": "done",
             "testStrategy": ""
@@ -726,10 +588,7 @@
             "id": 4,
             "title": "Implement Task Hierarchy (Parent/Child)",
             "description": "Enable support for hierarchical tasks, allowing tasks to have parent and child relationships within the schema and API.",
-            "dependencies": [
-              1,
-              3
-            ],
+            "dependencies": [1, 3],
             "details": "Update schema and endpoints to support nesting of tasks. Ensure recursive retrieval and updates are handled correctly.",
             "status": "done",
             "testStrategy": ""
@@ -738,10 +597,7 @@
             "id": 5,
             "title": "Implement Task Dependencies",
             "description": "Add support for defining and managing dependencies between tasks, ensuring tasks can reference other tasks as prerequisites.",
-            "dependencies": [
-              1,
-              3
-            ],
+            "dependencies": [1, 3],
             "details": "Extend schema and endpoints to allow tasks to depend on other tasks. Implement logic to prevent circular dependencies.",
             "status": "done",
             "testStrategy": ""
@@ -750,10 +606,7 @@
             "id": 6,
             "title": "Status Tracking",
             "description": "Implement comprehensive status tracking for tasks, including transitions, completion, and progress updates.",
-            "dependencies": [
-              1,
-              3
-            ],
+            "dependencies": [1, 3],
             "details": "Define allowed statuses and transitions. Ensure status changes are validated and propagated as needed (e.g., parent/child or dependency effects).",
             "status": "done",
             "testStrategy": ""
@@ -762,14 +615,7 @@
             "id": 7,
             "title": "Integrate with Projects, Phases, and Statuses",
             "description": "Ensure tasks are properly linked to projects, phases, and status entities, supporting cross-entity queries and updates.",
-            "dependencies": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6
-            ],
+            "dependencies": [1, 2, 3, 4, 5, 6],
             "details": "Implement and test relationships between tasks and other entities. Ensure referential integrity and efficient cross-entity operations.",
             "status": "done",
             "testStrategy": ""
@@ -778,14 +624,7 @@
             "id": 8,
             "title": "Write Comprehensive Tests",
             "description": "Develop thorough unit and integration tests covering all endpoints, schema relationships, and business logic, including edge cases.",
-            "dependencies": [
-              2,
-              3,
-              4,
-              5,
-              6,
-              7
-            ],
+            "dependencies": [2, 3, 4, 5, 6, 7],
             "details": "Test CRUD operations, filtering, hierarchy, dependencies, status transitions, and integration with projects and phases. Ensure high coverage and reliability.",
             "status": "done",
             "testStrategy": ""
@@ -799,10 +638,7 @@
         "details": "Extend the FloatApi service to add milestone-related methods. Create Zod schemas in src/schemas/milestones.ts for validation. Implement the following functions:\n\n1. listMilestones: Fetch all milestones with pagination and project filtering\n2. getMilestone: Get details for a specific milestone\n3. createMilestone: Create a new project milestone\n4. updateMilestone: Update an existing milestone\n5. deleteMilestone: Remove a milestone\n\nThe milestone schema should handle Float's structure:\n```typescript\nexport const milestoneSchema = z.object({\n  milestone_id: z.union([z.string(), z.number()]),\n  project_id: z.union([z.string(), z.number()]),\n  name: z.string(),\n  date: z.string(), // ISO date format\n  color: z.string().nullable(),\n  notes: z.string().nullable(),\n  // Add additional fields from Float API\n});\n\nexport const milestoneListSchema = z.array(milestoneSchema);\n\n// In tools file\nexport const createMilestoneTool = createTool({\n  name: 'createMilestone',\n  description: 'Create a new project milestone in Float',\n  parameters: z.object({\n    project_id: z.union([z.string(), z.number()]).describe('The project ID'),\n    name: z.string().describe('Milestone name'),\n    date: z.string().describe('Milestone date (YYYY-MM-DD)'),\n    color: z.string().optional().describe('Color code for the milestone'),\n    notes: z.string().optional().describe('Optional notes')\n    // Add other parameters\n  }),\n  execute: async (params) => {\n    const floatApi = new FloatApi();\n    return await floatApi.post('/milestones', params);\n  }\n});\n```\nImplement support for date-based milestone tracking and project association.",
         "testStrategy": "1. Unit test each milestone endpoint function with mocked API responses\n2. Test CRUD operations for milestones\n3. Test project-specific filtering\n4. Verify date handling for milestones\n5. Test milestone tracking functionality\n6. Verify schema validation for milestone objects\n7. Integration test with actual Float API in a test environment",
         "priority": "medium",
-        "dependencies": [
-          27,
-          34
-        ],
+        "dependencies": [27, 34],
         "status": "done",
         "subtasks": [
           {
@@ -818,9 +654,7 @@
             "id": 2,
             "title": "Implement listMilestones with Project Filtering",
             "description": "Develop the listMilestones API/functionality to retrieve milestones, supporting filtering by associated project.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Ensure the implementation can efficiently filter milestones by project ID and return relevant milestone details. Consider pagination and sorting by date if necessary.",
             "status": "done",
             "testStrategy": ""
@@ -829,9 +663,7 @@
             "id": 3,
             "title": "Implement get/create/update/deleteMilestone",
             "description": "Develop CRUD operations for milestones, allowing retrieval, creation, updating, and deletion of milestone records.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Implement endpoints or functions for each CRUD operation. Validate input data, enforce project association, and handle dependencies between milestones where applicable.",
             "status": "done",
             "testStrategy": ""
@@ -840,10 +672,7 @@
             "id": 4,
             "title": "Date-Based Tracking Logic",
             "description": "Implement logic to track milestones based on their expected dates, including status updates and notifications for upcoming or overdue milestones.",
-            "dependencies": [
-              2,
-              3
-            ],
+            "dependencies": [2, 3],
             "details": "Add logic to calculate milestone status (e.g., upcoming, due, overdue, completed) based on current date and expected date. Integrate with notification or alert systems if required.",
             "status": "done",
             "testStrategy": ""
@@ -852,11 +681,7 @@
             "id": 5,
             "title": "Write Tests",
             "description": "Develop comprehensive tests for all milestone-related functionality, including schema validation, CRUD operations, project filtering, and date-based tracking.",
-            "dependencies": [
-              2,
-              3,
-              4
-            ],
+            "dependencies": [2, 3, 4],
             "details": "Write unit and integration tests to ensure correctness, data integrity, and proper handling of edge cases (e.g., invalid dates, missing dependencies, unauthorized access).",
             "status": "done",
             "testStrategy": ""
@@ -870,9 +695,7 @@
         "details": "Extend the FloatApi service to add logged-time related methods. Create Zod schemas in src/schemas/loggedtime.ts for validation. Implement the following functions:\n\n1. listLoggedTime: Fetch all logged time entries with pagination and filtering\n2. getLoggedTime: Get details for a specific time entry\n3. createLoggedTime: Create a new time entry\n4. updateLoggedTime: Update an existing time entry\n5. deleteLoggedTime: Remove a time entry\n6. bulkCreateLoggedTime: Create multiple time entries at once\n\nThe logged time schema should handle Float's structure:\n```typescript\nexport const loggedTimeSchema = z.object({\n  time_id: z.union([z.string(), z.number()]),\n  person_id: z.union([z.string(), z.number()]),\n  project_id: z.union([z.string(), z.number()]),\n  task_id: z.union([z.string(), z.number(), z.null()]),\n  date: z.string(), // ISO date format\n  hours: z.number(),\n  notes: z.string().nullable(),\n  is_billable: z.boolean().nullable(),\n  // Add additional fields from Float API\n});\n\nexport const loggedTimeListSchema = z.array(loggedTimeSchema);\n\n// In tools file\nexport const createLoggedTimeTool = createTool({\n  name: 'createLoggedTime',\n  description: 'Create a new time entry in Float',\n  parameters: z.object({\n    person_id: z.union([z.string(), z.number()]).describe('The person ID'),\n    project_id: z.union([z.string(), z.number()]).describe('The project ID'),\n    task_id: z.union([z.string(), z.number()]).optional().describe('Task ID if applicable'),\n    date: z.string().describe('Entry date (YYYY-MM-DD)'),\n    hours: z.number().describe('Hours logged'),\n    notes: z.string().optional().describe('Optional notes'),\n    is_billable: z.boolean().optional().describe('Whether time is billable')\n    // Add other parameters\n  }),\n  execute: async (params) => {\n    const floatApi = new FloatApi();\n    return await floatApi.post('/logged-time', params);\n  }\n});\n```\nImplement support for billable/non-billable tracking, timesheet management, and reporting integration.",
         "testStrategy": "1. Unit test each logged time endpoint function with mocked API responses\n2. Test CRUD operations for time entries\n3. Test bulk time entry creation\n4. Verify billable/non-billable tracking\n5. Test filtering by person, project, and date range\n6. Test timesheet reporting functionality\n7. Verify schema validation for time entry objects\n8. Integration test with actual Float API in a test environment",
         "priority": "high",
-        "dependencies": [
-          27
-        ],
+        "dependencies": [27],
         "status": "done",
         "subtasks": [
           {
@@ -888,9 +711,7 @@
             "id": 2,
             "title": "Implement listLoggedTime with Filtering",
             "description": "Develop the API or function to list logged time entries, supporting filtering by user, project, date range, billable status, and other relevant fields.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Ensure efficient querying and pagination for large datasets. Implement filter logic based on schema design.",
             "status": "done",
             "testStrategy": ""
@@ -899,9 +720,7 @@
             "id": 3,
             "title": "Implement get/create/update/deleteLoggedTime",
             "description": "Create endpoints or functions to retrieve, add, modify, and remove individual logged time entries.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Support full CRUD operations with validation and error handling. Ensure changes are reflected in the database accurately.",
             "status": "done",
             "testStrategy": ""
@@ -910,10 +729,7 @@
             "id": 4,
             "title": "Implement bulkCreateLoggedTime",
             "description": "Develop functionality to create multiple logged time entries in a single operation, handling validation and error reporting for each entry.",
-            "dependencies": [
-              1,
-              3
-            ],
+            "dependencies": [1, 3],
             "details": "Optimize for performance and atomicity. Ensure partial failures are handled gracefully and results are reported clearly.",
             "status": "done",
             "testStrategy": ""
@@ -922,12 +738,7 @@
             "id": 5,
             "title": "Billable/Non-Billable Logic",
             "description": "Implement business logic to distinguish and process billable versus non-billable time entries throughout the system.",
-            "dependencies": [
-              1,
-              2,
-              3,
-              4
-            ],
+            "dependencies": [1, 2, 3, 4],
             "details": "Ensure billable status is correctly set, updated, and used in calculations and reporting. Enforce business rules as required.",
             "status": "done",
             "testStrategy": ""
@@ -936,12 +747,7 @@
             "id": 6,
             "title": "Timesheet/Reporting Integration",
             "description": "Integrate logged time data with timesheet and reporting modules, supporting aggregation, summaries, and export features.",
-            "dependencies": [
-              2,
-              3,
-              4,
-              5
-            ],
+            "dependencies": [2, 3, 4, 5],
             "details": "Design and implement interfaces for generating timesheets and reports, ensuring accurate reflection of logged and billable time.",
             "status": "done",
             "testStrategy": ""
@@ -950,13 +756,7 @@
             "id": 7,
             "title": "Write Tests",
             "description": "Develop comprehensive tests for all logged time features, including CRUD operations, filtering, bulk operations, billable logic, and reporting integration.",
-            "dependencies": [
-              2,
-              3,
-              4,
-              5,
-              6
-            ],
+            "dependencies": [2, 3, 4, 5, 6],
             "details": "Ensure high test coverage and automate regression testing for all business rules and edge cases.",
             "status": "done",
             "testStrategy": ""
@@ -970,9 +770,7 @@
         "details": "Modify the FloatApi service in src/services/float-api.js to add support for different response formats. Implement the following:\n\n1. Add a format parameter to all API request methods\n2. Implement content negotiation with Accept headers\n3. Add XML parsing for XML responses\n4. Create format conversion utilities\n\n```typescript\n// Add to FloatApi class\nprivate async request(method: string, endpoint: string, params?: any, format: 'json' | 'xml' = 'json') {\n  const headers = {\n    'Authorization': `Bearer ${this.apiKey}`,\n    'Accept': format === 'json' ? 'application/json' : 'application/xml',\n    'Content-Type': 'application/json'\n  };\n  \n  const response = await axios({\n    method,\n    url: `${this.baseUrl}${endpoint}`,\n    headers,\n    data: method !== 'GET' ? params : undefined,\n    params: method === 'GET' ? params : undefined\n  });\n  \n  if (format === 'xml') {\n    // Use a library like fast-xml-parser to convert XML to JSON\n    const parser = new XMLParser();\n    return parser.parse(response.data);\n  }\n  \n  return response.data;\n}\n\n// Update all API methods to support format parameter\npublic async get(endpoint: string, params?: any, format: 'json' | 'xml' = 'json') {\n  return this.request('GET', endpoint, params, format);\n}\n```\n\nInstall and use the fast-xml-parser library (version 4.2.0+) for XML parsing. Update all tool implementations to support format selection.",
         "testStrategy": "1. Unit test JSON and XML format handling\n2. Test content negotiation with different Accept headers\n3. Verify XML parsing works correctly for all response types\n4. Test format conversion utilities\n5. Integration test with actual Float API in both formats\n6. Verify all endpoints work correctly with both formats\n7. Test error handling in both formats",
         "priority": "medium",
-        "dependencies": [
-          27
-        ],
+        "dependencies": [27],
         "status": "done",
         "subtasks": [
           {
@@ -988,9 +786,7 @@
             "id": 2,
             "title": "Implement Accept header/content negotiation",
             "description": "Enable content negotiation by parsing the HTTP Accept header and responding with the requested format if supported.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Modify request handling logic to inspect the Accept header and prioritize it over the 'format' parameter when both are present. Return appropriate HTTP status codes for unsupported formats.",
             "status": "done",
             "testStrategy": ""
@@ -999,9 +795,7 @@
             "id": 3,
             "title": "Integrate XML parsing",
             "description": "Add robust XML parsing and serialization capabilities to the API to support XML input and output.",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Select and integrate a reliable XML library. Ensure correct handling of edge cases, encoding, and error reporting for XML payloads.",
             "status": "done",
             "testStrategy": ""
@@ -1010,9 +804,7 @@
             "id": 4,
             "title": "Create format conversion utilities",
             "description": "Develop utilities to convert between JSON and XML formats for both request and response bodies.",
-            "dependencies": [
-              3
-            ],
+            "dependencies": [3],
             "details": "Implement reusable functions or classes for converting data structures between JSON and XML, ensuring data integrity and consistency.",
             "status": "done",
             "testStrategy": ""
@@ -1021,9 +813,7 @@
             "id": 5,
             "title": "Update all endpoints/tools for format support",
             "description": "Refactor all API endpoints and related tools to utilize the new format parameter, content negotiation, and conversion utilities.",
-            "dependencies": [
-              4
-            ],
+            "dependencies": [4],
             "details": "Ensure every endpoint can handle both JSON and XML formats for input and output. Update internal tools and documentation as needed.",
             "status": "done",
             "testStrategy": ""
@@ -1032,9 +822,7 @@
             "id": 6,
             "title": "Write tests for both formats",
             "description": "Develop comprehensive tests to verify correct behavior for both JSON and XML formats across all endpoints.",
-            "dependencies": [
-              5
-            ],
+            "dependencies": [5],
             "details": "Create unit and integration tests covering various scenarios, including format negotiation, error handling, and edge cases for both formats.",
             "status": "done",
             "testStrategy": ""
@@ -1048,10 +836,7 @@
         "details": "Create a centralized error handling system in src/services/error-handler.ts. Implement the following:\n\n1. Custom error classes for different error types\n2. Rate limit detection and handling\n3. Authentication error handling\n4. Validation error formatting\n5. Integration with MCP error response format\n\n```typescript\n// Error classes\nexport class FloatApiError extends Error {\n  constructor(message: string, public statusCode: number, public details?: any) {\n    super(message);\n    this.name = 'FloatApiError';\n  }\n}\n\nexport class FloatRateLimitError extends FloatApiError {\n  constructor(retryAfter?: number) {\n    super('Float API rate limit exceeded', 429, { retryAfter });\n    this.name = 'FloatRateLimitError';\n  }\n}\n\n// Error handler function\nexport function handleFloatApiError(error: any) {\n  if (axios.isAxiosError(error)) {\n    const response = error.response;\n    if (!response) {\n      return new FloatApiError('Network error', 0);\n    }\n    \n    if (response.status === 429) {\n      const retryAfter = parseInt(response.headers['retry-after'] || '60', 10);\n      return new FloatRateLimitError(retryAfter);\n    }\n    \n    if (response.status === 401) {\n      return new FloatApiError('Authentication failed', 401);\n    }\n    \n    // Handle other status codes\n    return new FloatApiError(\n      response.data?.message || 'Float API error',\n      response.status,\n      response.data\n    );\n  }\n  \n  return error;\n}\n```\n\nUpdate the FloatApi service to use this error handler and modify all tools to properly handle and format error responses for MCP.",
         "testStrategy": "1. Unit test each error type with mocked API responses\n2. Test rate limit handling with retry-after headers\n3. Test authentication error handling\n4. Test validation error formatting\n5. Verify MCP-compatible error responses\n6. Test error handling for all endpoints\n7. Integration test with actual Float API error scenarios",
         "priority": "high",
-        "dependencies": [
-          27,
-          38
-        ],
+        "dependencies": [27, 38],
         "status": "done",
         "subtasks": [
           {
@@ -1067,9 +852,7 @@
             "id": 2,
             "title": "Implement Rate Limit Detection and Handling",
             "description": "Develop logic to detect rate limit errors and handle them using the custom error classes.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Identify rate limit responses from APIs, instantiate the RateLimitError class, and ensure the error handler processes these errors appropriately.",
             "status": "done",
             "testStrategy": ""
@@ -1078,9 +861,7 @@
             "id": 3,
             "title": "Implement Authentication Error Handling",
             "description": "Add detection and handling for authentication-related errors using the custom error classes.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Detect authentication failures (e.g., invalid tokens, expired sessions), raise AuthError, and ensure consistent error propagation.",
             "status": "done",
             "testStrategy": ""
@@ -1089,9 +870,7 @@
             "id": 4,
             "title": "Implement Validation Error Formatting",
             "description": "Format validation errors using the custom error classes to provide clear, structured feedback.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Capture validation failures, instantiate ValidationError with relevant details, and format the output for client consumption.",
             "status": "done",
             "testStrategy": ""
@@ -1100,12 +879,7 @@
             "id": 5,
             "title": "Integrate with MCP Error Format",
             "description": "Ensure all custom errors are mapped to and compatible with the MCP error format for downstream systems.",
-            "dependencies": [
-              1,
-              2,
-              3,
-              4
-            ],
+            "dependencies": [1, 2, 3, 4],
             "details": "Map properties from custom error instances to the MCP error schema, ensuring all required fields are populated and error types are correctly represented.",
             "status": "done",
             "testStrategy": ""
@@ -1114,13 +888,7 @@
             "id": 6,
             "title": "Update FloatApi to Use Centralized Error Handler",
             "description": "Refactor FloatApi endpoints to utilize the new centralized error handler and custom error classes.",
-            "dependencies": [
-              1,
-              2,
-              3,
-              4,
-              5
-            ],
+            "dependencies": [1, 2, 3, 4, 5],
             "details": "Replace legacy error handling in FloatApi with calls to the centralized handler, ensuring all endpoints propagate errors in the standardized format.",
             "status": "done",
             "testStrategy": ""
@@ -1129,14 +897,7 @@
             "id": 7,
             "title": "Write Tests for All Error Scenarios",
             "description": "Develop comprehensive tests covering all error types and scenarios to ensure reliability and correctness.",
-            "dependencies": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6
-            ],
+            "dependencies": [1, 2, 3, 4, 5, 6],
             "details": "Write unit and integration tests for rate limit, authentication, validation, and MCP integration errors, verifying correct error instantiation, formatting, and propagation.",
             "status": "done",
             "testStrategy": ""
@@ -1150,21 +911,7 @@
         "details": "Create comprehensive documentation for all implemented tools. For each endpoint:\n\n1. Create detailed tool descriptions for MCP integration\n2. Document all parameters with clear descriptions\n3. Provide example usage patterns\n4. Document response formats and schemas\n5. Include error handling guidance\n\nImplement consistent documentation patterns across all tools:\n\n```typescript\n// Example of well-documented tool\nexport const listAccountsTool = createTool({\n  name: 'listAccounts',\n  description: 'List all accounts in Float with pagination support. Returns account details including name, ID, and permissions.',\n  parameters: z.object({\n    page: z.number().optional().describe('Page number for pagination (starts at 1)'),\n    per_page: z.number().optional().describe('Number of results per page (default: 100, max: 500)'),\n    sort: z.enum(['name', 'created_at']).optional().describe('Sort field'),\n    order: z.enum(['asc', 'desc']).optional().describe('Sort order')\n  }),\n  execute: async (params) => {\n    const floatApi = new FloatApi();\n    return await floatApi.getPaginated('/accounts', params);\n  }\n});\n```\n\nCreate a documentation markdown file for each endpoint category explaining usage patterns, parameter details, and response formats.",
         "testStrategy": "1. Verify all tools have comprehensive descriptions\n2. Check all parameters have clear descriptions\n3. Validate documentation against actual implementation\n4. Test documentation examples for accuracy\n5. Verify MCP tool listings display correctly\n6. Review documentation for completeness and clarity\n7. Test documentation in Claude Desktop MCP integration",
         "priority": "medium",
-        "dependencies": [
-          27,
-          28,
-          29,
-          30,
-          31,
-          32,
-          33,
-          34,
-          35,
-          36,
-          37,
-          38,
-          39
-        ],
+        "dependencies": [27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
         "status": "done",
         "subtasks": [
           {
@@ -1180,9 +927,7 @@
             "id": 2,
             "title": "Document All Parameters",
             "description": "List and explain all parameters for each endpoint, including required and optional fields, data types, and constraints.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Include parameter names, types, whether they are required or optional, default values, and any validation rules. Use consistent terminology and formatting throughout.",
             "status": "done",
             "testStrategy": ""
@@ -1191,9 +936,7 @@
             "id": 3,
             "title": "Provide Example Usage",
             "description": "Create example requests for each endpoint, demonstrating typical usage scenarios.",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Include sample code snippets or curl commands for each endpoint, ensuring examples are accurate and easy to follow for entry-level users.",
             "status": "done",
             "testStrategy": ""
@@ -1202,9 +945,7 @@
             "id": 4,
             "title": "Document Response Formats/Schemas",
             "description": "Detail the structure and schema of responses returned by each endpoint, including data types and example responses.",
-            "dependencies": [
-              3
-            ],
+            "dependencies": [3],
             "details": "Provide clear JSON or other relevant schema examples, and explain each field in the response. Highlight any variations based on input parameters or error conditions.",
             "status": "done",
             "testStrategy": ""
@@ -1213,9 +954,7 @@
             "id": 5,
             "title": "Add Error Handling Guidance",
             "description": "Document possible error responses, status codes, and troubleshooting tips for each endpoint.",
-            "dependencies": [
-              4
-            ],
+            "dependencies": [4],
             "details": "List common error codes, their meanings, and recommended actions for users. Include example error responses and guidance on how to handle them.",
             "status": "done",
             "testStrategy": ""
@@ -1224,9 +963,7 @@
             "id": 6,
             "title": "Review for Consistency and Completeness",
             "description": "Perform a thorough review of the documentation to ensure consistency, accuracy, and completeness across all endpoints.",
-            "dependencies": [
-              5
-            ],
+            "dependencies": [5],
             "details": "Check for consistent terminology, formatting, and structure. Verify that all endpoints, parameters, examples, responses, and error handling sections are present and up-to-date.",
             "status": "done",
             "testStrategy": ""
@@ -1240,21 +977,7 @@
         "details": "Create an integration testing suite in src/tests/integration/ using Jest. Implement the following:\n\n1. Test setup with Float API test credentials\n2. Test cases for all implemented endpoints\n3. Validation of response schemas\n4. Error handling tests\n5. Format conversion tests (JSON/XML)\n\n```typescript\n// Example integration test\nimport { FloatApi } from '../../services/float-api';\nimport { accountsSchema } from '../../schemas/accounts';\n\ndescribe('Accounts API Integration', () => {\n  let floatApi: FloatApi;\n  \n  beforeAll(() => {\n    // Setup with test credentials\n    floatApi = new FloatApi(process.env.FLOAT_TEST_API_KEY);\n  });\n  \n  test('listAccounts returns valid accounts', async () => {\n    const accounts = await floatApi.get('/accounts');\n    \n    // Validate schema\n    const result = accountsSchema.safeParse(accounts);\n    expect(result.success).toBe(true);\n    \n    // Validate data\n    expect(Array.isArray(accounts)).toBe(true);\n    if (accounts.length > 0) {\n      expect(accounts[0]).toHaveProperty('account_id');\n      expect(accounts[0]).toHaveProperty('name');\n    }\n  });\n  \n  test('getAccount returns valid account details', async () => {\n    // First get an account ID from the list\n    const accounts = await floatApi.get('/accounts');\n    if (accounts.length === 0) {\n      console.warn('No accounts found for testing');\n      return;\n    }\n    \n    const accountId = accounts[0].account_id;\n    const account = await floatApi.get(`/accounts/${accountId}`);\n    \n    // Validate schema and data\n    expect(account).toHaveProperty('account_id', accountId);\n    expect(account).toHaveProperty('name');\n  });\n  \n  // Add more tests for each endpoint\n});\n```\n\nImplement similar test suites for all endpoint categories. Use environment variables for test credentials and create a CI-compatible test configuration.",
         "testStrategy": "1. Create test cases for all implemented endpoints\n2. Test both success and error scenarios\n3. Verify schema validation for all responses\n4. Test pagination and filtering\n5. Test format conversion (JSON/XML)\n6. Verify rate limit handling\n7. Test in CI environment\n8. Document test coverage and results",
         "priority": "high",
-        "dependencies": [
-          27,
-          28,
-          29,
-          30,
-          31,
-          32,
-          33,
-          34,
-          35,
-          36,
-          37,
-          38,
-          39
-        ],
+        "dependencies": [27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
         "status": "done",
         "subtasks": [
           {
@@ -1270,9 +993,7 @@
             "id": 2,
             "title": "Write Test Cases for Each Endpoint",
             "description": "Develop comprehensive test cases covering all API endpoints, including positive and negative scenarios.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Document and automate test cases for each endpoint, ensuring both standard and edge cases are addressed for functional coverage.",
             "status": "done",
             "testStrategy": ""
@@ -1281,9 +1002,7 @@
             "id": 3,
             "title": "Validate Response Schemas",
             "description": "Implement schema validation for API responses to ensure they conform to expected structures.",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Define expected response schemas (JSON/XML) and automate validation checks within test cases for all endpoints.",
             "status": "done",
             "testStrategy": ""
@@ -1292,9 +1011,7 @@
             "id": 4,
             "title": "Test Error Handling",
             "description": "Verify that the API returns appropriate error codes and messages for invalid requests and edge cases.",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Create and execute tests for invalid inputs, unauthorized access, and other error scenarios to confirm robust error handling.",
             "status": "done",
             "testStrategy": ""
@@ -1303,9 +1020,7 @@
             "id": 5,
             "title": "Test Format Conversion (JSON/XML)",
             "description": "Ensure the API correctly handles and returns data in multiple formats such as JSON and XML.",
-            "dependencies": [
-              3
-            ],
+            "dependencies": [3],
             "details": "Write tests to request and validate responses in all supported formats, checking for consistency and correctness.",
             "status": "done",
             "testStrategy": ""
@@ -1314,9 +1029,7 @@
             "id": 6,
             "title": "Test Pagination and Filtering",
             "description": "Validate the API's pagination and filtering mechanisms for endpoints that support large data sets.",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Develop tests to verify correct behavior of pagination (page size, page number) and filtering parameters, ensuring accurate and efficient data retrieval.",
             "status": "done",
             "testStrategy": ""
@@ -1325,12 +1038,7 @@
             "id": 7,
             "title": "CI Integration",
             "description": "Integrate automated API tests into the continuous integration (CI) pipeline for ongoing validation.",
-            "dependencies": [
-              3,
-              4,
-              5,
-              6
-            ],
+            "dependencies": [3, 4, 5, 6],
             "details": "Configure the CI system to run API tests on code commits and deployments, ensuring rapid feedback and early detection of issues.",
             "status": "done",
             "testStrategy": ""
@@ -1353,10 +1061,7 @@
         "details": "Perform comprehensive project cleanup and organization tasks:\n\n1. **Root Directory Cleanup**:\n   - Remove temporary files (.tmp, .cache, node_modules if corrupted)\n   - Clean up build artifacts and generated files\n   - Remove unused configuration files\n   - Organize root-level files into logical groups\n\n2. **Source Code Organization**:\n   - Review src/ directory structure for logical organization\n   - Ensure proper separation of concerns (services, schemas, tests, utils)\n   - Move misplaced files to appropriate directories\n   - Create consistent naming conventions across all files\n\n3. **Documentation Organization**:\n   - Consolidate documentation files into docs/ directory\n   - Organize API documentation by endpoint categories\n   - Create clear README structure with proper sections\n   - Ensure all documentation is up-to-date and consistent\n\n4. **Test Structure Cleanup**:\n   - Organize test files to mirror source structure\n   - Separate unit tests, integration tests, and test utilities\n   - Remove obsolete or duplicate test files\n   - Ensure consistent test naming conventions\n\n5. **Configuration Management**:\n   - Review and organize configuration files\n   - Remove unused dependencies from package.json\n   - Clean up environment configuration files\n   - Ensure proper .gitignore coverage\n\n6. **Code Quality Improvements**:\n   - Remove unused imports and dead code\n   - Ensure consistent code formatting\n   - Organize imports consistently across files\n   - Remove commented-out code blocks",
         "testStrategy": "1. **File Structure Validation**:\n   - Verify all files are in appropriate directories\n   - Check that no temporary or build files remain in repository\n   - Validate consistent naming conventions across project\n\n2. **Documentation Review**:\n   - Ensure all documentation is accessible and well-organized\n   - Verify README and API docs are current and complete\n   - Check that documentation structure is logical and navigable\n\n3. **Code Quality Checks**:\n   - Run linting tools to ensure code consistency\n   - Verify no unused imports or dead code remains\n   - Check that all files follow established patterns\n\n4. **Build and Test Verification**:\n   - Ensure project builds successfully after cleanup\n   - Run full test suite to verify no functionality was broken\n   - Verify all dependencies are properly declared and used\n\n5. **Repository Health Check**:\n   - Review .gitignore effectiveness\n   - Ensure no sensitive files are tracked\n   - Verify clean git status after cleanup\n\n6. **Developer Experience Validation**:\n   - Test project setup from fresh clone\n   - Verify development workflow still functions correctly\n   - Ensure all scripts and commands work as expected",
         "status": "done",
-        "dependencies": [
-          40,
-          41
-        ],
+        "dependencies": [40, 41],
         "priority": "high",
         "subtasks": [
           {
@@ -1372,9 +1077,7 @@
             "id": 2,
             "title": "Source Code Organization",
             "description": "Review and restructure the src/ directory to ensure logical organization and clear separation of concerns.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Audit the src/ directory for misplaced files and move them to appropriate folders (e.g., services, schemas, tests, utils). Apply consistent naming conventions and ensure each file resides in its correct location.",
             "status": "done",
             "testStrategy": "Check that all source files are organized by function, naming conventions are consistent, and there are no misplaced files."
@@ -1383,9 +1086,7 @@
             "id": 3,
             "title": "Documentation Organization",
             "description": "Consolidate and update documentation files, ensuring they are organized and current.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Move all documentation into a docs/ directory. Organize API documentation by endpoint categories, create a clear README structure, and update all documentation for accuracy and consistency.",
             "status": "done",
             "testStrategy": "Confirm that all documentation is in the docs/ directory, organized by category, and that the README and other docs are up-to-date and clearly structured."
@@ -1394,9 +1095,7 @@
             "id": 4,
             "title": "Test Structure Cleanup",
             "description": "Organize test files to mirror the source structure, separate test types, and remove obsolete or duplicate tests.",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Ensure test files are structured to reflect the organization of the source code. Separate unit, integration, and utility tests. Remove outdated or duplicate test files and enforce consistent naming conventions.",
             "status": "done",
             "testStrategy": "Verify that all test files are correctly categorized, obsolete tests are removed, and naming conventions are followed."
@@ -1405,10 +1104,7 @@
             "id": 5,
             "title": "Configuration and Code Quality Improvements",
             "description": "Review and clean up configuration files, remove unused dependencies, and improve code quality by eliminating dead code and enforcing formatting standards.",
-            "dependencies": [
-              1,
-              2
-            ],
+            "dependencies": [1, 2],
             "details": "Audit configuration files for relevance and accuracy, remove unused dependencies from package.json, clean up environment files, and ensure .gitignore is comprehensive. Remove unused imports, dead code, and commented-out blocks, and enforce consistent code formatting and import organization.",
             "status": "done",
             "testStrategy": "Check that configuration files are accurate and minimal, dependencies are current, code is free of dead or commented-out code, and formatting is consistent throughout the project."
@@ -1422,11 +1118,7 @@
         "details": "Create a comprehensive documentation suite that makes the Float API MCP integration accessible to developers. Implement the following documentation components:\n\n1. **README.md** - Main project documentation:\n   - Project overview and purpose\n   - Installation instructions (npm/yarn)\n   - Quick start guide\n   - Configuration setup (API keys, environment variables)\n   - Basic usage examples\n   - Contributing guidelines\n   - License information\n\n2. **API Documentation** (docs/api/):\n   - Complete Float API endpoint coverage\n   - Request/response examples for each tool\n   - Parameter descriptions and validation rules\n   - Error handling patterns\n   - Rate limiting guidance\n   - Authentication setup\n\n3. **Tool Reference Guides** (docs/tools/):\n   - Categorized tool documentation (accounts, projects, tasks, etc.)\n   - Detailed parameter descriptions\n   - Usage examples for each tool\n   - Common use cases and patterns\n   - Integration examples with MCP clients\n\n4. **Configuration Guide** (docs/configuration.md):\n   - Environment variable setup\n   - API key configuration\n   - MCP server configuration\n   - Advanced configuration options\n   - Security best practices\n\n5. **Troubleshooting Guide** (docs/troubleshooting.md):\n   - Common error scenarios and solutions\n   - API rate limiting issues\n   - Authentication problems\n   - Network connectivity issues\n   - Debugging techniques\n\n6. **Usage Examples** (docs/examples/):\n   - Real-world usage scenarios\n   - Integration patterns\n   - Workflow examples\n   - Best practices\n   - Performance optimization tips\n\nUse consistent formatting, clear code examples, and maintain up-to-date information that reflects the current implementation.",
         "testStrategy": "1. Review all documentation for accuracy against current implementation\n2. Verify all code examples execute correctly\n3. Test installation instructions on clean environments\n4. Validate configuration examples work with actual Float API\n5. Check all internal links and references\n6. Ensure documentation covers all implemented tools (tasks 27-41)\n7. Verify troubleshooting guide addresses common issues\n8. Test documentation with new users for clarity and completeness\n9. Validate API documentation matches actual endpoint behavior\n10. Ensure examples demonstrate real-world usage patterns",
         "status": "done",
-        "dependencies": [
-          40,
-          39,
-          41
-        ],
+        "dependencies": [40, 39, 41],
         "priority": "high",
         "subtasks": [
           {
@@ -1442,9 +1134,7 @@
             "id": 2,
             "title": "Develop Detailed API Documentation",
             "description": "Document all Float API endpoints, including request/response examples, parameter descriptions, validation rules, error handling, rate limiting, and authentication setup.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Organize API documentation in docs/api/. Ensure each endpoint is covered with clear examples and explanations. Follow a consistent format for endpoint documentation.",
             "status": "done",
             "testStrategy": "Cross-check documentation against actual API implementation and test endpoints to verify accuracy of examples and descriptions."
@@ -1453,9 +1143,7 @@
             "id": 3,
             "title": "Create Tool Reference Guides",
             "description": "Produce categorized documentation for each tool (accounts, projects, tasks, etc.), including detailed parameter descriptions, usage examples, common use cases, and integration patterns with MCP clients.",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Structure guides in docs/tools/ by tool category. Provide real-world examples and highlight integration best practices.",
             "status": "done",
             "testStrategy": "Validate examples by running them against the current implementation. Solicit feedback from developers for clarity and usefulness."
@@ -1464,9 +1152,7 @@
             "id": 4,
             "title": "Write Configuration and Troubleshooting Guides",
             "description": "Document environment variable setup, API key configuration, MCP server configuration, advanced options, security best practices, and troubleshooting for common errors, rate limiting, authentication, and connectivity issues.",
-            "dependencies": [
-              3
-            ],
+            "dependencies": [3],
             "details": "Create docs/configuration.md and docs/troubleshooting.md. Ensure guides are actionable, up-to-date, and address real-world scenarios.",
             "status": "done",
             "testStrategy": "Test configuration steps and troubleshooting solutions in a controlled environment. Update documentation based on observed issues and user feedback."
@@ -1475,9 +1161,7 @@
             "id": 5,
             "title": "Compile Comprehensive Usage Examples",
             "description": "Develop a suite of real-world usage scenarios, integration patterns, workflow examples, best practices, and performance optimization tips for all implemented Float API tools.",
-            "dependencies": [
-              4
-            ],
+            "dependencies": [4],
             "details": "Organize examples in docs/examples/. Ensure examples are relevant, executable, and demonstrate both basic and advanced use cases.",
             "status": "done",
             "testStrategy": "Run all examples to confirm correctness. Review with target users to ensure examples meet their needs and are easy to follow."
@@ -1491,10 +1175,7 @@
         "details": "Perform comprehensive GitHub Actions workflow cleanup and optimization:\n\n1. **Review Existing Integration Test Workflow**:\n   - Audit the current .github/workflows/ directory for existing workflows\n   - Identify issues in the integration test workflow (timeouts, environment setup, API key handling)\n   - Review workflow triggers, job dependencies, and step configurations\n   - Check for proper secret management and environment variable setup\n\n2. **Fix Integration Test Workflow Issues**:\n   - Resolve authentication problems with Float API test credentials\n   - Fix timeout issues by optimizing test execution and adding proper timeouts\n   - Ensure proper Node.js version and dependency installation\n   - Fix any matrix build configurations that may be causing instability\n   - Implement proper error handling and failure reporting\n\n3. **Create Simplified CI/CD Workflow**:\n   ```yaml\n   name: CI/CD Pipeline\n   on:\n     push:\n       branches: [main, develop]\n     pull_request:\n       branches: [main]\n   \n   jobs:\n     test:\n       runs-on: ubuntu-latest\n       steps:\n         - uses: actions/checkout@v4\n         - uses: actions/setup-node@v4\n           with:\n             node-version: '18'\n             cache: 'npm'\n         - run: npm ci\n         - run: npm run test\n         - run: npm run test:integration\n           env:\n             FLOAT_API_KEY: ${{ secrets.FLOAT_API_KEY }}\n   ```\n\n4. **Workflow Organization**:\n   - Separate concerns: unit tests, integration tests, linting, building\n   - Implement proper caching strategies for dependencies\n   - Add status badges and proper workflow naming\n   - Configure proper branch protection rules\n   - Remove redundant or broken workflows\n\n5. **Environment and Secret Management**:\n   - Document required repository secrets\n   - Implement proper environment variable handling\n   - Add fallback configurations for missing secrets\n   - Ensure test isolation and cleanup\n\n6. **Performance Optimization**:\n   - Implement parallel job execution where appropriate\n   - Optimize dependency installation with proper caching\n   - Add conditional job execution to avoid unnecessary runs\n   - Implement proper artifact handling for build outputs",
         "testStrategy": "1. **Workflow Validation**:\n   - Test all workflows locally using act or similar tools\n   - Verify workflows trigger correctly on push/PR events\n   - Ensure all jobs complete successfully without timeouts\n\n2. **Integration Test Verification**:\n   - Run integration tests in GitHub Actions environment\n   - Verify Float API authentication works correctly\n   - Test that all integration test suites pass consistently\n   - Validate proper error reporting and failure handling\n\n3. **CI/CD Pipeline Testing**:\n   - Test the complete pipeline from code push to deployment\n   - Verify proper secret handling and environment setup\n   - Test matrix builds if implemented (different Node versions)\n   - Ensure proper caching behavior and performance\n\n4. **Branch Protection and PR Testing**:\n   - Test that PR workflows run correctly and block merging on failures\n   - Verify status checks are properly configured\n   - Test that required workflows complete before merge\n   - Validate proper permissions and access controls\n\n5. **Documentation and Maintenance**:\n   - Document all workflow configurations and requirements\n   - Test workflow badge functionality in README\n   - Verify all required secrets are documented\n   - Ensure workflows are maintainable and well-commented",
         "status": "done",
-        "dependencies": [
-          41,
-          42
-        ],
+        "dependencies": [41, 42],
         "priority": "medium",
         "subtasks": [
           {
@@ -1510,9 +1191,7 @@
             "id": 2,
             "title": "Resolve Integration Test Workflow Issues",
             "description": "Fix all identified issues in the integration test workflow, including authentication, timeouts, environment setup, and error handling.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Address authentication with Float API credentials, optimize test execution to prevent timeouts, ensure correct Node.js version and dependencies, fix matrix build instability, and implement robust error reporting.",
             "status": "done",
             "testStrategy": "Run the updated integration test workflow and confirm all tests pass reliably under various scenarios."
@@ -1521,9 +1200,7 @@
             "id": 3,
             "title": "Design and Implement a Simplified CI/CD Workflow",
             "description": "Create a new, streamlined GitHub Actions workflow for CI/CD that is easy to maintain and consistently reliable.",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Develop a single YAML workflow that covers build, unit tests, and integration tests, using best practices for triggers, environment variables, and secret management. Ensure the workflow is clear and minimal.",
             "status": "done",
             "testStrategy": "Trigger the workflow on push and pull request events; confirm all jobs execute as expected and results are visible in the GitHub Actions UI."
@@ -1532,9 +1209,7 @@
             "id": 4,
             "title": "Organize and Optimize Workflow Structure",
             "description": "Refactor workflows to separate concerns (unit tests, integration tests, linting, build), implement caching, add status badges, and remove redundant or broken workflows.",
-            "dependencies": [
-              3
-            ],
+            "dependencies": [3],
             "details": "Split workflows where appropriate, apply dependency caching, configure branch protection, and ensure workflows are clearly named and documented. Remove or consolidate outdated workflows.",
             "status": "done",
             "testStrategy": "Check that each workflow runs only its intended jobs, caching is effective, and status badges reflect the correct workflow states."
@@ -1543,9 +1218,7 @@
             "id": 5,
             "title": "Enhance Environment and Secret Management",
             "description": "Document required secrets, improve environment variable handling, add fallback configurations, and ensure test isolation and cleanup.",
-            "dependencies": [
-              4
-            ],
+            "dependencies": [4],
             "details": "List all necessary repository secrets, update documentation, implement fallback logic for missing secrets, and ensure each test run is isolated and cleans up after itself.",
             "status": "done",
             "testStrategy": "Test workflows with and without secrets set, verify documentation accuracy, and confirm no data or environment leakage between runs."
@@ -1559,19 +1232,7 @@
         "details": "Perform a systematic code quality improvement across the entire TypeScript codebase:\n\n1. **Type Safety Audit:**\n   - Review all TypeScript files for proper typing\n   - Add explicit return types to all functions\n   - Replace `any` types with specific type definitions\n   - Ensure all API response types are properly defined\n   - Add generic type constraints where appropriate\n\n2. **Missing Type Definitions:**\n   - Create comprehensive type definitions for all API endpoints\n   - Add types for configuration objects and options\n   - Define union types for status enums and constants\n   - Create utility types for common patterns\n\n3. **Code Style Consistency:**\n   - Implement ESLint and Prettier configurations\n   - Standardize naming conventions (camelCase, PascalCase)\n   - Ensure consistent import/export patterns\n   - Standardize function declaration styles\n   - Apply consistent indentation and formatting\n\n4. **Error Handling Patterns:**\n   - Implement consistent error handling across all API calls\n   - Create custom error classes for different error types\n   - Add proper error propagation and logging\n   - Implement retry mechanisms for transient failures\n   - Add validation error handling for schema mismatches\n\n5. **Code Organization:**\n   - Review and optimize file structure\n   - Ensure proper separation of concerns\n   - Add comprehensive JSDoc comments\n   - Remove dead code and unused imports\n   - Optimize type imports vs value imports\n\nExample improvements:\n```typescript\n// Before\nfunction processData(data: any): any {\n  return data.map(item => item.value);\n}\n\n// After\ninterface DataItem {\n  value: string;\n  id: number;\n}\n\nfunction processData(data: DataItem[]): string[] {\n  return data.map((item: DataItem) => item.value);\n}\n```",
         "testStrategy": "1. **Static Analysis Testing:**\n   - Run TypeScript compiler with strict mode enabled\n   - Execute ESLint with strict rules to catch style issues\n   - Use Prettier to verify consistent formatting\n   - Run type coverage analysis to ensure high type coverage\n\n2. **Code Quality Metrics:**\n   - Measure cyclomatic complexity reduction\n   - Verify elimination of `any` types\n   - Check for proper error handling coverage\n   - Validate consistent naming conventions\n\n3. **Integration Testing:**\n   - Run all existing unit tests to ensure no regressions\n   - Test error handling scenarios with invalid inputs\n   - Verify API response type validation works correctly\n   - Test schema validation with malformed data\n\n4. **Manual Code Review:**\n   - Review all modified files for consistency\n   - Verify proper TypeScript best practices\n   - Check error handling patterns are applied uniformly\n   - Ensure documentation is comprehensive and accurate\n\n5. **Performance Testing:**\n   - Measure build time improvements\n   - Verify runtime performance is not degraded\n   - Test memory usage with improved type definitions",
         "status": "done",
-        "dependencies": [
-          27,
-          28,
-          29,
-          30,
-          31,
-          32,
-          33,
-          34,
-          36,
-          37,
-          38
-        ],
+        "dependencies": [27, 28, 29, 30, 31, 32, 33, 34, 36, 37, 38],
         "priority": "medium",
         "subtasks": [
           {
@@ -1587,9 +1248,7 @@
             "id": 2,
             "title": "Add Missing Type Definitions",
             "description": "Create comprehensive type definitions for all API endpoints, configuration objects, options, status enums, constants, and utility types for common patterns.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Identify all areas lacking type definitions, including API interfaces, configuration schemas, enums, and utility types. Implement and document these types to ensure clarity and reusability across the codebase.",
             "status": "done",
             "testStrategy": "Validate that all new types are used in relevant modules and that TypeScript infers correct types throughout. Add or update tests to cover new type definitions."
@@ -1598,9 +1257,7 @@
             "id": 3,
             "title": "Enforce Code Style Consistency",
             "description": "Implement and configure ESLint and Prettier, standardize naming conventions, import/export patterns, function declaration styles, and ensure consistent formatting and indentation.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Set up ESLint and Prettier with project-specific rules. Refactor code to follow standardized naming conventions (camelCase, PascalCase), consistent import/export syntax, and uniform function declarations. Apply formatting across all files.",
             "status": "done",
             "testStrategy": "Run automated linting and formatting checks. Ensure all files pass linting without errors or warnings."
@@ -1609,10 +1266,7 @@
             "id": 4,
             "title": "Implement Consistent Error Handling Patterns",
             "description": "Standardize error handling across all API calls, create custom error classes, add error propagation and logging, implement retry mechanisms for transient failures, and handle validation errors for schema mismatches.",
-            "dependencies": [
-              2,
-              3
-            ],
+            "dependencies": [2, 3],
             "details": "Audit all error handling logic. Refactor to use custom error classes, ensure errors are logged and propagated appropriately, add retries for transient errors, and handle validation errors with clear messaging.",
             "status": "done",
             "testStrategy": "Write and execute tests for error scenarios, including API failures, validation errors, and retry logic. Confirm that errors are handled and logged as expected."
@@ -1621,9 +1275,7 @@
             "id": 5,
             "title": "Optimize Code Organization and Documentation",
             "description": "Review and optimize the file structure, ensure proper separation of concerns, add comprehensive JSDoc comments, remove dead code and unused imports, and optimize type imports versus value imports.",
-            "dependencies": [
-              4
-            ],
+            "dependencies": [4],
             "details": "Restructure files and folders for logical organization, document all modules and functions with JSDoc, eliminate unused code and imports, and distinguish between type-only and value imports for clarity and performance.\n<info added on 2025-07-08T18:52:08.650Z>\nDocker rebuild completed successfully with production-ready image float-mcp:latest. Build time 34.7s, optimized to 276MB. All reorganized tool structure compiled correctly with proper import paths, TypeScript compilation working, and type checking passing completely. Container validation confirms API key requirement, correct dist/ directory structure, and all organized tool files present in core/, project-management/, time-management/, and reporting/ directories. Main entry point executable with proper error handling and validation. Image ready for deployment.\n</info added on 2025-07-08T18:52:08.650Z>\n<info added on 2025-07-08T19:30:33.605Z>\nCI pipeline issues resolved with comprehensive linting error fixes. Addressed 18 critical linting errors including unused imports in integration test files (beforeEach, afterEach, executeTool, testDataTracker), removed unused error imports from error-handling.ts, commented out unused StdioServerTransport import, and corrected malformed return type annotation in expectError function from Promise<e> to Promise<Error>. Successfully reduced critical errors from 18 to 9. All builds and type checking now pass verification with npm run build, npm run typecheck, and Docker build completing in 22.1s. Docker image rebuilt as float-mcp:ci-fixed and tagged as latest. Git commit and push completed successfully. CI pipeline should now pass on next run with significantly improved code quality while maintaining full functionality.\n</info added on 2025-07-08T19:30:33.605Z>",
             "status": "done",
             "testStrategy": "Verify that the codebase is free of dead code and unused imports, documentation is present and accurate, and the project structure aligns with best practices."
@@ -1637,11 +1289,7 @@
         "details": "Prepare the Float API MCP integration project for publication by implementing comprehensive packaging and release infrastructure:\n\n1. **Package.json Configuration**:\n   - Update metadata fields (name, description, version, author, license)\n   - Configure proper entry points and exports\n   - Set up keywords for discoverability\n   - Define repository, bugs, and homepage URLs\n   - Configure engines and peerDependencies\n   - Add proper scripts for build, test, and release\n\n2. **Release Workflow Implementation**:\n   - Create GitHub Actions workflow (.github/workflows/release.yml)\n   - Implement automated testing before release\n   - Set up semantic versioning with conventional commits\n   - Configure automated npm publishing\n   - Add release asset generation and GitHub releases\n\n3. **Versioning Strategy**:\n   - Implement semantic versioning (semver) compliance\n   - Create version bump scripts\n   - Configure changelog generation from commit messages\n   - Set up pre-release and beta channel support\n\n4. **Documentation for Release**:\n   - Create CHANGELOG.md with proper formatting\n   - Generate release notes template\n   - Document release process in CONTRIBUTING.md\n   - Create migration guides for breaking changes\n\n5. **Publication Preparation**:\n   - Configure .npmignore for clean package distribution\n   - Set up build artifacts and distribution files\n   - Validate package contents and size\n   - Configure npm registry settings and access tokens\n\n```json\n// Example package.json updates\n{\n  \"name\": \"@your-org/float-api-mcp\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Model Context Protocol integration for Float API v3\",\n  \"main\": \"dist/index.js\",\n  \"types\": \"dist/index.d.ts\",\n  \"exports\": {\n    \".\": {\n      \"import\": \"./dist/index.mjs\",\n      \"require\": \"./dist/index.js\",\n      \"types\": \"./dist/index.d.ts\"\n    }\n  },\n  \"scripts\": {\n    \"release\": \"semantic-release\",\n    \"version\": \"conventional-changelog -p angular -i CHANGELOG.md -s\"\n  }\n}\n```",
         "testStrategy": "1. Validate package.json structure and metadata completeness\n2. Test release workflow in staging environment with dry-run\n3. Verify semantic versioning works correctly with test commits\n4. Test npm package installation and imports in clean environment\n5. Validate changelog generation from commit history\n6. Test GitHub Actions workflow triggers and permissions\n7. Verify release notes generation and formatting\n8. Test package size and contents meet distribution requirements\n9. Validate all documentation links and references work correctly\n10. Perform end-to-end release test with beta version",
         "status": "pending",
-        "dependencies": [
-          43,
-          40,
-          41
-        ],
+        "dependencies": [43, 40, 41],
         "priority": "medium",
         "subtasks": [
           {
@@ -1657,9 +1305,7 @@
             "id": 2,
             "title": "Implement Automated Release Workflow",
             "description": "Create and configure a GitHub Actions workflow for automated releases, including pre-release testing, semantic versioning, npm publishing, asset generation, and GitHub release creation.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Develop .github/workflows/release.yml to automate the release process. Integrate conventional commits for semantic versioning and ensure all release steps are executed in sequence.",
             "status": "pending",
             "testStrategy": "Trigger workflow on test branches and verify that all steps (tests, version bump, changelog, npm publish, GitHub release) execute successfully."
@@ -1668,9 +1314,7 @@
             "id": 3,
             "title": "Establish Semantic Versioning and Version Bump Automation",
             "description": "Implement semantic versioning compliance, create scripts for automated version bumps, configure changelog generation from commit messages, and support pre-release/beta channels.",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Integrate tools like semantic-release and conventional-changelog. Ensure versioning strategy is documented and enforced through CI/CD.",
             "status": "pending",
             "testStrategy": "Simulate various commit scenarios and verify correct version increments and changelog updates."
@@ -1679,9 +1323,7 @@
             "id": 4,
             "title": "Prepare and Document Release Artifacts",
             "description": "Create and maintain CHANGELOG.md, generate release notes templates, document the release process in CONTRIBUTING.md, and provide migration guides for breaking changes.",
-            "dependencies": [
-              3
-            ],
+            "dependencies": [3],
             "details": "Ensure all documentation is clear, up-to-date, and accessible. Automate changelog and release note generation where possible.",
             "status": "pending",
             "testStrategy": "Review documentation for completeness and clarity; verify that generated changelogs and release notes accurately reflect recent changes."
@@ -1690,9 +1332,7 @@
             "id": 5,
             "title": "Finalize Publication and Distribution Settings",
             "description": "Configure .npmignore, set up build artifacts and distribution files, validate package contents and size, and configure npm registry settings and access tokens for secure publication.",
-            "dependencies": [
-              4
-            ],
+            "dependencies": [4],
             "details": "Ensure only necessary files are included in the published package, build outputs are correct, and npm credentials are securely managed.",
             "status": "pending",
             "testStrategy": "Perform a dry-run npm publish, inspect the resulting package, and confirm registry access and artifact integrity."
@@ -1706,12 +1346,7 @@
         "details": "Create comprehensive development and contribution documentation to enable smooth onboarding and collaboration. Implement the following documentation components:\n\n1. **CONTRIBUTING.md** - Main contribution guide:\n   - Development environment setup (Node.js, npm/yarn requirements)\n   - Repository cloning and dependency installation\n   - Environment configuration (API keys, test credentials)\n   - Local development server setup\n   - Testing procedures (unit, integration, linting)\n\n2. **Development Workflow Documentation** (docs/development/):\n   - Git workflow and branching strategy\n   - Pull request process and review guidelines\n   - Issue reporting and feature request templates\n   - Release process and versioning\n   - CI/CD pipeline documentation\n\n3. **Code Style Standards** (docs/development/code-style.md):\n   - TypeScript/JavaScript coding conventions\n   - ESLint and Prettier configuration\n   - File naming conventions\n   - Code organization patterns\n   - Documentation standards for functions and classes\n\n4. **Development Setup Guide** (docs/development/setup.md):\n   - Prerequisites and system requirements\n   - IDE/editor recommendations and configurations\n   - Debugging setup and techniques\n   - Testing environment configuration\n   - Common troubleshooting solutions\n\n5. **Architecture Documentation** (docs/development/architecture.md):\n   - Project structure overview\n   - MCP integration patterns\n   - Float API service architecture\n   - Error handling patterns\n   - Schema validation approach\n\nInclude GitHub templates for issues and pull requests, pre-commit hooks configuration, and automated code quality checks.",
         "testStrategy": "1. Verify development setup instructions work on clean environments (different OS)\n2. Test that new contributors can successfully set up development environment\n3. Validate all code examples and commands execute correctly\n4. Check that style guide examples match actual project code patterns\n5. Ensure GitHub templates render correctly and provide clear guidance\n6. Test pre-commit hooks and automated quality checks function properly\n7. Verify documentation links and references are accurate\n8. Review contribution workflow with actual pull request simulation\n9. Validate that troubleshooting guides address common setup issues\n10. Ensure documentation stays current with project dependencies and tools",
         "status": "pending",
-        "dependencies": [
-          43,
-          40,
-          39,
-          41
-        ],
+        "dependencies": [43, 40, 39, 41],
         "priority": "low",
         "subtasks": [
           {
@@ -1736,10 +1371,7 @@
             "id": 3,
             "title": "Develop Contribution Guidelines",
             "description": "Write a comprehensive CONTRIBUTING.md covering environment setup, repository cloning, dependency installation, environment configuration, local server setup, and testing procedures.",
-            "dependencies": [
-              1,
-              2
-            ],
+            "dependencies": [1, 2],
             "details": "Include step-by-step onboarding instructions, testing commands, and expectations for code contributions. Reference the code style guide and setup documentation.",
             "status": "pending",
             "testStrategy": "Have a new contributor follow the guide to onboard and submit a test contribution, verifying clarity and completeness."
@@ -1748,9 +1380,7 @@
             "id": 4,
             "title": "Document Development Workflow",
             "description": "Create documentation for the development workflow, including Git branching strategy, pull request process, review guidelines, issue and feature request templates, release process, and CI/CD pipeline.",
-            "dependencies": [
-              3
-            ],
+            "dependencies": [3],
             "details": "Provide clear instructions for collaborating via GitHub, submitting and reviewing pull requests, reporting issues, and following the release process. Include templates and automation setup for code quality checks.",
             "status": "pending",
             "testStrategy": "Simulate a feature development cycle, from issue creation to pull request and release, using the documented workflow."
@@ -1773,11 +1403,7 @@
         "details": "Create a comprehensive testing strategy document that outlines the testing framework architecture for the Float MCP server. This planning task should establish:\n\n1. **Testing Architecture Design**:\n   - Define testing layers (unit, integration, end-to-end)\n   - Establish testing directory structure (src/tests/unit/, src/tests/integration/, src/tests/schemas/)\n   - Design test configuration and setup patterns\n   - Plan test data management and mocking strategies\n\n2. **Unit Testing Strategy**:\n   - Define unit test patterns for Float API service methods\n   - Plan mocking strategies for external API calls\n   - Design test coverage requirements and metrics\n   - Establish testing patterns for Zod schema validation\n   - Plan error handling test scenarios\n\n3. **Integration Testing Framework**:\n   - Design integration test structure for Float API endpoints\n   - Plan test environment setup and configuration\n   - Define test data seeding and cleanup strategies\n   - Design rate limiting and authentication test approaches\n   - Plan cross-endpoint dependency testing\n\n4. **Schema Validation Testing**:\n   - Design comprehensive schema validation test patterns\n   - Plan testing for all Float API response schemas\n   - Define edge case and boundary testing for schemas\n   - Plan validation error testing scenarios\n\n5. **Testing Tools and Configuration**:\n   - Document Jest configuration and setup\n   - Plan test utilities and helper functions\n   - Design CI/CD integration testing pipeline\n   - Establish test reporting and coverage requirements\n   - Plan performance and load testing considerations\n\n6. **Test Documentation Standards**:\n   - Define test naming conventions and organization\n   - Establish test documentation requirements\n   - Plan test maintenance and update procedures",
         "testStrategy": "1. Review testing strategy document for completeness and technical feasibility\n2. Validate proposed testing architecture against current codebase structure\n3. Verify testing patterns align with Float API endpoint implementations\n4. Check integration testing approach covers all implemented endpoints (tasks 28-37)\n5. Ensure schema validation testing covers all Zod schemas\n6. Validate testing tool selections and configurations\n7. Review test coverage requirements and metrics for reasonableness\n8. Verify CI/CD integration approach is practical and implementable\n9. Check test documentation standards are comprehensive and maintainable\n10. Ensure testing strategy supports future endpoint additions and modifications",
         "status": "pending",
-        "dependencies": [
-          41,
-          39,
-          40
-        ],
+        "dependencies": [41, 39, 40],
         "priority": "low",
         "subtasks": [
           {
@@ -1793,9 +1419,7 @@
             "id": 2,
             "title": "Develop Unit Testing Strategy",
             "description": "Plan the unit testing approach for Float API service methods, including mocking strategies for external dependencies, test coverage metrics, schema validation patterns, and error handling scenarios.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Define patterns for writing unit tests, establish guidelines for mocking external API calls, set coverage targets, and specify how to test Zod schema validation and error handling.",
             "status": "pending",
             "testStrategy": "Ensure all service logic is tested in isolation with mocks/stubs for dependencies, and validate schema correctness at the unit level."
@@ -1804,9 +1428,7 @@
             "id": 3,
             "title": "Design Integration Testing Framework",
             "description": "Outline the structure and requirements for integration tests, including environment setup, data seeding and cleanup, rate limiting, authentication, and cross-endpoint dependency testing.",
-            "dependencies": [
-              1
-            ],
+            "dependencies": [1],
             "details": "Document how integration tests will be organized, how environments will be configured, and how dependencies and data will be managed for realistic test scenarios.",
             "status": "pending",
             "testStrategy": "Simulate real-world interactions between services and endpoints, ensuring correct integration and handling of dependencies."
@@ -1815,9 +1437,7 @@
             "id": 4,
             "title": "Plan Schema Validation Testing",
             "description": "Design comprehensive schema validation test patterns for all Float API response schemas, including edge case, boundary, and validation error scenarios.",
-            "dependencies": [
-              2
-            ],
+            "dependencies": [2],
             "details": "Specify how schema validation tests will be structured, which schemas will be covered, and how to address edge cases and error conditions.",
             "status": "pending",
             "testStrategy": "Automate schema validation for all API responses, ensuring strict adherence to defined contracts and robust error handling."
@@ -1826,12 +1446,7 @@
             "id": 5,
             "title": "Establish Testing Tools, CI/CD Integration, and Documentation Standards",
             "description": "Document the configuration and setup for testing tools (e.g., Jest), plan test utilities, CI/CD pipeline integration, reporting, coverage requirements, and define test documentation and maintenance standards.",
-            "dependencies": [
-              1,
-              2,
-              3,
-              4
-            ],
+            "dependencies": [1, 2, 3, 4],
             "details": "Specify tool configurations, helper utilities, CI/CD integration steps, reporting formats, and standards for naming, organizing, and maintaining tests.",
             "status": "pending",
             "testStrategy": "Integrate automated testing into the development pipeline, enforce documentation standards, and ensure maintainability and visibility of test results."

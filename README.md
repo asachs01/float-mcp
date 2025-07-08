@@ -9,6 +9,7 @@ A comprehensive **Model Context Protocol (MCP) server** that provides seamless i
 ## 🌟 Features
 
 ### **Complete Float API Coverage**
+
 - **👥 People Management** - Full CRUD operations for team members
 - **📁 Project Management** - Projects, phases, tasks, and milestones
 - **⏱️ Time Tracking** - Logged time, timesheets, and billable hours
@@ -19,6 +20,7 @@ A comprehensive **Model Context Protocol (MCP) server** that provides seamless i
 - **📈 Reports** - Time reports, utilization, and project analytics
 
 ### **Advanced Features**
+
 - **🔄 Rate Limiting** - Built-in API rate limiting with exponential backoff
 - **🛡️ Type Safety** - Full TypeScript support with Zod schema validation
 - **📝 Comprehensive Logging** - Detailed logging for debugging and monitoring
@@ -29,6 +31,7 @@ A comprehensive **Model Context Protocol (MCP) server** that provides seamless i
 ## 🚀 Quick Start
 
 ### **Prerequisites**
+
 - Node.js 22.0.0 or later
 - Float.com account with API access
 - Valid Float API key
@@ -93,12 +96,14 @@ Add to your MCP client configuration (e.g., Claude Desktop):
 The Float MCP server provides **246+ tools** organized into logical categories:
 
 ### **Core Entity Management**
+
 - **People**: `list-people`, `get-person`, `create-person`, `update-person`, `delete-person`
 - **Departments**: `list-departments`, `get-department`, `create-department`, `update-department`, `delete-department`
 - **Roles**: `list-roles`, `get-role`, `create-role`, `update-role`, `delete-role`
 - **Accounts**: `list-accounts`, `get-account`, `create-account`, `update-account`, `deactivate-account`
 
 ### **Project Management**
+
 - **Projects**: `list-projects`, `get-project`, `create-project`, `update-project`, `delete-project`
 - **Tasks**: `list-tasks`, `get-task`, `create-task`, `update-task`, `delete-task`
 - **Phases**: `list-phases`, `get-phase`, `create-phase`, `update-phase`, `delete-phase`
@@ -106,15 +111,18 @@ The Float MCP server provides **246+ tools** organized into logical categories:
 - **Clients**: `list-clients`, `get-client`, `create-client`, `update-client`, `delete-client`
 
 ### **Resource Allocation**
+
 - **Allocations**: `list-allocations`, `get-allocation`, `create-allocation`, `update-allocation`, `delete-allocation`
 - **Project Tasks**: `list-project-tasks`, `get-project-task`, `bulk-create-project-tasks`, `reorder-project-tasks`
 
 ### **Time Management**
+
 - **Time Off**: `list-timeoff`, `create-timeoff`, `approve-timeoff`, `reject-timeoff`, `get-timeoff-calendar`
 - **Logged Time**: `list-logged-time`, `create-logged-time`, `get-timesheet`, `get-billable-time-report`
 - **Holidays**: `list-public-holidays`, `list-team-holidays`, `create-public-holiday`
 
 ### **Reporting & Analytics**
+
 - **Reports**: `get-time-report`, `get-project-report`, `get-people-utilization-report`
 - **Analytics**: `get-person-logged-time-summary`, `get-project-logged-time-summary`
 
@@ -122,13 +130,13 @@ The Float MCP server provides **246+ tools** organized into logical categories:
 
 ### **Environment Variables**
 
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `FLOAT_API_KEY` | Your Float API key (starts with `flt_`) | ✅ Yes | - |
-| `FLOAT_API_BASE_URL` | Float API base URL | ❌ No | `https://api.float.com/v3` |
-| `LOG_LEVEL` | Logging level (`error`, `warn`, `info`, `debug`) | ❌ No | `info` |
-| `MAX_RETRIES` | Maximum API retry attempts | ❌ No | `3` |
-| `REQUEST_TIMEOUT` | API request timeout (ms) | ❌ No | `30000` |
+| Variable             | Description                                      | Required | Default                    |
+| -------------------- | ------------------------------------------------ | -------- | -------------------------- |
+| `FLOAT_API_KEY`      | Your Float API key (starts with `flt_`)          | ✅ Yes   | -                          |
+| `FLOAT_API_BASE_URL` | Float API base URL                               | ❌ No    | `https://api.float.com/v3` |
+| `LOG_LEVEL`          | Logging level (`error`, `warn`, `info`, `debug`) | ❌ No    | `info`                     |
+| `MAX_RETRIES`        | Maximum API retry attempts                       | ❌ No    | `3`                        |
+| `REQUEST_TIMEOUT`    | API request timeout (ms)                         | ❌ No    | `30000`                    |
 
 ### **Getting a Float API Key**
 
@@ -151,18 +159,18 @@ const project = await getProject({ project_id: 12345 });
 
 // Create a new person
 const person = await createPerson({
-  name: "John Doe",
-  email: "john@example.com",
-  department_id: 1
+  name: 'John Doe',
+  email: 'john@example.com',
+  department_id: 1,
 });
 
 // Schedule an allocation
 const allocation = await createAllocation({
   project_id: 12345,
   people_id: 67890,
-  start_date: "2024-01-15",
-  end_date: "2024-01-31",
-  hours: 8
+  start_date: '2024-01-15',
+  end_date: '2024-01-31',
+  hours: 8,
 });
 ```
 
@@ -171,32 +179,32 @@ const allocation = await createAllocation({
 ```typescript
 // Get team utilization report
 const utilization = await getPeopleUtilizationReport({
-  start_date: "2024-01-01",
-  end_date: "2024-12-31"
+  start_date: '2024-01-01',
+  end_date: '2024-12-31',
 });
 
 // Bulk create project tasks
 const tasks = await bulkCreateProjectTasks({
   project_id: 12345,
   tasks: [
-    { name: "Design Phase", start_date: "2024-01-01" },
-    { name: "Development Phase", start_date: "2024-01-15" }
-  ]
+    { name: 'Design Phase', start_date: '2024-01-01' },
+    { name: 'Development Phase', start_date: '2024-01-15' },
+  ],
 });
 
 // Process time off request
 await createTimeOff({
   people_ids: [67890],
   timeoff_type_id: 1,
-  start_date: "2024-02-01",
-  end_date: "2024-02-05",
-  status: 1 // Pending approval
+  start_date: '2024-02-01',
+  end_date: '2024-02-05',
+  status: 1, // Pending approval
 });
 
 await approveTimeOff({
   timeoff_id: 123,
   approved_by: 456,
-  notes: "Approved for vacation"
+  notes: 'Approved for vacation',
 });
 ```
 
@@ -257,7 +265,7 @@ services:
       - FLOAT_API_KEY=flt_your_api_key_here
       - LOG_LEVEL=info
     ports:
-      - "3000:3000"
+      - '3000:3000'
     restart: unless-stopped
 ```
 
@@ -266,18 +274,21 @@ services:
 ### **Common Issues**
 
 **API Key Issues**
+
 ```bash
 Error: Unauthorized (401)
 # Solution: Check your API key format and validity
 ```
 
 **Rate Limiting**
+
 ```bash
 Error: Too Many Requests (429)
 # Solution: The server automatically handles rate limiting with exponential backoff
 ```
 
 **Connection Issues**
+
 ```bash
 Error: Network timeout
 # Solution: Check your internet connection and Float API status
