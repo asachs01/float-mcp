@@ -81,19 +81,23 @@ Add this configuration to your Claude Desktop config file:
       "command": "docker",
       "args": [
         "run", "--rm", "-i",
-        "--env-file", "/path/to/your/float-mcp/.env",
-        "ghcr.io/yourusername/float-mcp:latest",
-        "node", "dist/index.js", "--mcp"
+        "ghcr.io/asachs01/float-mcp:latest"
       ],
       "env": {
-        "FLOAT_API_KEY": "your_float_api_key_here",
-        "FLOAT_API_BASE_URL": "https://api.float.com/v3",
-        "NODE_ENV": "production",
-        "LOG_LEVEL": "error",
-        "LOG_FORMAT": "json"
+        "FLOAT_API_KEY": "your_float_api_key_here"
       }
     }
   }
+}
+```
+
+**Optional environment variables** (add to `env` section if needed):
+```json
+{
+  "FLOAT_API_BASE_URL": "https://api.float.com/v3",
+  "NODE_ENV": "production", 
+  "LOG_LEVEL": "error",
+  "LOG_FORMAT": "json"
 }
 ```
 
@@ -126,10 +130,10 @@ Pre-built Docker images are available from GitHub Container Registry:
 
 ```bash
 # Latest version
-docker pull ghcr.io/yourusername/float-mcp:latest
+docker pull ghcr.io/asachs01/float-mcp:latest
 
 # Specific version
-docker pull ghcr.io/yourusername/float-mcp:v0.1.0
+docker pull ghcr.io/asachs01/float-mcp:v0.2.0
 ```
 
 ### Building Locally
@@ -312,7 +316,7 @@ Enable detailed logging:
 export LOG_LEVEL=debug
 
 # Or in Docker
-docker run -e LOG_LEVEL=debug ghcr.io/yourusername/float-mcp:latest
+docker run --rm -i -e LOG_LEVEL=debug ghcr.io/asachs01/float-mcp:latest
 ```
 
 ### Testing MCP Connection
@@ -323,8 +327,7 @@ Test the server manually:
 echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | \
   docker run --rm -i \
     -e FLOAT_API_KEY="your_key" \
-    ghcr.io/yourusername/float-mcp:latest \
-    node dist/index.js --mcp
+    ghcr.io/asachs01/float-mcp:latest
 ```
 
 ## Contributing

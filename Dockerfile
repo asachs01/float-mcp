@@ -37,5 +37,5 @@ RUN groupadd -r floatmcp && useradd -r -g floatmcp floatmcp
 RUN chown -R floatmcp:floatmcp /app
 USER floatmcp
 
-# Start the application
-CMD ["node", "dist/index.js"] 
+# Default to MCP mode for Claude Desktop compatibility
+CMD ["node", "dist/index.js", "--mcp"] 
