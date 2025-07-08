@@ -1,0 +1,77 @@
+# Task ID: 32
+# Title: Implement Public Holidays Endpoint
+# Status: done
+# Dependencies: 27
+# Priority: medium
+# Description: Create a complete implementation of the Public Holidays endpoint following the Float API v3 specification, including listing public holidays, managing holiday calendar, and supporting multi-region holidays.
+# Details:
+Implementation completed successfully. Created comprehensive public holidays MCP tools in src/tools/public-holidays.ts with:
+
+1. Added publicHolidaySchema to src/types/float.ts with proper Zod validation
+2. Implemented 5 core tools: listPublicHolidays, getPublicHoliday, createPublicHoliday, updatePublicHoliday, deletePublicHoliday
+3. Features include:
+   - Date range filtering (start_date, end_date)
+   - Multi-region support (region, country fields)
+   - Holiday type support (moveable, recurring, fixed)
+   - Full CRUD operations with proper error handling
+   - Pagination support for listing
+   - Proper Float API patterns following existing tools
+
+4. Updated src/tools/index.ts to export all new tools
+5. All builds and type checks pass successfully
+
+The implementation follows Float API v3 conventions and established patterns from other tools in the codebase.
+
+Public holiday schema structure:
+```typescript
+export const publicHolidaySchema = z.object({
+  holiday_id: z.union([z.string(), z.number()]),
+  name: z.string(),
+  date: z.string(), // ISO date format
+  region: z.string().nullable(),
+  country: z.string().nullable(),
+  type: z.string().optional(), // moveable, recurring, fixed
+  // Additional fields from Float API
+});
+```
+
+# Test Strategy:
+1. Unit test each public holiday endpoint function with mocked API responses
+2. Test CRUD operations for public holidays
+3. Test date range filtering and pagination
+4. Test region-specific filtering
+5. Verify schema validation for holiday objects
+6. Integration test with actual Float API in a test environment
+7. Test multi-region holiday support
+
+# Subtasks:
+## 1. Create Public Holiday Schema and Types [completed]
+### Dependencies: None
+### Description: Add publicHolidaySchema to src/types/float.ts with proper Zod validation for Float API v3 compatibility.
+### Details:
+Implemented publicHolidaySchema in src/types/float.ts with support for holiday_id, name, date, region, country, and type fields. Schema includes proper validation and nullable fields as per Float API specification.
+
+## 2. Implement Core Public Holiday Tools [completed]
+### Dependencies: 32.1
+### Description: Create comprehensive MCP tools for public holiday management in src/tools/public-holidays.ts.
+### Details:
+Implemented 5 core tools: listPublicHolidays (with date range and region filtering), getPublicHoliday, createPublicHoliday, updatePublicHoliday, and deletePublicHoliday. All tools follow established Float API patterns and include proper error handling.
+
+## 3. Add Multi-Region and Date Filtering Support [completed]
+### Dependencies: 32.2
+### Description: Implement advanced filtering capabilities for public holidays including multi-region support and date range queries.
+### Details:
+Added support for region and country filtering, date range queries (start_date, end_date), and holiday type filtering (moveable, recurring, fixed). Pagination support included for listing operations.
+
+## 4. Update Tool Exports [completed]
+### Dependencies: 32.2
+### Description: Export all new public holiday tools in src/tools/index.ts for MCP server integration.
+### Details:
+Updated src/tools/index.ts to export all 5 public holiday tools, ensuring they are available for MCP server registration and client usage.
+
+## 5. Validate Implementation and Build Process [completed]
+### Dependencies: 32.3, 32.4
+### Description: Ensure all implementations pass type checking and build validation.
+### Details:
+All builds and type checks pass successfully. Implementation follows Float API v3 conventions and established patterns from other tools in the codebase.
+

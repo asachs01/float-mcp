@@ -1,0 +1,85 @@
+# Task ID: 31
+# Title: Implement Time Off Types Endpoint
+# Status: done
+# Dependencies: 27
+# Priority: high
+# Description: Create a complete implementation of the Time Off Types endpoint following the Float API v3 specification, including listing time off types (vacation, sick, etc.), creating custom time off types, and managing type configuration.
+# Details:
+Extend the FloatApi service to add time-off-type related methods. Create Zod schemas in src/schemas/timeofftypes.ts for validation. Implement the following functions:
+
+1. listTimeOffTypes: Fetch all time off types
+2. getTimeOffType: Get details for a specific time off type
+3. createTimeOffType: Create a new custom time off type
+4. updateTimeOffType: Update an existing time off type
+5. deleteTimeOffType: Remove a time off type
+
+The time off type schema should handle Float's structure:
+```typescript
+export const timeOffTypeSchema = z.object({
+  type_id: z.union([z.string(), z.number()]),
+  name: z.string(),
+  color: z.string().nullable(),
+  is_default: z.boolean().nullable(),
+  is_active: z.boolean().nullable(),
+  // Add additional fields from Float API
+});
+
+export const timeOffTypeListSchema = z.array(timeOffTypeSchema);
+
+// In tools file
+export const createTimeOffTypeTool = createTool({
+  name: 'createTimeOffType',
+  description: 'Create a new time off type in Float',
+  parameters: z.object({
+    name: z.string().describe('The name of the time off type'),
+    color: z.string().optional().describe('Color code for the time off type'),
+    is_active: z.boolean().optional().describe('Whether this type is active')
+    // Add other parameters
+  }),
+  execute: async (params) => {
+    const floatApi = new FloatApi();
+    return await floatApi.post('/timeoff-types', params);
+  }
+});
+```
+Ensure proper handling of default time off types and active/inactive status.
+
+# Test Strategy:
+1. Unit test each time off type endpoint function with mocked API responses
+2. Test CRUD operations for time off types
+3. Verify schema validation for time off type objects
+4. Test handling of default and custom time off types
+5. Test active/inactive status changes
+6. Integration test with actual Float API in a test environment
+
+# Subtasks:
+## 1. Design Schema for Time Off Types [done]
+### Dependencies: None
+### Description: Create a database schema to represent different time off types, including fields for name, description, default status, and active status. Ensure the schema supports integration with existing time off request structures.
+### Details:
+Define tables and relationships for time off types. Include fields such as id, name, description, is_default, is_active, and timestamps. Consider normalization and future extensibility.
+
+## 2. Implement CRUD Operations for Time Off Types [done]
+### Dependencies: 31.1
+### Description: Develop API endpoints and backend logic to list, get, create, update, and delete time off types using the designed schema.
+### Details:
+Implement endpoints: listTimeOffTypes, getTimeOffType, createTimeOffType, updateTimeOffType, deleteTimeOffType. Ensure proper validation and error handling.
+
+## 3. Handle Default and Active Status Logic [done]
+### Dependencies: 31.2
+### Description: Implement logic to manage default and active statuses for time off types, ensuring only one default and proper handling of active/inactive states.
+### Details:
+Enforce business rules: only one time off type can be default at a time, and inactive types cannot be selected for new requests. Update related endpoints to respect these rules.
+
+## 4. Integrate Time Off Types with Time Off Endpoints [done]
+### Dependencies: 31.3
+### Description: Update existing time off request endpoints to use the new time off type schema, ensuring compatibility and data integrity.
+### Details:
+Modify time off request creation and retrieval to reference time off type IDs. Migrate existing data if necessary and update documentation.
+
+## 5. Write Automated Tests for Time Off Type Functionality [done]
+### Dependencies: 31.4
+### Description: Develop comprehensive tests for all CRUD operations, status logic, and integration points to ensure correctness and prevent regressions.
+### Details:
+Write unit and integration tests covering all endpoints, status transitions, and edge cases. Use mocks or test databases as appropriate.
+

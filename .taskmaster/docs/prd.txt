@@ -1,228 +1,184 @@
-# Float MCP Server - Python Rewrite using FastMCP
+# Float MCP Server - Complete API Implementation PRD
 
 ## Project Overview
-Complete rewrite of the Float MCP server from TypeScript/Node.js to Python using the FastMCP framework. The original TypeScript implementation had persistent issues with Claude Desktop integration due to Docker configuration complexity and environment variable handling.
+This project aims to implement a comprehensive Float MCP (Model Context Protocol) server that provides complete coverage of the Float API v3 endpoints. Currently, the project has partial implementation covering basic CRUD operations for Projects, People, Tasks/Allocations, Clients, Departments, and Reports. However, many critical Float API endpoints are missing.
 
-## Business Context
-Float.com is a resource planning and time tracking platform. This MCP server provides Claude Desktop users with tools to interact with Float's API for project management, resource allocation, and time tracking operations.
+## Current Implementation Status
+**✅ Implemented Endpoints:**
+- Projects (CRUD)
+- People (CRUD) 
+- Tasks/Allocations (CRUD)
+- Clients (CRUD)
+- Departments (CRUD)
+- Reports (Time, Project, People Utilization)
 
-## Float API Documentation
-**Base URL**: https://api.float.com/v3  
-**Authentication**: Bearer token (obtained from Float Account Settings → Integrations)  
-**Data Formats**: JSON (preferred) and XML  
-**Documentation**: https://developer.float.com
+**❌ Missing Endpoints (Based on Official Float API Documentation):**
+- Accounts
+- Roles  
+- Statuses
+- Time Off
+- Time Off Types
+- Public Holidays
+- Team Holidays
+- Phases
+- Project Tasks (distinct from general Tasks)
+- Milestones
+- Logged Time (distinct from Time Reports)
 
-### API Features
-- RESTful design with standard HTTP methods
-- Pagination (max 200 items per page)
-- Field filtering and sorting
-- Date range filtering
-- Department/project/people filtering
-- Bearer token authentication
-- Rate limiting
+## Technical Requirements
 
-### Key API Endpoints
-- **Accounts**: Account information and settings
-- **Departments**: Organizational departments
-- **People**: Team members and users
-- **Roles**: User roles and permissions
-- **Statuses**: Task and project statuses
-- **Time Off**: Time off requests and approvals
-- **Time Off Types**: Categories of time off
-- **Public Holidays**: Company-wide holidays
-- **Team Holidays**: Team-specific holidays
-- **Clients**: Client organizations
-- **Projects**: Projects and project data
-- **Phases**: Project phases
-- **Project Tasks**: Individual tasks within projects
-- **Milestones**: Project milestones
-- **Allocations**: Resource allocation and scheduling
-- **Logged Time**: Time tracking entries
-- **Reports**: Analytics and reporting data
+### Architecture Constraints
+- Maintain existing Zod schema validation approach
+- Use current TypeScript/Node.js stack with Docker deployment
+- Follow existing patterns in `src/tools/` for new endpoints
+- Maintain compatibility with existing Claude Desktop MCP integration
+- All endpoints must handle Float API's nullable field patterns
+- Support both JSON and XML formats as per Float API specification
 
-## Core Requirements
+### API Specifications
+Based on official Float API v3 documentation (https://developer.float.com/api_reference.html):
 
-### 1. FastMCP Python Implementation
-- Use FastMCP 2.0 framework (https://gofastmcp.com/)
-- Clean, Pythonic implementation with decorators
-- Proper error handling and validation
-- Type hints throughout
+**1. Accounts Endpoint**
+- List accounts
+- Get account details
+- Update account information
+- Account permissions management
 
-### 2. Existing Tools to Implement (25 Total)
-The original TypeScript implementation provided 25 tools across 5 categories:
+**2. Roles Endpoint**
+- List roles
+- Create, read, update, delete roles
+- Role-based access control integration
 
-#### Project Tools (5 tools)
-- `list_projects`: Get all projects with filtering options
-- `get_project`: Get specific project details by ID
-- `create_project`: Create new project
-- `update_project`: Update existing project
-- `delete_project`: Delete project
+**3. Statuses Endpoint**
+- List project/task statuses
+- Create custom statuses
+- Status management operations
 
-#### Task Tools (5 tools)
-- `list_tasks`: Get all tasks with date range and filtering
-- `get_task`: Get specific task details by ID
-- `create_task`: Create new task
-- `update_task`: Update existing task
-- `delete_task`: Delete task
+**4. Time Off Management**
+- List time off requests
+- Create/approve/reject time off
+- Time off calendar integration
+- Bulk time off operations
 
-#### People Tools (5 tools)
-- `list_people`: Get all team members
-- `get_person`: Get specific person details by ID
-- `create_person`: Add new team member
-- `update_person`: Update person information
-- `delete_person`: Remove team member
+**5. Time Off Types**
+- List time off types (vacation, sick, etc.)
+- Create custom time off types
+- Type configuration management
 
-#### Client Tools (5 tools)
-- `list_clients`: Get all clients
-- `get_client`: Get specific client details by ID
-- `create_client`: Create new client
-- `update_client`: Update client information
-- `delete_client`: Delete client
+**6. Holiday Management**
+- Public holidays listing
+- Team-specific holidays
+- Holiday calendar management
+- Multi-region holiday support
 
-#### Allocation Tools (5 tools)
-- `list_allocations`: Get resource allocations with filtering
-- `get_allocation`: Get specific allocation details by ID
-- `create_allocation`: Create new allocation
-- `update_allocation`: Update existing allocation
-- `delete_allocation`: Delete allocation
+**7. Phases**
+- Project phase management
+- Phase CRUD operations
+- Phase scheduling and dependencies
 
-### 3. Authentication & Configuration
-- Bearer token authentication using FLOAT_API_KEY environment variable
-- Base URL: https://api.float.com/v3
-- Proper error handling for authentication failures
-- Configuration validation on startup
+**8. Project Tasks (Enhanced)**
+- Distinct from general allocations
+- Task-specific operations
+- Project task hierarchies
+- Task dependencies
 
-### 4. Docker Integration
-- Single Dockerfile with Python runtime
-- Default to MCP mode for Claude Desktop
-- Environment variable passing without complex Docker args
-- Multi-platform support (linux/amd64, linux/arm64)
+**9. Milestones**
+- Project milestone management
+- Milestone tracking
+- Date-based milestone operations
 
-### 5. GitHub Actions Workflow
-Maintain existing CI/CD pipeline with these jobs:
+**10. Logged Time**
+- Time entry logging
+- Time tracking operations
+- Timesheet management
+- Billable/non-billable time tracking
 
-#### Build and Push Job
-- Checkout repository
-- Setup Node.js (replace with Python 3.11+)
-- Install dependencies (requirements.txt)
-- Run tests (pytest)
-- Build application
-- Docker Buildx setup
-- GitHub Container Registry login
-- Extract metadata for tags
-- Build and push multi-platform Docker image
-- Security scanning with Trivy
-- Upload SARIF results
+## Implementation Goals
 
-#### Test Docker Image Job
-- Test image availability and propagation
-- Functional testing of MCP server
-- Verify all 25 tools are available
-- Docker Compose integration testing
+### Primary Objectives
+1. **Complete API Coverage**: Implement all missing Float API v3 endpoints
+2. **Schema Accuracy**: Create proper Zod schemas that handle Float's nullable field patterns
+3. **Type Safety**: Maintain strict TypeScript typing throughout
+4. **Error Handling**: Robust error handling for all Float API response patterns
+5. **Documentation**: Comprehensive tool descriptions for MCP integration
 
-#### Release Process
-- Tag-based releases (v1.0.0, v1.1.0, etc.)
-- Automatic changelog updates following keepachangelog.com format
-- GitHub Container Registry publishing
-- GitHub Releases with release notes
+### Secondary Objectives
+1. **Performance**: Efficient API calls with proper pagination support
+2. **Testing**: Comprehensive test coverage for new endpoints
+3. **Compatibility**: Maintain backward compatibility with existing tools
+4. **Extensibility**: Clean architecture for future Float API updates
 
-### 6. Claude Desktop Integration
-- Simplified configuration requiring only Docker image name
-- No complex environment variable passing in args
-- Support for `env` section in Claude Desktop config
-- Debug logging for troubleshooting
+## Technical Implementation Details
 
-## Technical Architecture
+### Schema Design Patterns
+- Use nullable schemas for fields that Float API returns as null
+- Implement proper union types for ID fields (string | number)
+- Handle Float's inconsistent date/timestamp field naming
+- Support both detailed and summary response formats
 
-### 1. Project Structure
-```
-float_mcp/
-├── src/
-│   ├── __init__.py
-│   ├── server.py          # FastMCP server setup
-│   ├── config.py          # Configuration and validation
-│   ├── auth.py            # Authentication handling
-│   ├── client.py          # Float API client
-│   └── tools/
-│       ├── __init__.py
-│       ├── projects.py    # Project tools
-│       ├── tasks.py       # Task tools
-│       ├── people.py      # People tools
-│       ├── clients.py     # Client tools
-│       └── allocations.py # Allocation tools
-├── tests/                 # Comprehensive test suite
-├── requirements.txt       # Python dependencies
-├── Dockerfile            # Single-stage Python container
-├── docker-compose.yml    # Local development
-└── README.md             # Updated documentation
-```
+### Tool Architecture
+- Follow existing `createTool` pattern from `src/tools/base.ts`
+- Implement consistent naming: `list*`, `get*`, `create*`, `update*`, `delete*`
+- Provide comprehensive parameter validation
+- Include proper error handling and response validation
 
-### 2. Error Handling
-- Comprehensive exception handling for API failures
-- Proper HTTP status code responses
-- Detailed error messages for troubleshooting
-- Graceful degradation for network issues
-
-### 3. Logging & Monitoring
-- Structured logging with configurable levels
-- Debug mode for troubleshooting Claude Desktop integration
-- Health checks for container orchestration
-
-### 4. Performance
-- Async/await for API calls where possible
-- Connection pooling for HTTP requests
-- Proper rate limiting respect
-- Efficient data serialization
-
-## Migration Strategy
-
-### Phase 1: Foundation
-1. Setup FastMCP Python project structure
-2. Implement basic authentication and configuration
-3. Create Float API client with error handling
-
-### Phase 2: Core Tools
-4. Implement Project tools (5 tools)
-5. Implement Task tools (5 tools)
-6. Implement People tools (5 tools)
-7. Implement Client tools (5 tools)
-8. Implement Allocation tools (5 tools)
-
-### Phase 3: Integration
-9. Docker container setup and testing
-10. GitHub Actions workflow migration
-11. Claude Desktop configuration testing
-12. Documentation and examples
-
-### Phase 4: Release
-13. Comprehensive testing and validation
-14. Performance optimization
-15. Release v1.0.0 with migration guide
+### API Integration Points
+- Extend existing `FloatApi` service in `src/services/float-api.js`
+- Maintain pagination support using `getPaginated` method
+- Handle Float API authentication and rate limiting
+- Support filtering, sorting, and field selection parameters
 
 ## Success Criteria
-- All 25 tools functional and tested
-- Seamless Claude Desktop integration
-- Simplified Docker configuration
-- Comprehensive documentation
-- Automated CI/CD pipeline
-- Performance equal or better than TypeScript version
 
-## Timeline
-- Phase 1: 1-2 days
-- Phase 2: 3-4 days  
-- Phase 3: 2-3 days
-- Phase 4: 1-2 days
-- **Total: 7-11 days**
+### Functional Requirements
+1. All 10 missing endpoint categories fully implemented
+2. 100% compatibility with Float API v3 specification
+3. Proper handling of all Float API response formats
+4. Complete CRUD operations where supported by Float API
+5. Comprehensive parameter validation and error handling
 
-## Risks & Mitigation
-- **FastMCP Learning Curve**: Start with simple tools, reference FastMCP docs
-- **API Compatibility**: Test against Float API thoroughly
-- **Docker Issues**: Use official Python base images, test multi-platform
-- **Claude Desktop Integration**: Implement comprehensive debug logging
+### Quality Requirements
+1. Zero breaking changes to existing functionality
+2. Complete TypeScript type coverage
+3. Consistent tool naming and parameter patterns
+4. Proper Zod schema validation for all responses
+5. Docker image builds successfully with new endpoints
 
-## References
-- Float API Documentation: https://developer.float.com
-- FastMCP Documentation: https://gofastmcp.com/
-- Original TypeScript Implementation: Current codebase
-- Keep a Changelog: https://keepachangelog.com/
-- Semantic Versioning: https://semver.org/ 
+### Integration Requirements
+1. Seamless Claude Desktop MCP integration
+2. All tools appear correctly in MCP tool listings
+3. Proper tool descriptions and parameter documentation
+4. Consistent error handling across all endpoints
+5. Maintains existing authentication patterns
+
+## Project Phases
+
+### Phase 1: Core User Management (Accounts, Roles, Statuses)
+Implement fundamental user and permission management endpoints that support other features.
+
+### Phase 2: Time Management (Time Off, Time Off Types, Holidays)
+Add comprehensive time-off and holiday management capabilities.
+
+### Phase 3: Advanced Project Features (Phases, Milestones, Project Tasks)
+Enhance project management with detailed tracking capabilities.
+
+### Phase 4: Time Tracking (Logged Time)
+Implement detailed time logging and tracking features.
+
+### Phase 5: Integration & Testing
+Comprehensive testing, documentation, and integration verification.
+
+## Dependencies
+- Existing Float API authentication and service layer
+- Current Docker and TypeScript build system
+- Zod schema validation library
+- Existing MCP tools infrastructure
+
+## Risk Mitigation
+1. **API Changes**: Monitor Float API documentation for version updates
+2. **Schema Validation**: Implement flexible schemas that handle Float's nullable patterns
+3. **Rate Limiting**: Respect Float API rate limits in implementation
+4. **Backward Compatibility**: Ensure existing tools continue to function
+5. **Error Handling**: Comprehensive error scenarios and graceful degradation
+
+This PRD outlines the complete implementation of missing Float API endpoints to achieve full API coverage in the Float MCP server. 

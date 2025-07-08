@@ -1,0 +1,88 @@
+# Task ID: 28
+# Title: Implement Roles Endpoint
+# Status: done
+# Dependencies: 27
+# Priority: high
+# Description: Create a complete implementation of the Roles endpoint following the Float API v3 specification, including listing roles, creating, reading, updating, and deleting roles, and integrating role-based access control.
+# Details:
+Extend the FloatApi service to add role-related methods. Create Zod schemas in src/schemas/roles.ts for validation. Implement the following functions:
+
+1. listRoles: Fetch all roles with pagination
+2. getRole: Get details for a specific role
+3. createRole: Create a new role
+4. updateRole: Update an existing role
+5. deleteRole: Remove a role
+
+The roles schema should handle Float's specific role structure:
+```typescript
+export const roleSchema = z.object({
+  role_id: z.union([z.string(), z.number()]),
+  name: z.string(),
+  permissions: z.array(z.string()).nullable(),
+  // Add additional fields from Float API
+});
+
+export const rolesListSchema = z.array(roleSchema);
+
+// In tools file
+export const createRoleTool = createTool({
+  name: 'createRole',
+  description: 'Create a new role in Float',
+  parameters: z.object({
+    name: z.string().describe('The name of the role'),
+    permissions: z.array(z.string()).optional().describe('List of permissions for this role')
+    // Add other required parameters
+  }),
+  execute: async (params) => {
+    const floatApi = new FloatApi();
+    return await floatApi.post('/roles', params);
+  }
+});
+```
+Ensure proper handling of role-based access control integration with existing Float API patterns.
+
+# Test Strategy:
+1. Unit test each role endpoint function with mocked API responses
+2. Test CRUD operations for roles with various permission combinations
+3. Verify schema validation for role objects
+4. Test error cases including duplicate role names
+5. Integration test with actual Float API in a test environment
+6. Verify role-based access control works correctly
+
+# Subtasks:
+## 1. Design Role Schema [done]
+### Dependencies: None
+### Description: Define the database schema for roles, including fields for role name, description, and associated permissions. Ensure the schema supports extensibility for future permission types.
+### Details:
+Consider normalization for permissions, and ensure the schema allows for efficient querying and updates. Include constraints for unique role names.
+
+## 2. Implement listRoles Endpoint with Pagination [done]
+### Dependencies: 28.1
+### Description: Develop the API endpoint to list roles, supporting pagination parameters such as page number and page size.
+### Details:
+Ensure the endpoint returns roles in a consistent order and includes metadata for total count and current page. Validate pagination inputs.
+
+## 3. Implement getRole Endpoint [done]
+### Dependencies: 28.1
+### Description: Create the API endpoint to retrieve a single role by its unique identifier, returning all relevant role details and permissions.
+### Details:
+Handle cases where the role does not exist and return appropriate error responses.
+
+## 4. Implement createRole Endpoint [done]
+### Dependencies: 28.1
+### Description: Develop the API endpoint to create a new role, including validation for required fields and permission assignments.
+### Details:
+Ensure role names are unique and permissions are valid. Return the created role object on success.
+
+## 5. Implement updateRole and deleteRole Endpoints [done]
+### Dependencies: 28.1
+### Description: Build endpoints to update existing roles and delete roles by ID, with validation and error handling.
+### Details:
+Support partial updates for role fields and ensure roles assigned to users cannot be deleted without reassignment.
+
+## 6. Integrate Role-Based Access Control and Write Tests [done]
+### Dependencies: 28.2, 28.3, 28.4, 28.5
+### Description: Integrate RBAC logic into endpoints, enforcing permissions for each operation, and write comprehensive unit and integration tests.
+### Details:
+Ensure only authorized users can perform role management actions. Cover edge cases and permission boundaries in tests.
+

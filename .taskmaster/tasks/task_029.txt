@@ -1,0 +1,82 @@
+# Task ID: 29
+# Title: Implement Statuses Endpoint
+# Status: done
+# Dependencies: 27
+# Priority: medium
+# Description: Create a complete implementation of the Statuses endpoint following the Float API v3 specification, including listing project/task statuses, creating custom statuses, and managing status operations.
+# Details:
+Extend the FloatApi service to add status-related methods. Create Zod schemas in src/schemas/statuses.ts for validation. Implement the following functions:
+
+1. listStatuses: Fetch all statuses with pagination
+2. getStatus: Get details for a specific status
+3. createStatus: Create a new custom status
+4. updateStatus: Update an existing status
+5. deleteStatus: Remove a status
+
+The status schema should handle Float's status structure:
+```typescript
+export const statusSchema = z.object({
+  status_id: z.union([z.string(), z.number()]),
+  name: z.string(),
+  color: z.string().nullable(),
+  is_default: z.boolean().nullable(),
+  // Add additional fields from Float API
+});
+
+export const statusesListSchema = z.array(statusSchema);
+
+// In tools file
+export const listStatusesTool = createTool({
+  name: 'listStatuses',
+  description: 'List all statuses in Float',
+  parameters: z.object({
+    type: z.enum(['project', 'task']).optional().describe('Filter statuses by type')
+    // Add pagination parameters
+  }),
+  execute: async (params) => {
+    const floatApi = new FloatApi();
+    return await floatApi.getPaginated('/statuses', params);
+  }
+});
+```
+Ensure proper handling of status types (project vs task) and default status indicators.
+
+# Test Strategy:
+1. Unit test each status endpoint function with mocked API responses
+2. Test CRUD operations for statuses with various configurations
+3. Verify schema validation for status objects
+4. Test filtering by status type
+5. Test handling of default statuses
+6. Integration test with actual Float API in a test environment
+
+# Subtasks:
+## 1. Schema Design for Statuses [done]
+### Dependencies: None
+### Description: Design a database schema to manage statuses efficiently, ensuring normalization and data integrity.
+### Details:
+Use a separate table for statuses with foreign keys to ensure consistency and flexibility.
+
+## 2. Implement listStatuses with Filtering [done]
+### Dependencies: 29.1
+### Description: Develop a function to list statuses with filtering capabilities based on specific criteria.
+### Details:
+Use SQL queries with WHERE clauses to filter statuses based on input parameters.
+
+## 3. Implement getStatus [done]
+### Dependencies: 29.1
+### Description: Create a function to retrieve a specific status by its identifier.
+### Details:
+Use a SELECT query with a WHERE clause to fetch the status based on its ID.
+
+## 4. Implement create/update/deleteStatus [done]
+### Dependencies: 29.1
+### Description: Develop functions to create, update, and delete statuses while maintaining data integrity.
+### Details:
+Use INSERT, UPDATE, and DELETE SQL statements with appropriate validation and error handling.
+
+## 5. Handle Default Status Logic and Write Tests [done]
+### Dependencies: 29.1, 29.2, 29.3, 29.4
+### Description: Implement logic for default status handling and write comprehensive tests for all status operations.
+### Details:
+Ensure default status is applied correctly and write unit tests for CRUD operations and filtering.
+

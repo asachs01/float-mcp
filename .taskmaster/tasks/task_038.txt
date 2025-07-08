@@ -1,0 +1,94 @@
+# Task ID: 38
+# Title: Implement API Response Format Support
+# Status: done
+# Dependencies: 27
+# Priority: medium
+# Description: Enhance the Float API service to support both JSON and XML response formats as specified in the Float API documentation, ensuring all endpoints can handle both formats correctly.
+# Details:
+Modify the FloatApi service in src/services/float-api.js to add support for different response formats. Implement the following:
+
+1. Add a format parameter to all API request methods
+2. Implement content negotiation with Accept headers
+3. Add XML parsing for XML responses
+4. Create format conversion utilities
+
+```typescript
+// Add to FloatApi class
+private async request(method: string, endpoint: string, params?: any, format: 'json' | 'xml' = 'json') {
+  const headers = {
+    'Authorization': `Bearer ${this.apiKey}`,
+    'Accept': format === 'json' ? 'application/json' : 'application/xml',
+    'Content-Type': 'application/json'
+  };
+  
+  const response = await axios({
+    method,
+    url: `${this.baseUrl}${endpoint}`,
+    headers,
+    data: method !== 'GET' ? params : undefined,
+    params: method === 'GET' ? params : undefined
+  });
+  
+  if (format === 'xml') {
+    // Use a library like fast-xml-parser to convert XML to JSON
+    const parser = new XMLParser();
+    return parser.parse(response.data);
+  }
+  
+  return response.data;
+}
+
+// Update all API methods to support format parameter
+public async get(endpoint: string, params?: any, format: 'json' | 'xml' = 'json') {
+  return this.request('GET', endpoint, params, format);
+}
+```
+
+Install and use the fast-xml-parser library (version 4.2.0+) for XML parsing. Update all tool implementations to support format selection.
+
+# Test Strategy:
+1. Unit test JSON and XML format handling
+2. Test content negotiation with different Accept headers
+3. Verify XML parsing works correctly for all response types
+4. Test format conversion utilities
+5. Integration test with actual Float API in both formats
+6. Verify all endpoints work correctly with both formats
+7. Test error handling in both formats
+
+# Subtasks:
+## 1. Add format parameter to API methods [done]
+### Dependencies: None
+### Description: Introduce a 'format' parameter to all relevant API methods to allow clients to specify the desired response format (e.g., JSON or XML).
+### Details:
+Update API method signatures and documentation to include the new 'format' parameter. Ensure backward compatibility and default to JSON if the parameter is not provided.
+
+## 2. Implement Accept header/content negotiation [done]
+### Dependencies: 38.1
+### Description: Enable content negotiation by parsing the HTTP Accept header and responding with the requested format if supported.
+### Details:
+Modify request handling logic to inspect the Accept header and prioritize it over the 'format' parameter when both are present. Return appropriate HTTP status codes for unsupported formats.
+
+## 3. Integrate XML parsing [done]
+### Dependencies: 38.2
+### Description: Add robust XML parsing and serialization capabilities to the API to support XML input and output.
+### Details:
+Select and integrate a reliable XML library. Ensure correct handling of edge cases, encoding, and error reporting for XML payloads.
+
+## 4. Create format conversion utilities [done]
+### Dependencies: 38.3
+### Description: Develop utilities to convert between JSON and XML formats for both request and response bodies.
+### Details:
+Implement reusable functions or classes for converting data structures between JSON and XML, ensuring data integrity and consistency.
+
+## 5. Update all endpoints/tools for format support [done]
+### Dependencies: 38.4
+### Description: Refactor all API endpoints and related tools to utilize the new format parameter, content negotiation, and conversion utilities.
+### Details:
+Ensure every endpoint can handle both JSON and XML formats for input and output. Update internal tools and documentation as needed.
+
+## 6. Write tests for both formats [done]
+### Dependencies: 38.5
+### Description: Develop comprehensive tests to verify correct behavior for both JSON and XML formats across all endpoints.
+### Details:
+Create unit and integration tests covering various scenarios, including format negotiation, error handling, and edge cases for both formats.
+

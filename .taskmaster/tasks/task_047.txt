@@ -1,0 +1,57 @@
+# Task ID: 47
+# Title: Create Development and Contribution Guidelines
+# Status: pending
+# Dependencies: 43, 40, 39, 41
+# Priority: low
+# Description: Establish clear development setup instructions, contribution guidelines, code style standards, and development workflow documentation for future contributors.
+# Details:
+Create comprehensive development and contribution documentation to enable smooth onboarding and collaboration. Implement the following documentation components:
+
+1. **CONTRIBUTING.md** - Main contribution guide:
+   - Development environment setup (Node.js, npm/yarn requirements)
+   - Repository cloning and dependency installation
+   - Environment configuration (API keys, test credentials)
+   - Local development server setup
+   - Testing procedures (unit, integration, linting)
+
+2. **Development Workflow Documentation** (docs/development/):
+   - Git workflow and branching strategy
+   - Pull request process and review guidelines
+   - Issue reporting and feature request templates
+   - Release process and versioning
+   - CI/CD pipeline documentation
+
+3. **Code Style Standards** (docs/development/code-style.md):
+   - TypeScript/JavaScript coding conventions
+   - ESLint and Prettier configuration
+   - File naming conventions
+   - Code organization patterns
+   - Documentation standards for functions and classes
+
+4. **Development Setup Guide** (docs/development/setup.md):
+   - Prerequisites and system requirements
+   - IDE/editor recommendations and configurations
+   - Debugging setup and techniques
+   - Testing environment configuration
+   - Common troubleshooting solutions
+
+5. **Architecture Documentation** (docs/development/architecture.md):
+   - Project structure overview
+   - MCP integration patterns
+   - Float API service architecture
+   - Error handling patterns
+   - Schema validation approach
+
+Include GitHub templates for issues and pull requests, pre-commit hooks configuration, and automated code quality checks.
+
+# Test Strategy:
+1. Verify development setup instructions work on clean environments (different OS)
+2. Test that new contributors can successfully set up development environment
+3. Validate all code examples and commands execute correctly
+4. Check that style guide examples match actual project code patterns
+5. Ensure GitHub templates render correctly and provide clear guidance
+6. Test pre-commit hooks and automated quality checks function properly
+7. Verify documentation links and references are accurate
+8. Review contribution workflow with actual pull request simulation
+9. Validate that troubleshooting guides address common setup issues
+10. Ensure documentation stays current with project dependencies and tools

@@ -1,0 +1,91 @@
+# Task ID: 27
+# Title: Implement Accounts Endpoint
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Create a complete implementation of the Accounts endpoint following the Float API v3 specification, including listing accounts, getting account details, updating account information, and managing account permissions.
+# Details:
+Extend the FloatApi service in src/services/float-api.js to add account-related methods. Create Zod schemas in a new file src/schemas/accounts.ts that handle Float's nullable field patterns. Implement the following functions:
+
+1. listAccounts: Fetch all accounts with pagination support
+2. getAccount: Get details for a specific account by ID
+3. updateAccount: Update account information
+4. manageAccountPermissions: Handle permission changes
+
+Use axios for API requests with proper error handling. Follow the pattern:
+```typescript
+export const accountsSchema = z.object({
+  account_id: z.union([z.string(), z.number()]),
+  name: z.string(),
+  // Add all fields from Float API docs
+  // Handle nullable fields with .nullable()
+});
+
+export const accountsListSchema = z.array(accountsSchema);
+
+// In tools file
+export const listAccountsTool = createTool({
+  name: 'listAccounts',
+  description: 'List all accounts in Float',
+  parameters: z.object({
+    // Add pagination and filter parameters
+  }),
+  execute: async (params) => {
+    const floatApi = new FloatApi();
+    return await floatApi.getPaginated('/accounts', params);
+  }
+});
+```
+Implement proper error handling for API rate limits (429 responses) and authentication failures (401 responses).
+
+# Test Strategy:
+1. Unit test each account endpoint function with mocked API responses
+2. Test handling of nullable fields in responses
+3. Verify pagination works correctly for account listing
+4. Test error handling for various HTTP status codes
+5. Integration test with actual Float API in a test environment
+6. Verify schema validation correctly handles all response formats
+
+# Subtasks:
+## 1. Design Schema for Accounts and Lists [done]
+### Dependencies: None
+### Description: Define the database schema for the 'accounts' and 'lists' entities, including fields, data types, relationships, and nullable fields as required.
+### Details:
+Ensure the schema supports all necessary account attributes, list associations, and is flexible for future changes.
+
+## 2. Implement listAccounts with Pagination [done]
+### Dependencies: 27.1
+### Description: Develop the endpoint to retrieve a paginated list of accounts, supporting query parameters for page number and page size.
+### Details:
+Include pagination metadata in the response, such as total count and current page, following RESTful best practices.
+
+## 3. Implement getAccount by ID [done]
+### Dependencies: 27.1
+### Description: Create the endpoint to fetch a single account by its unique identifier.
+### Details:
+Ensure proper handling of not-found cases and return a consistent response structure.
+
+## 4. Implement updateAccount [done]
+### Dependencies: 27.1, 27.3
+### Description: Develop the endpoint to update account details, supporting partial updates where applicable.
+### Details:
+Validate input, handle nullable fields, and ensure only allowed fields are updated.
+
+## 5. Implement manageAccountPermissions [done]
+### Dependencies: 27.1, 27.3
+### Description: Add functionality to manage permissions for accounts, including assigning and revoking roles or access levels.
+### Details:
+Ensure permission changes are auditable and follow security best practices.
+
+## 6. Add Error Handling for 401 and 429 [done]
+### Dependencies: 27.2, 27.3, 27.4, 27.5
+### Description: Implement robust error handling for unauthorized (401) and rate-limited (429) responses across all account endpoints.
+### Details:
+Return consistent error formats with appropriate HTTP status codes and descriptive messages.
+
+## 7. Write Unit and Integration Tests [done]
+### Dependencies: 27.2, 27.3, 27.4, 27.5, 27.6
+### Description: Develop comprehensive unit and integration tests for all account endpoints and related logic.
+### Details:
+Ensure tests cover success, failure, edge cases, and error handling scenarios.
+

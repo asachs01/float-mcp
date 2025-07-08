@@ -1,0 +1,95 @@
+# Task ID: 44
+# Title: Fix and Organize GitHub Workflows
+# Status: pending
+# Dependencies: 41, 42
+# Priority: medium
+# Description: Review and fix the existing integration test workflow created by Claude Code, resolve any configuration issues, and create a simplified, reliable GitHub Actions CI/CD setup that works consistently without failures.
+# Details:
+Perform comprehensive GitHub Actions workflow cleanup and optimization:
+
+1. **Review Existing Integration Test Workflow**:
+   - Audit the current .github/workflows/ directory for existing workflows
+   - Identify issues in the integration test workflow (timeouts, environment setup, API key handling)
+   - Review workflow triggers, job dependencies, and step configurations
+   - Check for proper secret management and environment variable setup
+
+2. **Fix Integration Test Workflow Issues**:
+   - Resolve authentication problems with Float API test credentials
+   - Fix timeout issues by optimizing test execution and adding proper timeouts
+   - Ensure proper Node.js version and dependency installation
+   - Fix any matrix build configurations that may be causing instability
+   - Implement proper error handling and failure reporting
+
+3. **Create Simplified CI/CD Workflow**:
+   ```yaml
+   name: CI/CD Pipeline
+   on:
+     push:
+       branches: [main, develop]
+     pull_request:
+       branches: [main]
+   
+   jobs:
+     test:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v4
+         - uses: actions/setup-node@v4
+           with:
+             node-version: '18'
+             cache: 'npm'
+         - run: npm ci
+         - run: npm run test
+         - run: npm run test:integration
+           env:
+             FLOAT_API_KEY: ${{ secrets.FLOAT_API_KEY }}
+   ```
+
+4. **Workflow Organization**:
+   - Separate concerns: unit tests, integration tests, linting, building
+   - Implement proper caching strategies for dependencies
+   - Add status badges and proper workflow naming
+   - Configure proper branch protection rules
+   - Remove redundant or broken workflows
+
+5. **Environment and Secret Management**:
+   - Document required repository secrets
+   - Implement proper environment variable handling
+   - Add fallback configurations for missing secrets
+   - Ensure test isolation and cleanup
+
+6. **Performance Optimization**:
+   - Implement parallel job execution where appropriate
+   - Optimize dependency installation with proper caching
+   - Add conditional job execution to avoid unnecessary runs
+   - Implement proper artifact handling for build outputs
+
+# Test Strategy:
+1. **Workflow Validation**:
+   - Test all workflows locally using act or similar tools
+   - Verify workflows trigger correctly on push/PR events
+   - Ensure all jobs complete successfully without timeouts
+
+2. **Integration Test Verification**:
+   - Run integration tests in GitHub Actions environment
+   - Verify Float API authentication works correctly
+   - Test that all integration test suites pass consistently
+   - Validate proper error reporting and failure handling
+
+3. **CI/CD Pipeline Testing**:
+   - Test the complete pipeline from code push to deployment
+   - Verify proper secret handling and environment setup
+   - Test matrix builds if implemented (different Node versions)
+   - Ensure proper caching behavior and performance
+
+4. **Branch Protection and PR Testing**:
+   - Test that PR workflows run correctly and block merging on failures
+   - Verify status checks are properly configured
+   - Test that required workflows complete before merge
+   - Validate proper permissions and access controls
+
+5. **Documentation and Maintenance**:
+   - Document all workflow configurations and requirements
+   - Test workflow badge functionality in README
+   - Verify all required secrets are documented
+   - Ensure workflows are maintainable and well-commented

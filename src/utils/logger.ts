@@ -3,7 +3,8 @@ import { appConfig } from '../config/index.js';
 
 // Detect if we're running as an MCP server (Claude Desktop communication)
 // Check for explicit --mcp flag or typical MCP environment (piped stdin/stdout)
-const isMCPServer = process.argv.includes('--mcp') || (!process.stdin.isTTY && !process.stdout.isTTY);
+const isMCPServer =
+  process.argv.includes('--mcp') || (!process.stdin.isTTY && !process.stdout.isTTY);
 
 // Conditionally create transport only when needed and available
 let transport: any = undefined;

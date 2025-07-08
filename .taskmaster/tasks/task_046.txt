@@ -1,0 +1,75 @@
+# Task ID: 46
+# Title: Package and Release Preparation
+# Status: pending
+# Dependencies: 43, 40, 41
+# Priority: medium
+# Description: Update package.json with proper metadata, create automated release workflow, implement semantic versioning, and prepare the project for publication with comprehensive changelogs and release notes.
+# Details:
+Prepare the Float API MCP integration project for publication by implementing comprehensive packaging and release infrastructure:
+
+1. **Package.json Configuration**:
+   - Update metadata fields (name, description, version, author, license)
+   - Configure proper entry points and exports
+   - Set up keywords for discoverability
+   - Define repository, bugs, and homepage URLs
+   - Configure engines and peerDependencies
+   - Add proper scripts for build, test, and release
+
+2. **Release Workflow Implementation**:
+   - Create GitHub Actions workflow (.github/workflows/release.yml)
+   - Implement automated testing before release
+   - Set up semantic versioning with conventional commits
+   - Configure automated npm publishing
+   - Add release asset generation and GitHub releases
+
+3. **Versioning Strategy**:
+   - Implement semantic versioning (semver) compliance
+   - Create version bump scripts
+   - Configure changelog generation from commit messages
+   - Set up pre-release and beta channel support
+
+4. **Documentation for Release**:
+   - Create CHANGELOG.md with proper formatting
+   - Generate release notes template
+   - Document release process in CONTRIBUTING.md
+   - Create migration guides for breaking changes
+
+5. **Publication Preparation**:
+   - Configure .npmignore for clean package distribution
+   - Set up build artifacts and distribution files
+   - Validate package contents and size
+   - Configure npm registry settings and access tokens
+
+```json
+// Example package.json updates
+{
+  "name": "@your-org/float-api-mcp",
+  "version": "1.0.0",
+  "description": "Model Context Protocol integration for Float API v3",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "release": "semantic-release",
+    "version": "conventional-changelog -p angular -i CHANGELOG.md -s"
+  }
+}
+```
+
+# Test Strategy:
+1. Validate package.json structure and metadata completeness
+2. Test release workflow in staging environment with dry-run
+3. Verify semantic versioning works correctly with test commits
+4. Test npm package installation and imports in clean environment
+5. Validate changelog generation from commit history
+6. Test GitHub Actions workflow triggers and permissions
+7. Verify release notes generation and formatting
+8. Test package size and contents meet distribution requirements
+9. Validate all documentation links and references work correctly
+10. Perform end-to-end release test with beta version

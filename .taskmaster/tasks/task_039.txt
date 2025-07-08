@@ -1,0 +1,114 @@
+# Task ID: 39
+# Title: Implement Comprehensive Error Handling
+# Status: done
+# Dependencies: 27, 38
+# Priority: high
+# Description: Create a robust error handling system for all Float API endpoints that properly handles Float API's error response patterns, rate limiting, authentication failures, and provides meaningful error messages.
+# Details:
+Create a centralized error handling system in src/services/error-handler.ts. Implement the following:
+
+1. Custom error classes for different error types
+2. Rate limit detection and handling
+3. Authentication error handling
+4. Validation error formatting
+5. Integration with MCP error response format
+
+```typescript
+// Error classes
+export class FloatApiError extends Error {
+  constructor(message: string, public statusCode: number, public details?: any) {
+    super(message);
+    this.name = 'FloatApiError';
+  }
+}
+
+export class FloatRateLimitError extends FloatApiError {
+  constructor(retryAfter?: number) {
+    super('Float API rate limit exceeded', 429, { retryAfter });
+    this.name = 'FloatRateLimitError';
+  }
+}
+
+// Error handler function
+export function handleFloatApiError(error: any) {
+  if (axios.isAxiosError(error)) {
+    const response = error.response;
+    if (!response) {
+      return new FloatApiError('Network error', 0);
+    }
+    
+    if (response.status === 429) {
+      const retryAfter = parseInt(response.headers['retry-after'] || '60', 10);
+      return new FloatRateLimitError(retryAfter);
+    }
+    
+    if (response.status === 401) {
+      return new FloatApiError('Authentication failed', 401);
+    }
+    
+    // Handle other status codes
+    return new FloatApiError(
+      response.data?.message || 'Float API error',
+      response.status,
+      response.data
+    );
+  }
+  
+  return error;
+}
+```
+
+Update the FloatApi service to use this error handler and modify all tools to properly handle and format error responses for MCP.
+
+# Test Strategy:
+1. Unit test each error type with mocked API responses
+2. Test rate limit handling with retry-after headers
+3. Test authentication error handling
+4. Test validation error formatting
+5. Verify MCP-compatible error responses
+6. Test error handling for all endpoints
+7. Integration test with actual Float API error scenarios
+
+# Subtasks:
+## 1. Design Custom Error Classes [done]
+### Dependencies: None
+### Description: Create a hierarchy of custom error classes for different error scenarios, following best practices for naming, constructors, and additional properties as needed.
+### Details:
+Define base and specialized error classes (e.g., ValidationError, RateLimitError, AuthError) that inherit from a common error superclass. Ensure each class includes appropriate constructors and properties for error context.
+
+## 2. Implement Rate Limit Detection and Handling [done]
+### Dependencies: 39.1
+### Description: Develop logic to detect rate limit errors and handle them using the custom error classes.
+### Details:
+Identify rate limit responses from APIs, instantiate the RateLimitError class, and ensure the error handler processes these errors appropriately.
+
+## 3. Implement Authentication Error Handling [done]
+### Dependencies: 39.1
+### Description: Add detection and handling for authentication-related errors using the custom error classes.
+### Details:
+Detect authentication failures (e.g., invalid tokens, expired sessions), raise AuthError, and ensure consistent error propagation.
+
+## 4. Implement Validation Error Formatting [done]
+### Dependencies: 39.1
+### Description: Format validation errors using the custom error classes to provide clear, structured feedback.
+### Details:
+Capture validation failures, instantiate ValidationError with relevant details, and format the output for client consumption.
+
+## 5. Integrate with MCP Error Format [done]
+### Dependencies: 39.1, 39.2, 39.3, 39.4
+### Description: Ensure all custom errors are mapped to and compatible with the MCP error format for downstream systems.
+### Details:
+Map properties from custom error instances to the MCP error schema, ensuring all required fields are populated and error types are correctly represented.
+
+## 6. Update FloatApi to Use Centralized Error Handler [done]
+### Dependencies: 39.1, 39.2, 39.3, 39.4, 39.5
+### Description: Refactor FloatApi endpoints to utilize the new centralized error handler and custom error classes.
+### Details:
+Replace legacy error handling in FloatApi with calls to the centralized handler, ensuring all endpoints propagate errors in the standardized format.
+
+## 7. Write Tests for All Error Scenarios [done]
+### Dependencies: 39.1, 39.2, 39.3, 39.4, 39.5, 39.6
+### Description: Develop comprehensive tests covering all error types and scenarios to ensure reliability and correctness.
+### Details:
+Write unit and integration tests for rate limit, authentication, validation, and MCP integration errors, verifying correct error instantiation, formatting, and propagation.
+

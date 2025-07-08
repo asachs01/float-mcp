@@ -1,0 +1,85 @@
+# Task ID: 33
+# Title: Implement Team Holidays Endpoint
+# Status: done
+# Dependencies: 27, 32
+# Priority: medium
+# Description: Create a complete implementation of the Team Holidays endpoint following the Float API v3 specification, including team-specific holidays and holiday calendar management.
+# Details:
+Extend the FloatApi service to add team-holiday related methods. Create Zod schemas in src/schemas/teamholidays.ts for validation. Implement the following functions:
+
+1. listTeamHolidays: Fetch all team holidays with pagination and filtering
+2. getTeamHoliday: Get details for a specific team holiday
+3. createTeamHoliday: Create a new team holiday
+4. updateTeamHoliday: Update an existing team holiday
+5. deleteTeamHoliday: Remove a team holiday
+
+The team holiday schema should handle Float's structure:
+```typescript
+export const teamHolidaySchema = z.object({
+  holiday_id: z.union([z.string(), z.number()]),
+  name: z.string(),
+  date: z.string(), // ISO date format
+  department_id: z.union([z.string(), z.number(), z.null()]),
+  // Add additional fields from Float API
+});
+
+export const teamHolidayListSchema = z.array(teamHolidaySchema);
+
+// In tools file
+export const createTeamHolidayTool = createTool({
+  name: 'createTeamHoliday',
+  description: 'Create a new team holiday in Float',
+  parameters: z.object({
+    name: z.string().describe('The name of the holiday'),
+    date: z.string().describe('Holiday date (YYYY-MM-DD)'),
+    department_id: z.union([z.string(), z.number()]).optional().describe('Department ID if applicable')
+    // Add other parameters
+  }),
+  execute: async (params) => {
+    const floatApi = new FloatApi();
+    return await floatApi.post('/team-holidays', params);
+  }
+});
+```
+Implement support for department-specific holidays and date range queries.
+
+# Test Strategy:
+1. Unit test each team holiday endpoint function with mocked API responses
+2. Test CRUD operations for team holidays
+3. Test date range filtering and pagination
+4. Test department-specific filtering
+5. Verify schema validation for holiday objects
+6. Integration test with actual Float API in a test environment
+7. Test interaction with departments
+
+# Subtasks:
+## 1. Schema Design for Team Holidays [done]
+### Dependencies: None
+### Description: Design a database schema to store team holidays, including tables for holidays, departments, and employee holiday requests.
+### Details:
+Consider using separate tables for fixed and moveable holidays, similar to public holidays, and integrate with department-specific logic.
+
+## 2. Implement listTeamHolidays with Department/Date Filters [done]
+### Dependencies: 33.1
+### Description: Develop a function to list team holidays with filters for department and date.
+### Details:
+Use SQL queries to filter holidays based on department and date ranges.
+
+## 3. Implement get/create/update/deleteTeamHoliday [done]
+### Dependencies: 33.1
+### Description: Create functions to get, create, update, and delete team holidays.
+### Details:
+Ensure these functions handle department-specific logic and validate user input.
+
+## 4. Department-Specific Logic Implementation [done]
+### Dependencies: 33.1, 33.3
+### Description: Implement logic that applies department-specific rules to team holidays.
+### Details:
+Consider rules such as different holiday allowances or restrictions per department.
+
+## 5. Write Tests for Team Holidays Functions [done]
+### Dependencies: 33.2, 33.3, 33.4
+### Description: Develop comprehensive tests for all team holidays functions.
+### Details:
+Use testing frameworks to ensure functions work correctly under various scenarios.
+

@@ -1,0 +1,83 @@
+# Task ID: 40
+# Title: Implement Comprehensive Documentation
+# Status: done
+# Dependencies: 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39
+# Priority: medium
+# Description: Create detailed documentation for all implemented Float API endpoints, including tool descriptions, parameter documentation, response formats, and example usage for MCP integration.
+# Details:
+Create comprehensive documentation for all implemented tools. For each endpoint:
+
+1. Create detailed tool descriptions for MCP integration
+2. Document all parameters with clear descriptions
+3. Provide example usage patterns
+4. Document response formats and schemas
+5. Include error handling guidance
+
+Implement consistent documentation patterns across all tools:
+
+```typescript
+// Example of well-documented tool
+export const listAccountsTool = createTool({
+  name: 'listAccounts',
+  description: 'List all accounts in Float with pagination support. Returns account details including name, ID, and permissions.',
+  parameters: z.object({
+    page: z.number().optional().describe('Page number for pagination (starts at 1)'),
+    per_page: z.number().optional().describe('Number of results per page (default: 100, max: 500)'),
+    sort: z.enum(['name', 'created_at']).optional().describe('Sort field'),
+    order: z.enum(['asc', 'desc']).optional().describe('Sort order')
+  }),
+  execute: async (params) => {
+    const floatApi = new FloatApi();
+    return await floatApi.getPaginated('/accounts', params);
+  }
+});
+```
+
+Create a documentation markdown file for each endpoint category explaining usage patterns, parameter details, and response formats.
+
+# Test Strategy:
+1. Verify all tools have comprehensive descriptions
+2. Check all parameters have clear descriptions
+3. Validate documentation against actual implementation
+4. Test documentation examples for accuracy
+5. Verify MCP tool listings display correctly
+6. Review documentation for completeness and clarity
+7. Test documentation in Claude Desktop MCP integration
+
+# Subtasks:
+## 1. Write Tool Descriptions for Each Endpoint [done]
+### Dependencies: None
+### Description: Draft clear and concise descriptions for every API endpoint, explaining their purpose and functionality.
+### Details:
+Ensure each endpoint description is tailored for both entry-level and experienced users, avoiding unnecessary jargon and providing context for when and why each endpoint should be used.
+
+## 2. Document All Parameters [done]
+### Dependencies: 40.1
+### Description: List and explain all parameters for each endpoint, including required and optional fields, data types, and constraints.
+### Details:
+Include parameter names, types, whether they are required or optional, default values, and any validation rules. Use consistent terminology and formatting throughout.
+
+## 3. Provide Example Usage [done]
+### Dependencies: 40.2
+### Description: Create example requests for each endpoint, demonstrating typical usage scenarios.
+### Details:
+Include sample code snippets or curl commands for each endpoint, ensuring examples are accurate and easy to follow for entry-level users.
+
+## 4. Document Response Formats/Schemas [done]
+### Dependencies: 40.3
+### Description: Detail the structure and schema of responses returned by each endpoint, including data types and example responses.
+### Details:
+Provide clear JSON or other relevant schema examples, and explain each field in the response. Highlight any variations based on input parameters or error conditions.
+
+## 5. Add Error Handling Guidance [done]
+### Dependencies: 40.4
+### Description: Document possible error responses, status codes, and troubleshooting tips for each endpoint.
+### Details:
+List common error codes, their meanings, and recommended actions for users. Include example error responses and guidance on how to handle them.
+
+## 6. Review for Consistency and Completeness [done]
+### Dependencies: 40.5
+### Description: Perform a thorough review of the documentation to ensure consistency, accuracy, and completeness across all endpoints.
+### Details:
+Check for consistent terminology, formatting, and structure. Verify that all endpoints, parameters, examples, responses, and error handling sections are present and up-to-date.
+

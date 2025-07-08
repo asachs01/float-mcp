@@ -1,54 +1,310 @@
+import { listPeople, getPerson, createPerson, updatePerson, deletePerson } from './core/people.js';
+import {
+  listDepartments,
+  getDepartment,
+  createDepartment,
+  updateDepartment,
+  deleteDepartment,
+} from './core/departments.js';
+import {
+  listStatuses,
+  getStatus,
+  createStatus,
+  updateStatus,
+  deleteStatus,
+  getDefaultStatus,
+  setDefaultStatus,
+  getStatusesByType,
+} from './core/statuses.js';
+import {
+  listRoles,
+  getRole,
+  createRole,
+  updateRole,
+  deleteRole,
+  getRolesByPermission,
+  getRolePermissions,
+  updateRolePermissions,
+  getRoleHierarchy,
+  checkRoleAccess,
+} from './core/roles.js';
+import {
+  listAccounts,
+  getAccount,
+  updateAccount,
+  manageAccountPermissions,
+  createAccount,
+  deactivateAccount,
+  reactivateAccount,
+  getCurrentAccount,
+  updateAccountTimezone,
+  setAccountDepartmentFilter,
+  bulkUpdateAccountPermissions,
+} from './core/accounts.js';
+
+// Project management tools
 import {
   listProjects,
   getProject,
   createProject,
   updateProject,
   deleteProject,
-} from './projects.js';
-import { listTasks, getTask, createTask, updateTask, deleteTask } from './tasks.js';
-import { listPeople, getPerson, createPerson, updatePerson, deletePerson } from './people.js';
-import { listClients, getClient, createClient, updateClient, deleteClient } from './clients.js';
+} from './project-management/projects.js';
 import {
-  listAllocations,
-  getAllocation,
-  createAllocation,
-  updateAllocation,
-  deleteAllocation,
-} from './allocations.js';
-
-export const tools = [
-  // Project tools
-  listProjects,
-  getProject,
-  createProject,
-  updateProject,
-  deleteProject,
-
-  // Task tools
   listTasks,
   getTask,
   createTask,
   updateTask,
   deleteTask,
-
-  // People tools
-  listPeople,
-  getPerson,
-  createPerson,
-  updatePerson,
-  deletePerson,
-
-  // Client tools
+} from './project-management/tasks.js';
+import {
   listClients,
   getClient,
   createClient,
   updateClient,
   deleteClient,
-
-  // Allocation tools
+} from './project-management/clients.js';
+import {
   listAllocations,
   getAllocation,
   createAllocation,
   updateAllocation,
   deleteAllocation,
+} from './project-management/allocations.js';
+import {
+  listMilestones,
+  getMilestone,
+  createMilestone,
+  updateMilestone,
+  deleteMilestone,
+  getProjectMilestones,
+  getUpcomingMilestones,
+  getOverdueMilestones,
+  completeMilestone,
+  getMilestoneReminders,
+} from './project-management/milestones.js';
+import {
+  listPhases,
+  getPhase,
+  createPhase,
+  updatePhase,
+  deletePhase,
+  listPhasesByProject,
+  getPhasesByDateRange,
+  getActivePhases,
+  getPhaseSchedule,
+} from './project-management/phases.js';
+import {
+  listProjectTasks,
+  getProjectTask,
+  createProjectTask,
+  updateProjectTask,
+  deleteProjectTask,
+  getProjectTasksByProject,
+  getProjectTasksByPhase,
+  bulkCreateProjectTasks,
+  reorderProjectTasks,
+  archiveProjectTask,
+  getProjectTaskDependencies,
+} from './project-management/project-tasks.js';
+
+// Time management tools
+import {
+  listTimeOff,
+  getTimeOff,
+  createTimeOff,
+  updateTimeOff,
+  deleteTimeOff,
+  bulkCreateTimeOff,
+  approveTimeOff,
+  rejectTimeOff,
+  listTimeOffTypes,
+  getTimeOffCalendar,
+  getPersonTimeOffSummary,
+} from './time-management/timeoff.js';
+import {
+  listTimeOffTypes as listTimeOffTypesConfig,
+  getTimeOffType,
+  createTimeOffType,
+  updateTimeOffType,
+  deleteTimeOffType,
+} from './time-management/timeoff-types.js';
+import {
+  listPublicHolidays,
+  getPublicHoliday,
+  createPublicHoliday,
+  updatePublicHoliday,
+  deletePublicHoliday,
+} from './time-management/public-holidays.js';
+import {
+  listTeamHolidays,
+  getTeamHoliday,
+  createTeamHoliday,
+  updateTeamHoliday,
+  deleteTeamHoliday,
+  listTeamHolidaysByDepartment,
+  listTeamHolidaysByDateRange,
+  listRecurringTeamHolidays,
+  getUpcomingTeamHolidays,
+} from './time-management/team-holidays.js';
+import {
+  listLoggedTime,
+  getLoggedTime,
+  createLoggedTime,
+  updateLoggedTime,
+  deleteLoggedTime,
+  bulkCreateLoggedTime,
+  getPersonLoggedTimeSummary,
+  getProjectLoggedTimeSummary,
+  getLoggedTimeTimesheet,
+  getBillableTimeReport,
+} from './time-management/logged-time.js';
+
+// Reporting tools
+import {
+  getTimeReport,
+  getProjectReport,
+  getPeopleUtilizationReport,
+} from './reporting/reports.js';
+
+export const tools = [
+  // Core entity tools
+  listPeople,
+  getPerson,
+  createPerson,
+  updatePerson,
+  deletePerson,
+  listDepartments,
+  getDepartment,
+  createDepartment,
+  updateDepartment,
+  deleteDepartment,
+  listStatuses,
+  getStatus,
+  createStatus,
+  updateStatus,
+  deleteStatus,
+  getDefaultStatus,
+  setDefaultStatus,
+  getStatusesByType,
+  listRoles,
+  getRole,
+  createRole,
+  updateRole,
+  deleteRole,
+  getRolesByPermission,
+  getRolePermissions,
+  updateRolePermissions,
+  getRoleHierarchy,
+  checkRoleAccess,
+  listAccounts,
+  getAccount,
+  updateAccount,
+  manageAccountPermissions,
+  createAccount,
+  deactivateAccount,
+  reactivateAccount,
+  getCurrentAccount,
+  updateAccountTimezone,
+  setAccountDepartmentFilter,
+  bulkUpdateAccountPermissions,
+
+  // Project management tools
+  listProjects,
+  getProject,
+  createProject,
+  updateProject,
+  deleteProject,
+  listTasks,
+  getTask,
+  createTask,
+  updateTask,
+  deleteTask,
+  listClients,
+  getClient,
+  createClient,
+  updateClient,
+  deleteClient,
+  listAllocations,
+  getAllocation,
+  createAllocation,
+  updateAllocation,
+  deleteAllocation,
+  listMilestones,
+  getMilestone,
+  createMilestone,
+  updateMilestone,
+  deleteMilestone,
+  getProjectMilestones,
+  getUpcomingMilestones,
+  getOverdueMilestones,
+  completeMilestone,
+  getMilestoneReminders,
+  listPhases,
+  getPhase,
+  createPhase,
+  updatePhase,
+  deletePhase,
+  listPhasesByProject,
+  getPhasesByDateRange,
+  getActivePhases,
+  getPhaseSchedule,
+  listProjectTasks,
+  getProjectTask,
+  createProjectTask,
+  updateProjectTask,
+  deleteProjectTask,
+  getProjectTasksByProject,
+  getProjectTasksByPhase,
+  bulkCreateProjectTasks,
+  reorderProjectTasks,
+  archiveProjectTask,
+  getProjectTaskDependencies,
+
+  // Time management tools
+  listTimeOff,
+  getTimeOff,
+  createTimeOff,
+  updateTimeOff,
+  deleteTimeOff,
+  bulkCreateTimeOff,
+  approveTimeOff,
+  rejectTimeOff,
+  listTimeOffTypes,
+  getTimeOffCalendar,
+  getPersonTimeOffSummary,
+  listTimeOffTypesConfig,
+  getTimeOffType,
+  createTimeOffType,
+  updateTimeOffType,
+  deleteTimeOffType,
+  listPublicHolidays,
+  getPublicHoliday,
+  createPublicHoliday,
+  updatePublicHoliday,
+  deletePublicHoliday,
+  listTeamHolidays,
+  getTeamHoliday,
+  createTeamHoliday,
+  updateTeamHoliday,
+  deleteTeamHoliday,
+  listTeamHolidaysByDepartment,
+  listTeamHolidaysByDateRange,
+  listRecurringTeamHolidays,
+  getUpcomingTeamHolidays,
+  listLoggedTime,
+  getLoggedTime,
+  createLoggedTime,
+  updateLoggedTime,
+  deleteLoggedTime,
+  bulkCreateLoggedTime,
+  getPersonLoggedTimeSummary,
+  getProjectLoggedTimeSummary,
+  getLoggedTimeTimesheet,
+  getBillableTimeReport,
+
+  // Reporting tools
+  getTimeReport,
+  getProjectReport,
+  getPeopleUtilizationReport,
 ];

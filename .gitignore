@@ -38,7 +38,10 @@ coverage/
 
 # Temporary files
 tmp/
-temp/ 
+temp/
+test_results
+reports/
+*.roomodes
 
 logs
 yarn-debug.log*

@@ -1,0 +1,124 @@
+# Task ID: 41
+# Title: Implement Integration Testing Suite
+# Status: done
+# Dependencies: 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39
+# Priority: high
+# Description: Create a comprehensive integration testing suite that validates all implemented Float API endpoints against the actual Float API, ensuring compatibility, correct error handling, and proper response parsing.
+# Details:
+Create an integration testing suite in src/tests/integration/ using Jest. Implement the following:
+
+1. Test setup with Float API test credentials
+2. Test cases for all implemented endpoints
+3. Validation of response schemas
+4. Error handling tests
+5. Format conversion tests (JSON/XML)
+
+```typescript
+// Example integration test
+import { FloatApi } from '../../services/float-api';
+import { accountsSchema } from '../../schemas/accounts';
+
+describe('Accounts API Integration', () => {
+  let floatApi: FloatApi;
+  
+  beforeAll(() => {
+    // Setup with test credentials
+    floatApi = new FloatApi(process.env.FLOAT_TEST_API_KEY);
+  });
+  
+  test('listAccounts returns valid accounts', async () => {
+    const accounts = await floatApi.get('/accounts');
+    
+    // Validate schema
+    const result = accountsSchema.safeParse(accounts);
+    expect(result.success).toBe(true);
+    
+    // Validate data
+    expect(Array.isArray(accounts)).toBe(true);
+    if (accounts.length > 0) {
+      expect(accounts[0]).toHaveProperty('account_id');
+      expect(accounts[0]).toHaveProperty('name');
+    }
+  });
+  
+  test('getAccount returns valid account details', async () => {
+    // First get an account ID from the list
+    const accounts = await floatApi.get('/accounts');
+    if (accounts.length === 0) {
+      console.warn('No accounts found for testing');
+      return;
+    }
+    
+    const accountId = accounts[0].account_id;
+    const account = await floatApi.get(`/accounts/${accountId}`);
+    
+    // Validate schema and data
+    expect(account).toHaveProperty('account_id', accountId);
+    expect(account).toHaveProperty('name');
+  });
+  
+  // Add more tests for each endpoint
+});
+```
+
+Implement similar test suites for all endpoint categories. Use environment variables for test credentials and create a CI-compatible test configuration.
+
+# Test Strategy:
+1. Create test cases for all implemented endpoints
+2. Test both success and error scenarios
+3. Verify schema validation for all responses
+4. Test pagination and filtering
+5. Test format conversion (JSON/XML)
+6. Verify rate limit handling
+7. Test in CI environment
+8. Document test coverage and results
+
+# Subtasks:
+## 1. Test Setup with Credentials [done]
+### Dependencies: None
+### Description: Establish the testing environment and configure authentication credentials required for API access.
+### Details:
+Set up a dedicated test environment mirroring production, generate or obtain API keys/tokens, and securely store credentials for automated test execution.
+
+## 2. Write Test Cases for Each Endpoint [done]
+### Dependencies: 41.1
+### Description: Develop comprehensive test cases covering all API endpoints, including positive and negative scenarios.
+### Details:
+Document and automate test cases for each endpoint, ensuring both standard and edge cases are addressed for functional coverage.
+
+## 3. Validate Response Schemas [done]
+### Dependencies: 41.2
+### Description: Implement schema validation for API responses to ensure they conform to expected structures.
+### Details:
+Define expected response schemas (JSON/XML) and automate validation checks within test cases for all endpoints.
+
+## 4. Test Error Handling [done]
+### Dependencies: 41.2
+### Description: Verify that the API returns appropriate error codes and messages for invalid requests and edge cases.
+### Details:
+Create and execute tests for invalid inputs, unauthorized access, and other error scenarios to confirm robust error handling.
+
+## 5. Test Format Conversion (JSON/XML) [done]
+### Dependencies: 41.3
+### Description: Ensure the API correctly handles and returns data in multiple formats such as JSON and XML.
+### Details:
+Write tests to request and validate responses in all supported formats, checking for consistency and correctness.
+
+## 6. Test Pagination and Filtering [done]
+### Dependencies: 41.2
+### Description: Validate the API's pagination and filtering mechanisms for endpoints that support large data sets.
+### Details:
+Develop tests to verify correct behavior of pagination (page size, page number) and filtering parameters, ensuring accurate and efficient data retrieval.
+
+## 7. CI Integration [done]
+### Dependencies: 41.3, 41.4, 41.5, 41.6
+### Description: Integrate automated API tests into the continuous integration (CI) pipeline for ongoing validation.
+### Details:
+Configure the CI system to run API tests on code commits and deployments, ensuring rapid feedback and early detection of issues.
+
+## 8. Document Test Coverage and Results [done]
+### Dependencies: None
+### Description: Generate and maintain documentation detailing test coverage, execution results, and identified issues.
+### Details:
+Produce reports and dashboards summarizing which endpoints, scenarios, and formats are covered, and highlight any failures or gaps.
+

@@ -1,0 +1,107 @@
+# Task ID: 37
+# Title: Implement Logged Time Endpoint
+# Status: done
+# Dependencies: 27
+# Priority: high
+# Description: Create a complete implementation of the Logged Time endpoint following the Float API v3 specification, including time entry logging, time tracking operations, timesheet management, and billable/non-billable time tracking.
+# Details:
+Extend the FloatApi service to add logged-time related methods. Create Zod schemas in src/schemas/loggedtime.ts for validation. Implement the following functions:
+
+1. listLoggedTime: Fetch all logged time entries with pagination and filtering
+2. getLoggedTime: Get details for a specific time entry
+3. createLoggedTime: Create a new time entry
+4. updateLoggedTime: Update an existing time entry
+5. deleteLoggedTime: Remove a time entry
+6. bulkCreateLoggedTime: Create multiple time entries at once
+
+The logged time schema should handle Float's structure:
+```typescript
+export const loggedTimeSchema = z.object({
+  time_id: z.union([z.string(), z.number()]),
+  person_id: z.union([z.string(), z.number()]),
+  project_id: z.union([z.string(), z.number()]),
+  task_id: z.union([z.string(), z.number(), z.null()]),
+  date: z.string(), // ISO date format
+  hours: z.number(),
+  notes: z.string().nullable(),
+  is_billable: z.boolean().nullable(),
+  // Add additional fields from Float API
+});
+
+export const loggedTimeListSchema = z.array(loggedTimeSchema);
+
+// In tools file
+export const createLoggedTimeTool = createTool({
+  name: 'createLoggedTime',
+  description: 'Create a new time entry in Float',
+  parameters: z.object({
+    person_id: z.union([z.string(), z.number()]).describe('The person ID'),
+    project_id: z.union([z.string(), z.number()]).describe('The project ID'),
+    task_id: z.union([z.string(), z.number()]).optional().describe('Task ID if applicable'),
+    date: z.string().describe('Entry date (YYYY-MM-DD)'),
+    hours: z.number().describe('Hours logged'),
+    notes: z.string().optional().describe('Optional notes'),
+    is_billable: z.boolean().optional().describe('Whether time is billable')
+    // Add other parameters
+  }),
+  execute: async (params) => {
+    const floatApi = new FloatApi();
+    return await floatApi.post('/logged-time', params);
+  }
+});
+```
+Implement support for billable/non-billable tracking, timesheet management, and reporting integration.
+
+# Test Strategy:
+1. Unit test each logged time endpoint function with mocked API responses
+2. Test CRUD operations for time entries
+3. Test bulk time entry creation
+4. Verify billable/non-billable tracking
+5. Test filtering by person, project, and date range
+6. Test timesheet reporting functionality
+7. Verify schema validation for time entry objects
+8. Integration test with actual Float API in a test environment
+
+# Subtasks:
+## 1. Schema Design for Logged Time [done]
+### Dependencies: None
+### Description: Design the database schema to efficiently store logged time entries, supporting high data volume, billable/non-billable flags, and integration with timesheets and reporting.
+### Details:
+Define tables and fields for time logs, including user, project, task, timestamps, duration, billable status, and any necessary indexes for filtering and reporting.
+
+## 2. Implement listLoggedTime with Filtering [done]
+### Dependencies: 37.1
+### Description: Develop the API or function to list logged time entries, supporting filtering by user, project, date range, billable status, and other relevant fields.
+### Details:
+Ensure efficient querying and pagination for large datasets. Implement filter logic based on schema design.
+
+## 3. Implement get/create/update/deleteLoggedTime [done]
+### Dependencies: 37.1
+### Description: Create endpoints or functions to retrieve, add, modify, and remove individual logged time entries.
+### Details:
+Support full CRUD operations with validation and error handling. Ensure changes are reflected in the database accurately.
+
+## 4. Implement bulkCreateLoggedTime [done]
+### Dependencies: 37.1, 37.3
+### Description: Develop functionality to create multiple logged time entries in a single operation, handling validation and error reporting for each entry.
+### Details:
+Optimize for performance and atomicity. Ensure partial failures are handled gracefully and results are reported clearly.
+
+## 5. Billable/Non-Billable Logic [done]
+### Dependencies: 37.1, 37.2, 37.3, 37.4
+### Description: Implement business logic to distinguish and process billable versus non-billable time entries throughout the system.
+### Details:
+Ensure billable status is correctly set, updated, and used in calculations and reporting. Enforce business rules as required.
+
+## 6. Timesheet/Reporting Integration [done]
+### Dependencies: 37.2, 37.3, 37.4, 37.5
+### Description: Integrate logged time data with timesheet and reporting modules, supporting aggregation, summaries, and export features.
+### Details:
+Design and implement interfaces for generating timesheets and reports, ensuring accurate reflection of logged and billable time.
+
+## 7. Write Tests [done]
+### Dependencies: 37.2, 37.3, 37.4, 37.5, 37.6
+### Description: Develop comprehensive tests for all logged time features, including CRUD operations, filtering, bulk operations, billable logic, and reporting integration.
+### Details:
+Ensure high test coverage and automate regression testing for all business rules and edge cases.
+

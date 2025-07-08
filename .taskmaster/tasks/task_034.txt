@@ -1,0 +1,97 @@
+# Task ID: 34
+# Title: Implement Phases Endpoint
+# Status: done
+# Dependencies: 27
+# Priority: high
+# Description: Create a complete implementation of the Phases endpoint following the Float API v3 specification, including project phase management, phase CRUD operations, and phase scheduling and dependencies.
+# Details:
+Extend the FloatApi service to add phase-related methods. Create Zod schemas in src/schemas/phases.ts for validation. Implement the following functions:
+
+1. listPhases: Fetch all phases with pagination and project filtering
+2. getPhase: Get details for a specific phase
+3. createPhase: Create a new project phase
+4. updatePhase: Update an existing phase
+5. deletePhase: Remove a phase
+
+The phase schema should handle Float's structure:
+```typescript
+export const phaseSchema = z.object({
+  phase_id: z.union([z.string(), z.number()]),
+  project_id: z.union([z.string(), z.number()]),
+  name: z.string(),
+  start_date: z.string().nullable(), // ISO date format
+  end_date: z.string().nullable(), // ISO date format
+  color: z.string().nullable(),
+  notes: z.string().nullable(),
+  // Add additional fields from Float API
+});
+
+export const phaseListSchema = z.array(phaseSchema);
+
+// In tools file
+export const createPhaseTool = createTool({
+  name: 'createPhase',
+  description: 'Create a new project phase in Float',
+  parameters: z.object({
+    project_id: z.union([z.string(), z.number()]).describe('The project ID'),
+    name: z.string().describe('Phase name'),
+    start_date: z.string().optional().describe('Start date (YYYY-MM-DD)'),
+    end_date: z.string().optional().describe('End date (YYYY-MM-DD)'),
+    color: z.string().optional().describe('Color code for the phase'),
+    notes: z.string().optional().describe('Optional notes')
+    // Add other parameters
+  }),
+  execute: async (params) => {
+    const floatApi = new FloatApi();
+    return await floatApi.post('/phases', params);
+  }
+});
+```
+Implement support for phase dependencies and scheduling constraints.
+
+# Test Strategy:
+1. Unit test each phase endpoint function with mocked API responses
+2. Test CRUD operations for phases
+3. Test project-specific filtering
+4. Verify date range handling for phases
+5. Test phase dependency relationships
+6. Verify schema validation for phase objects
+7. Integration test with actual Float API in a test environment
+
+# Subtasks:
+## 1. Schema Design for Phases [done]
+### Dependencies: None
+### Description: Design a database schema to manage phases, including tables for phase details and relationships with projects.
+### Details:
+Use entity-relationship diagrams to define phase entities and attributes.
+
+## 2. Implement listPhases with Project Filtering [done]
+### Dependencies: 34.1
+### Description: Develop a function to list phases filtered by project, using the designed schema.
+### Details:
+Use SQL queries to retrieve phases based on project IDs.
+
+## 3. Implement get/create/update/deletePhase [done]
+### Dependencies: 34.1
+### Description: Create CRUD operations for phases, ensuring data integrity and consistency.
+### Details:
+Use RESTful API endpoints for CRUD operations.
+
+## 4. Handle Phase Dependencies and Scheduling [done]
+### Dependencies: 34.3
+### Description: Develop logic to manage dependencies between phases and schedule them accordingly.
+### Details:
+Use graph algorithms to resolve dependencies and schedule phases.
+
+## 5. Integrate with Projects [done]
+### Dependencies: 34.2, 34.3
+### Description: Integrate phase management with project management, ensuring seamless interaction.
+### Details:
+Use foreign keys to link phases to projects.
+
+## 6. Write Tests [done]
+### Dependencies: 34.1, 34.2, 34.3, 34.4, 34.5
+### Description: Develop comprehensive tests for phase management and integration with projects.
+### Details:
+Use unit tests and integration tests to ensure functionality.
+

@@ -1,0 +1,89 @@
+# Task ID: 36
+# Title: Implement Milestones Endpoint
+# Status: done
+# Dependencies: 27, 34
+# Priority: medium
+# Description: Create a complete implementation of the Milestones endpoint following the Float API v3 specification, including project milestone management, milestone tracking, and date-based milestone operations.
+# Details:
+Extend the FloatApi service to add milestone-related methods. Create Zod schemas in src/schemas/milestones.ts for validation. Implement the following functions:
+
+1. listMilestones: Fetch all milestones with pagination and project filtering
+2. getMilestone: Get details for a specific milestone
+3. createMilestone: Create a new project milestone
+4. updateMilestone: Update an existing milestone
+5. deleteMilestone: Remove a milestone
+
+The milestone schema should handle Float's structure:
+```typescript
+export const milestoneSchema = z.object({
+  milestone_id: z.union([z.string(), z.number()]),
+  project_id: z.union([z.string(), z.number()]),
+  name: z.string(),
+  date: z.string(), // ISO date format
+  color: z.string().nullable(),
+  notes: z.string().nullable(),
+  // Add additional fields from Float API
+});
+
+export const milestoneListSchema = z.array(milestoneSchema);
+
+// In tools file
+export const createMilestoneTool = createTool({
+  name: 'createMilestone',
+  description: 'Create a new project milestone in Float',
+  parameters: z.object({
+    project_id: z.union([z.string(), z.number()]).describe('The project ID'),
+    name: z.string().describe('Milestone name'),
+    date: z.string().describe('Milestone date (YYYY-MM-DD)'),
+    color: z.string().optional().describe('Color code for the milestone'),
+    notes: z.string().optional().describe('Optional notes')
+    // Add other parameters
+  }),
+  execute: async (params) => {
+    const floatApi = new FloatApi();
+    return await floatApi.post('/milestones', params);
+  }
+});
+```
+Implement support for date-based milestone tracking and project association.
+
+# Test Strategy:
+1. Unit test each milestone endpoint function with mocked API responses
+2. Test CRUD operations for milestones
+3. Test project-specific filtering
+4. Verify date handling for milestones
+5. Test milestone tracking functionality
+6. Verify schema validation for milestone objects
+7. Integration test with actual Float API in a test environment
+
+# Subtasks:
+## 1. Schema Design for Milestones [done]
+### Dependencies: None
+### Description: Design the database schema for milestones, ensuring fields for project association, milestone name, description, expected date, dependencies, and responsible team member are included.
+### Details:
+Include fields such as milestone ID, project ID (foreign key), name, description, expected date, dependencies (list of milestone IDs), and responsible user ID. Ensure the schema supports efficient querying and integration with project data.
+
+## 2. Implement listMilestones with Project Filtering [done]
+### Dependencies: 36.1
+### Description: Develop the listMilestones API/functionality to retrieve milestones, supporting filtering by associated project.
+### Details:
+Ensure the implementation can efficiently filter milestones by project ID and return relevant milestone details. Consider pagination and sorting by date if necessary.
+
+## 3. Implement get/create/update/deleteMilestone [done]
+### Dependencies: 36.1
+### Description: Develop CRUD operations for milestones, allowing retrieval, creation, updating, and deletion of milestone records.
+### Details:
+Implement endpoints or functions for each CRUD operation. Validate input data, enforce project association, and handle dependencies between milestones where applicable.
+
+## 4. Date-Based Tracking Logic [done]
+### Dependencies: 36.2, 36.3
+### Description: Implement logic to track milestones based on their expected dates, including status updates and notifications for upcoming or overdue milestones.
+### Details:
+Add logic to calculate milestone status (e.g., upcoming, due, overdue, completed) based on current date and expected date. Integrate with notification or alert systems if required.
+
+## 5. Write Tests [done]
+### Dependencies: 36.2, 36.3, 36.4
+### Description: Develop comprehensive tests for all milestone-related functionality, including schema validation, CRUD operations, project filtering, and date-based tracking.
+### Details:
+Write unit and integration tests to ensure correctness, data integrity, and proper handling of edge cases (e.g., invalid dates, missing dependencies, unauthorized access).
+

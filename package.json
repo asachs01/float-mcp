@@ -9,9 +9,18 @@
     "start": "node dist/index.js",
     "build": "tsc",
     "dev": "ts-node --esm src/index.ts",
-    "test": "echo 'Tests temporarily disabled due to ES module configuration complexity. Application functionality verified through Docker and MCP integration.' && exit 0",
-    "test:watch": "npm run test -- --watch",
+    "test": "NODE_OPTIONS='--loader ts-node/esm' jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:integration": "NODE_OPTIONS='--loader ts-node/esm' jest --testPathPattern=integration --passWithNoTests",
+    "test:integration:mock": "NODE_OPTIONS='--loader ts-node/esm' TEST_MOCK_MODE=true TEST_REAL_API=false jest --testPathPattern=integration --passWithNoTests",
+    "test:integration:real": "NODE_OPTIONS='--loader ts-node/esm' TEST_REAL_API=true TEST_MOCK_MODE=false jest --testPathPattern=integration --passWithNoTests",
+    "test:performance": "NODE_OPTIONS='--loader ts-node/esm' TEST_SKIP_SLOW=false jest --testPathPattern=performance --passWithNoTests",
+    "test:compatibility": "NODE_OPTIONS='--loader ts-node/esm' jest --testPathPattern=compatibility --passWithNoTests",
+    "test:schemas": "NODE_OPTIONS='--loader ts-node/esm' jest --testPathPattern=schema --passWithNoTests",
+    "test:all": "npm run test && npm run test:integration:mock",
     "lint": "eslint src tests --ext .ts",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write src tests",
     "clean": "rm -rf dist",
     "changeset": "changeset",
@@ -24,11 +33,20 @@
     "project-management",
     "task-management"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/float-mcp.git"
+  },
+  "homepage": "https://github.com/yourusername/float-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/yourusername/float-mcp/issues"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.8.0",
     "dotenv": "^16.4.5",
+    "fast-xml-parser": "^5.2.5",
     "pino": "^8.19.0",
     "zod": "^3.22.4",
     "zod-to-json-schema": "^3.24.6"

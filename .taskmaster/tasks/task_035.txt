@@ -1,0 +1,112 @@
+# Task ID: 35
+# Title: Implement Project Tasks Endpoint
+# Status: done
+# Dependencies: 27, 29, 34
+# Priority: high
+# Description: Create a complete implementation of the Project Tasks endpoint following the Float API v3 specification, including task-specific operations, project task hierarchies, and task dependencies that are distinct from general allocations.
+# Details:
+Extend the FloatApi service to add project-task related methods. Create Zod schemas in src/schemas/projecttasks.ts for validation. Implement the following functions:
+
+1. listProjectTasks: Fetch all project tasks with pagination and filtering
+2. getProjectTask: Get details for a specific project task
+3. createProjectTask: Create a new project task
+4. updateProjectTask: Update an existing project task
+5. deleteProjectTask: Remove a project task
+
+The project task schema should handle Float's structure:
+```typescript
+export const projectTaskSchema = z.object({
+  task_id: z.union([z.string(), z.number()]),
+  project_id: z.union([z.string(), z.number()]),
+  name: z.string(),
+  status_id: z.union([z.string(), z.number(), z.null()]),
+  start_date: z.string().nullable(), // ISO date format
+  end_date: z.string().nullable(), // ISO date format
+  parent_id: z.union([z.string(), z.number(), z.null()]), // For task hierarchy
+  dependencies: z.array(z.union([z.string(), z.number()])).nullable(),
+  // Add additional fields from Float API
+});
+
+export const projectTaskListSchema = z.array(projectTaskSchema);
+
+// In tools file
+export const createProjectTaskTool = createTool({
+  name: 'createProjectTask',
+  description: 'Create a new project task in Float',
+  parameters: z.object({
+    project_id: z.union([z.string(), z.number()]).describe('The project ID'),
+    name: z.string().describe('Task name'),
+    status_id: z.union([z.string(), z.number()]).optional().describe('Status ID'),
+    start_date: z.string().optional().describe('Start date (YYYY-MM-DD)'),
+    end_date: z.string().optional().describe('End date (YYYY-MM-DD)'),
+    parent_id: z.union([z.string(), z.number()]).optional().describe('Parent task ID for hierarchy'),
+    dependencies: z.array(z.union([z.string(), z.number()])).optional().describe('Task dependencies')
+    // Add other parameters
+  }),
+  execute: async (params) => {
+    const floatApi = new FloatApi();
+    return await floatApi.post('/project-tasks', params);
+  }
+});
+```
+Implement support for task hierarchies, dependencies, and status tracking.
+
+# Test Strategy:
+1. Unit test each project task endpoint function with mocked API responses
+2. Test CRUD operations for project tasks
+3. Test task hierarchy relationships
+4. Test task dependency relationships
+5. Verify status tracking functionality
+6. Test project-specific filtering
+7. Verify schema validation for task objects
+8. Integration test with actual Float API in a test environment
+
+# Subtasks:
+## 1. Schema Design for Project Tasks [done]
+### Dependencies: None
+### Description: Design a robust database schema to support project tasks, including fields for task details, hierarchy, dependencies, status, and integration with projects and phases.
+### Details:
+Define tables/entities for tasks, projects, phases, statuses, and relationships such as parent/child and dependencies. Ensure normalization and scalability.
+
+## 2. Implement listProjectTasks with Filtering [done]
+### Dependencies: 35.1
+### Description: Develop the endpoint to list project tasks with support for filtering by attributes such as status, phase, parent, and dependencies.
+### Details:
+Implement query logic to retrieve tasks based on various filters, leveraging the schema relationships. Optimize for performance and usability.
+
+## 3. Implement get/create/update/deleteProjectTask [done]
+### Dependencies: 35.1
+### Description: Create endpoints for retrieving, creating, updating, and deleting individual project tasks, ensuring data integrity and proper validation.
+### Details:
+Handle CRUD operations for tasks, including validation of required fields and relationships (e.g., parent/child, dependencies).
+
+## 4. Implement Task Hierarchy (Parent/Child) [done]
+### Dependencies: 35.1, 35.3
+### Description: Enable support for hierarchical tasks, allowing tasks to have parent and child relationships within the schema and API.
+### Details:
+Update schema and endpoints to support nesting of tasks. Ensure recursive retrieval and updates are handled correctly.
+
+## 5. Implement Task Dependencies [done]
+### Dependencies: 35.1, 35.3
+### Description: Add support for defining and managing dependencies between tasks, ensuring tasks can reference other tasks as prerequisites.
+### Details:
+Extend schema and endpoints to allow tasks to depend on other tasks. Implement logic to prevent circular dependencies.
+
+## 6. Status Tracking [done]
+### Dependencies: 35.1, 35.3
+### Description: Implement comprehensive status tracking for tasks, including transitions, completion, and progress updates.
+### Details:
+Define allowed statuses and transitions. Ensure status changes are validated and propagated as needed (e.g., parent/child or dependency effects).
+
+## 7. Integrate with Projects, Phases, and Statuses [done]
+### Dependencies: 35.1, 35.2, 35.3, 35.4, 35.5, 35.6
+### Description: Ensure tasks are properly linked to projects, phases, and status entities, supporting cross-entity queries and updates.
+### Details:
+Implement and test relationships between tasks and other entities. Ensure referential integrity and efficient cross-entity operations.
+
+## 8. Write Comprehensive Tests [done]
+### Dependencies: 35.2, 35.3, 35.4, 35.5, 35.6, 35.7
+### Description: Develop thorough unit and integration tests covering all endpoints, schema relationships, and business logic, including edge cases.
+### Details:
+Test CRUD operations, filtering, hierarchy, dependencies, status transitions, and integration with projects and phases. Ensure high coverage and reliability.
+

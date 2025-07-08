@@ -1,13 +1,11 @@
 import { config } from 'dotenv';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { 
-  CallToolRequestSchema, 
+import {
+  CallToolRequestSchema,
   ListToolsRequestSchema,
   ListResourcesRequestSchema,
   ListPromptsRequestSchema,
-  ReadResourceRequestSchema,
-  GetPromptRequestSchema
 } from '@modelcontextprotocol/sdk/types.js';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { logger, startHealthChecks } from './utils/logger.js';
@@ -19,7 +17,8 @@ config();
 
 // Detect if we're running as an MCP server
 // Check for explicit --mcp flag or typical MCP environment (piped stdin/stdout)
-const isMCPServer = process.argv.includes('--mcp') || (!process.stdin.isTTY && !process.stdout.isTTY);
+const isMCPServer =
+  process.argv.includes('--mcp') || (!process.stdin.isTTY && !process.stdout.isTTY);
 
 // Only log startup info if not running as MCP server
 if (!isMCPServer) {
@@ -67,11 +66,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
   try {
     const result = await tool.handler(request.params.arguments || {});
-    
+
     // Return the data directly, not wrapped in additional structure
     // If the result has a data property (from ToolResponse), extract it
-    const responseData = result && typeof result === 'object' && 'data' in result ? result.data : result;
-    
+    const responseData =
+      result && typeof result === 'object' && 'data' in result ? result.data : result;
+
     return {
       content: [
         {

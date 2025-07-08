@@ -42,7 +42,7 @@ function parseConfig(): Config {
     console.error(`NODE_ENV: ${process.env.NODE_ENV || '[NOT SET]'}`);
     console.error(`LOG_LEVEL: ${process.env.LOG_LEVEL || '[NOT SET]'}`);
   }
-  
+
   try {
     return configSchema.parse({
       floatApiKey: process.env.FLOAT_API_KEY,

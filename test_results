@@ -1,4 +1,0 @@
-
-> float-mcp@0.1.0 test
-> NODE_OPTIONS=--experimental-vm-modules jest
-
