@@ -386,7 +386,9 @@ describe('Task Tools Integration Tests', () => {
 
       tasks.forEach((task: any) => {
         if (task.start_date && task.end_date) {
-          expect(task.start_date).toBeLessThanOrEqual(task.end_date);
+          const startDate = new Date(task.start_date);
+          const endDate = new Date(task.end_date);
+          expect(startDate.getTime()).toBeLessThanOrEqual(endDate.getTime());
         }
       });
     });
