@@ -292,7 +292,7 @@ describe('Task Tools Integration Tests', () => {
         {
           task_id: 999999999,
         },
-        'task'
+        'tasks'
       );
     });
 
@@ -323,7 +323,7 @@ describe('Task Tools Integration Tests', () => {
         project_id: 999999999,
       });
 
-      await ErrorTestUtils.testValidationError('create-task', invalidData, 'project');
+      await ErrorTestUtils.testValidationError('create-task', invalidData, 'project_id');
     });
   });
 

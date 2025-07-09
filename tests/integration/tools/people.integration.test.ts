@@ -290,7 +290,7 @@ describe('People Tools Integration Tests', () => {
         {
           people_id: 999999999,
         },
-        'person'
+        'people'
       );
     });
 

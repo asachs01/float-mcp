@@ -86,27 +86,33 @@ export class ErrorTestUtils {
     invalidParams: Record<string, any>,
     expectedField?: string
   ): Promise<void> {
-    try {
-      await executeTool(toolName, invalidParams);
-      throw new Error('Expected validation error but operation succeeded');
-    } catch (error) {
-      expect(error).toBeDefined();
-      expect(error instanceof Error).toBe(true);
+    const result = await executeTool(toolName, invalidParams);
+    
+    // Check if the result is a structured error response (from tool wrapper)
+    if (result && typeof result === 'object' && 'success' in result) {
+      const toolResponse = result as { success: boolean; error?: string; errorCode?: string };
+      
+      if (!toolResponse.success && toolResponse.error) {
+        // This is an expected error response
+        const errorMessage = toolResponse.error.toLowerCase();
+        expect(
+          errorMessage.includes('validation') ||
+            errorMessage.includes('invalid') ||
+            errorMessage.includes('required') ||
+            errorMessage.includes('400')
+        ).toBe(true);
 
-      const errorMessage = (error as Error).message.toLowerCase();
-      expect(
-        errorMessage.includes('validation') ||
-          errorMessage.includes('invalid') ||
-          errorMessage.includes('required') ||
-          errorMessage.includes('400')
-      ).toBe(true);
-
-      if (expectedField && !process.env.TEST_REAL_API) {
-        // Real APIs may have different error message formats
-        // Only enforce strict field validation in mock mode
-        expect(errorMessage.includes(expectedField.toLowerCase())).toBe(true);
+        if (expectedField && process.env.TEST_REAL_API !== 'true') {
+          // Real APIs may have different error message formats
+          // Only enforce strict field validation in mock mode
+          expect(errorMessage.includes(expectedField.toLowerCase())).toBe(true);
+        }
+        return; // Test passed - we got the expected error response
       }
     }
+
+    // If we get here, the operation succeeded when it should have failed
+    throw new Error('Expected validation error but operation succeeded');
   }
 
   // Test not found error
@@ -115,26 +121,32 @@ export class ErrorTestUtils {
     params: Record<string, any>,
     entityType?: string
   ): Promise<void> {
-    try {
-      await executeTool(toolName, params);
-      throw new Error('Expected not found error but operation succeeded');
-    } catch (error) {
-      expect(error).toBeDefined();
-      expect(error instanceof Error).toBe(true);
+    const result = await executeTool(toolName, params);
+    
+    // Check if the result is a structured error response (from tool wrapper)
+    if (result && typeof result === 'object' && 'success' in result) {
+      const toolResponse = result as { success: boolean; error?: string; errorCode?: string };
+      
+      if (!toolResponse.success && toolResponse.error) {
+        // This is an expected error response
+        const errorMessage = toolResponse.error.toLowerCase();
+        expect(
+          errorMessage.includes('not found') ||
+            errorMessage.includes('404') ||
+            errorMessage.includes('does not exist')
+        ).toBe(true);
 
-      const errorMessage = (error as Error).message.toLowerCase();
-      expect(
-        errorMessage.includes('not found') ||
-          errorMessage.includes('404') ||
-          errorMessage.includes('does not exist')
-      ).toBe(true);
-
-      if (entityType && !process.env.TEST_REAL_API) {
-        // Real APIs may have different error message formats
-        // Only enforce strict entity type validation in mock mode
-        expect(errorMessage.includes(entityType.toLowerCase())).toBe(true);
+        if (entityType && process.env.TEST_REAL_API !== 'true') {
+          // Real APIs may have different error message formats
+          // Only enforce strict entity type validation in mock mode
+          expect(errorMessage.includes(entityType.toLowerCase())).toBe(true);
+        }
+        return; // Test passed - we got the expected error response
       }
     }
+
+    // If we get here, the operation succeeded when it should have failed
+    throw new Error('Expected not found error but operation succeeded');
   }
 
   // Test rate limit error
@@ -169,11 +181,17 @@ export class ErrorTestUtils {
     invalidParams: Record<string, any>
   ): Promise<void> {
     // First, cause an error
-    try {
-      await executeTool(toolName, invalidParams);
+    const errorResult = await executeTool(toolName, invalidParams);
+    
+    // Check if we got an error response (structured or thrown)
+    let gotError = false;
+    if (errorResult && typeof errorResult === 'object' && 'success' in errorResult) {
+      const toolResponse = errorResult as { success: boolean; error?: string };
+      gotError = !toolResponse.success && !!toolResponse.error;
+    }
+    
+    if (!gotError) {
       throw new Error('Expected error but operation succeeded');
-    } catch (error) {
-      expect(error).toBeDefined();
     }
 
     // Then, verify the system can recover with valid params
@@ -268,6 +286,9 @@ export class ErrorScenarioRunner {
 
 // Common error test cases
 export const createErrorTestCases = (entityType: string) => {
+  // Map singular entity types to their plural URL forms
+  const entityTypePlural = entityType === 'person' ? 'people' : `${entityType}s`;
+  
   return [
     {
       name: `${entityType} - Invalid API Key`,
@@ -298,7 +319,7 @@ export const createErrorTestCases = (entityType: string) => {
         const idField = `${entityType}_id`;
         invalidParams[idField] = 999999999;
 
-        await ErrorTestUtils.testNotFoundError(toolName, invalidParams, entityType);
+        await ErrorTestUtils.testNotFoundError(toolName, invalidParams, entityTypePlural);
       },
     },
     {
