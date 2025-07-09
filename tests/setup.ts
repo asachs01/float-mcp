@@ -303,12 +303,42 @@ jest.mock('../src/services/float-api.ts', () => {
           if (!data.name || data.name === '') {
             throw new Error('Validation error: Missing required field name');
           }
+          if (!data.project_id) {
+            throw new Error('Validation error: Missing required field project_id');
+          }
+          if (!data.people_id) {
+            throw new Error('Validation error: Missing required field people_id');
+          }
           if (
             data.project_id &&
             typeof data.project_id === 'string' &&
             !/^\d+$/.test(data.project_id as string)
           ) {
             throw new Error('Validation error: Invalid project_id format. Expected numeric value');
+          }
+          // Check if project_id exists in mock data
+          if (data.project_id) {
+            const projects = mockResponses['/projects'] || [];
+            const projectExists = projects.some((project: Record<string, unknown>) => 
+              project.project_id === data.project_id
+            );
+            if (!projectExists) {
+              throw new Error('Validation error: Invalid project_id - project does not exist');
+            }
+          }
+          if (
+            data.start_date &&
+            typeof data.start_date === 'string' &&
+            !/^\d{4}-\d{2}-\d{2}$/.test(data.start_date)
+          ) {
+            throw new Error('Validation error: Invalid start_date format. Expected YYYY-MM-DD');
+          }
+          if (
+            data.end_date &&
+            typeof data.end_date === 'string' &&
+            !/^\d{4}-\d{2}-\d{2}$/.test(data.end_date)
+          ) {
+            throw new Error('Validation error: Invalid end_date format. Expected YYYY-MM-DD');
           }
           break;
       }

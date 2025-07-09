@@ -292,7 +292,7 @@ describe('Task Tools Integration Tests', () => {
         {
           task_id: 999999999,
         },
-        'tasks'
+        'task'
       );
     });
 

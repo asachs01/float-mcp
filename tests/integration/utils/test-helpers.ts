@@ -160,6 +160,7 @@ export const generateTestTaskData = (overrides: Partial<any> = {}) => {
   return {
     name: `Test Task ${timestamp}_${random}`,
     project_id: 1,
+    people_id: 1, // Required field for create-task
     start_date: '2024-01-01',
     end_date: '2024-01-31',
     notes: 'Test task created by integration tests',

@@ -306,7 +306,8 @@ export const createErrorTestCases = (entityType: string) => {
       name: `${entityType} - Invalid ID Format`,
       test: async (toolName: string, validParams: Record<string, any>) => {
         const invalidParams = { ...validParams };
-        const idField = `${entityType}_id`;
+        // Handle special case where "person" uses "people_id" instead of "person_id"
+        const idField = entityType === 'person' ? 'people_id' : `${entityType}_id`;
         invalidParams[idField] = 'invalid_id';
 
         await ErrorTestUtils.testValidationError(toolName, invalidParams, idField);
@@ -316,17 +317,22 @@ export const createErrorTestCases = (entityType: string) => {
       name: `${entityType} - Non-existent ID`,
       test: async (toolName: string, validParams: Record<string, any>) => {
         const invalidParams = { ...validParams };
-        const idField = `${entityType}_id`;
+        // Handle special case where "person" uses "people_id" instead of "person_id"
+        const idField = entityType === 'person' ? 'people_id' : `${entityType}_id`;
         invalidParams[idField] = 999999999;
 
-        await ErrorTestUtils.testNotFoundError(toolName, invalidParams, entityTypePlural);
+        // Use the correct entity type that matches the mock error messages
+        // Special case: "person" mock generates "people" in error messages
+        const mockEntityType = entityType === 'person' ? 'people' : entityType;
+        await ErrorTestUtils.testNotFoundError(toolName, invalidParams, mockEntityType);
       },
     },
     {
       name: `${entityType} - Error Recovery`,
       test: async (toolName: string, validParams: Record<string, any>) => {
         const invalidParams = { ...validParams };
-        const idField = `${entityType}_id`;
+        // Handle special case where "person" uses "people_id" instead of "person_id"
+        const idField = entityType === 'person' ? 'people_id' : `${entityType}_id`;
         invalidParams[idField] = 'invalid_id';
 
         await ErrorTestUtils.testErrorRecovery(toolName, validParams, invalidParams);
