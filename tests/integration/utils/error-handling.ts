@@ -87,11 +87,11 @@ export class ErrorTestUtils {
     expectedField?: string
   ): Promise<void> {
     const result = await executeTool(toolName, invalidParams);
-    
+
     // Check if the result is a structured error response (from tool wrapper)
     if (result && typeof result === 'object' && 'success' in result) {
       const toolResponse = result as { success: boolean; error?: string; errorCode?: string };
-      
+
       if (!toolResponse.success && toolResponse.error) {
         // This is an expected error response
         const errorMessage = toolResponse.error.toLowerCase();
@@ -122,11 +122,11 @@ export class ErrorTestUtils {
     entityType?: string
   ): Promise<void> {
     const result = await executeTool(toolName, params);
-    
+
     // Check if the result is a structured error response (from tool wrapper)
     if (result && typeof result === 'object' && 'success' in result) {
       const toolResponse = result as { success: boolean; error?: string; errorCode?: string };
-      
+
       if (!toolResponse.success && toolResponse.error) {
         // This is an expected error response
         const errorMessage = toolResponse.error.toLowerCase();
@@ -182,14 +182,14 @@ export class ErrorTestUtils {
   ): Promise<void> {
     // First, cause an error
     const errorResult = await executeTool(toolName, invalidParams);
-    
+
     // Check if we got an error response (structured or thrown)
     let gotError = false;
     if (errorResult && typeof errorResult === 'object' && 'success' in errorResult) {
       const toolResponse = errorResult as { success: boolean; error?: string };
       gotError = !toolResponse.success && !!toolResponse.error;
     }
-    
+
     if (!gotError) {
       throw new Error('Expected error but operation succeeded');
     }
@@ -286,9 +286,6 @@ export class ErrorScenarioRunner {
 
 // Common error test cases
 export const createErrorTestCases = (entityType: string) => {
-  // Map singular entity types to their plural URL forms
-  const entityTypePlural = entityType === 'person' ? 'people' : `${entityType}s`;
-  
   return [
     {
       name: `${entityType} - Invalid API Key`,

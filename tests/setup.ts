@@ -319,8 +319,8 @@ jest.mock('../src/services/float-api.ts', () => {
           // Check if project_id exists in mock data
           if (data.project_id) {
             const projects = mockResponses['/projects'] || [];
-            const projectExists = projects.some((project: Record<string, unknown>) => 
-              project.project_id === data.project_id
+            const projectExists = projects.some(
+              (project: Record<string, unknown>) => project.project_id === data.project_id
             );
             if (!projectExists) {
               throw new Error('Validation error: Invalid project_id - project does not exist');
