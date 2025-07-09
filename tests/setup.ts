@@ -207,14 +207,16 @@ jest.mock('../src/services/float-api.ts', () => {
             case 'logged-time':
               idField = 'logged_time_id';
               break;
-            default:
+            default: {
               // Fallback: try to find any field ending with _id
               const entity = mockData[0];
               const possibleIdField = Object.keys(entity).find((key) => key.endsWith('_id'));
               idField = possibleIdField || 'id';
+              break;
+            }
           }
 
-          const entity = mockData.find((item: any) => item[idField] === id);
+          const entity = mockData.find((item: Record<string, unknown>) => item[idField] === id);
           if (!entity) {
             const entityTypeSingular = entityType.replace(/s$/, ''); // Remove trailing 's'
             throw new Error(
@@ -296,7 +298,9 @@ jest.mock('../src/services/float-api.ts', () => {
         const newEntity = { ...data };
         const idField = Object.keys(mockData[0]).find((key) => key.endsWith('_id'));
         if (idField) {
-          (newEntity as any)[idField] = Math.max(...mockData.map((item: any) => item[idField])) + 1;
+          (newEntity as Record<string, unknown>)[idField] =
+            Math.max(...mockData.map((item: Record<string, unknown>) => item[idField] as number)) +
+            1;
         }
         return newEntity;
       }
