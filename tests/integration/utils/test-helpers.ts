@@ -4,6 +4,9 @@ import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprot
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { tools } from '../../../src/tools/index.ts';
 import { TEST_CONFIG, sleep, retryOperation } from '../setup.ts';
+
+// Re-export commonly used functions
+export { sleep } from '../setup.ts';
 import { logger } from '../../../src/utils/logger.ts';
 import { z } from 'zod';
 
