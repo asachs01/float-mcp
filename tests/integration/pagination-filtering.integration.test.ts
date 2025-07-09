@@ -14,7 +14,7 @@ describe('Pagination and Filtering Integration Tests', () => {
       'list-statuses',
       'list-phases',
       'list-milestones',
-      'list-time-off',
+      'list-timeoff',
       'list-accounts',
       'list-roles',
       'list-project-tasks',
@@ -380,7 +380,7 @@ describe('Pagination and Filtering Integration Tests', () => {
 
     describe('Time Off Filtering', () => {
       it('should filter time off by person', async () => {
-        const result = await executeToolWithRetry('list-time-off', {
+        const result = await executeToolWithRetry('list-timeoff', {
           people_id: 1,
           'per-page': 10,
         });
@@ -394,7 +394,7 @@ describe('Pagination and Filtering Integration Tests', () => {
       });
 
       it('should filter time off by date range', async () => {
-        const result = await executeToolWithRetry('list-time-off', {
+        const result = await executeToolWithRetry('list-timeoff', {
           start_date: '2024-01-01',
           end_date: '2024-12-31',
           'per-page': 10,
@@ -414,8 +414,8 @@ describe('Pagination and Filtering Integration Tests', () => {
       });
 
       it('should filter time off by status', async () => {
-        const result = await executeToolWithRetry('list-time-off', {
-          status: 1,
+        const result = await executeToolWithRetry('list-timeoff', {
+          status: '1',
           'per-page': 10,
         });
 

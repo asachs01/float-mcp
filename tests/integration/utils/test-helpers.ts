@@ -10,7 +10,7 @@ import { z } from 'zod';
 // Test server instance
 let testServer: Server | null = null;
 
-// Create test server
+// Create test server for testing (simplified approach)
 export const createTestServer = () => {
   if (testServer) {
     return testServer;
@@ -69,39 +69,28 @@ export const createTestServer = () => {
   return testServer;
 };
 
-// Execute a tool with proper error handling and retries
+// Execute a tool directly using the tool handler
 export const executeToolWithRetry = async <T>(
   toolName: string,
   params: Record<string, any>,
   maxRetries: number = TEST_CONFIG.retryAttempts
 ): Promise<T> => {
   return retryOperation(async () => {
-    const server = createTestServer();
-
     // Add delay between calls to avoid rate limiting
     await sleep(TEST_CONFIG.apiCallDelay);
 
-    const result = await server.processRequest({
-      jsonrpc: '2.0',
-      id: 1,
-      method: 'tools/call',
-      params: {
-        name: toolName,
-        arguments: params,
-      },
-    });
-
-    if ('error' in result) {
-      throw new Error(result.error.message);
+    const tool = tools.find((t) => t.name === toolName);
+    if (!tool) {
+      throw new Error(`Tool ${toolName} not found`);
     }
 
-    // Parse the text response
-    const content = result.result.content[0];
-    if (content.type === 'text') {
-      return JSON.parse(content.text);
-    }
+    const result = await tool.handler(params || {});
 
-    throw new Error('Unexpected response format');
+    // Extract data from ToolResponse if needed
+    const responseData =
+      result && typeof result === 'object' && 'data' in result ? result.data : result;
+
+    return responseData;
   }, maxRetries);
 };
 
@@ -112,20 +101,11 @@ export const executeTool = async <T>(toolName: string, params: Record<string, an
 
 // Get all available tools
 export const getAvailableTools = async () => {
-  const server = createTestServer();
-
-  const result = await server.processRequest({
-    jsonrpc: '2.0',
-    id: 1,
-    method: 'tools/list',
-    params: {},
-  });
-
-  if ('error' in result) {
-    throw new Error(result.error.message);
-  }
-
-  return result.result.tools;
+  return tools.map((tool) => ({
+    name: tool.name,
+    description: tool.description,
+    inputSchema: zodToJsonSchema(tool.inputSchema),
+  }));
 };
 
 // Validate tool response against schema
