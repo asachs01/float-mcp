@@ -80,12 +80,15 @@ Add to your MCP client configuration (e.g., Claude Desktop):
 {
   "mcpServers": {
     "float-mcp": {
-      "command": "node",
-      "args": ["/path/to/float-mcp/dist/index.js"],
-      "env": {
-        "FLOAT_API_KEY": "flt_your_api_key_here",
-        "FLOAT_API_BASE_URL": "https://api.float.com/v3"
-      }
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "-e", "FLOAT_API_KEY=YOURAPIKEY",
+        "-e", "LOG_LEVEL=debug",
+        "ghcr.io/asachs01/float-mcp:latest"
+      ]
     }
   }
 }
