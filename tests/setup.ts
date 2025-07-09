@@ -66,8 +66,20 @@ jest.mock('../src/services/float-api.ts', () => {
       { logged_time_id: 2, people_id: 1, project_id: 1, hours: 6, date: '2024-01-02' },
     ],
     '/team-holidays': [
-      { team_holiday_id: 1, name: 'Company Holiday', start_date: '2024-12-25', end_date: '2024-12-25', active: 1 },
-      { team_holiday_id: 2, name: 'New Year', start_date: '2024-01-01', end_date: '2024-01-01', active: 1 },
+      {
+        team_holiday_id: 1,
+        name: 'Company Holiday',
+        start_date: '2024-12-25',
+        end_date: '2024-12-25',
+        active: 1,
+      },
+      {
+        team_holiday_id: 2,
+        name: 'New Year',
+        start_date: '2024-01-01',
+        end_date: '2024-01-01',
+        active: 1,
+      },
     ],
     '/public-holidays': [
       { public_holiday_id: 1, name: 'Christmas', date: '2024-12-25', country: 'US', active: 1 },
@@ -79,73 +91,93 @@ jest.mock('../src/services/float-api.ts', () => {
   class MockFloatApi {
     constructor() {}
 
-    async getPaginated(url: string, params?: any, schema?: any, format?: string) {
+    async getPaginated(
+      url: string,
+      params?: Record<string, unknown>,
+      _schema?: unknown,
+      _format?: string
+    ): Promise<unknown[]> {
       const baseUrl = url.split('?')[0];
       const mockData = mockResponses[baseUrl];
       if (!mockData) {
         throw new Error(`No mock data found for ${url}`);
       }
-      
+
       // Apply basic filtering if params provided
       let filteredData = [...mockData];
-      
+
       if (params) {
         // Apply simple filtering logic
-        Object.keys(params).forEach(key => {
+        Object.keys(params).forEach((key) => {
           if (key !== 'page' && key !== 'per-page' && params[key] !== undefined) {
-            filteredData = filteredData.filter(item => {
+            filteredData = filteredData.filter((item) => {
               const itemValue = item[key];
               const filterValue = params[key];
               return itemValue === filterValue || itemValue == filterValue;
             });
           }
         });
-        
+
         // Apply pagination
         const page = params.page || 1;
         const perPage = params['per-page'] || 50;
-        const startIndex = (page - 1) * perPage;
-        const endIndex = startIndex + perPage;
+        const startIndex = ((page as number) - 1) * (perPage as number);
+        const endIndex = startIndex + (perPage as number);
         filteredData = filteredData.slice(startIndex, endIndex);
       }
-      
+
       return filteredData;
     }
 
-    async get(url: string, schema?: any, format?: string) {
+    async get(url: string, _schema?: unknown, _format?: string): Promise<unknown> {
       const baseUrl = url.split('?')[0];
       const mockData = mockResponses[baseUrl];
       if (!mockData || mockData.length === 0) {
         throw new Error(`No mock data found for ${url}`);
       }
-      
+
       // For single entity requests (with ID)
       if (url.includes('/') && /\/\d+$/.test(url)) {
         return mockData[0]; // Return first item for single entity
       }
-      
+
       return mockData;
     }
 
-    async post(url: string, data: any, schema?: any, format?: string) {
+    async post(
+      url: string,
+      data: Record<string, unknown>,
+      _schema?: unknown,
+      _format?: string
+    ): Promise<unknown> {
       return { ...data, id: Math.floor(Math.random() * 1000) + 100 };
     }
 
-    async put(url: string, data: any, schema?: any, format?: string) {
+    async put(
+      url: string,
+      data: Record<string, unknown>,
+      _schema?: unknown,
+      _format?: string
+    ): Promise<unknown> {
       return { ...data, updated: true };
     }
 
-    async patch(url: string, data: any, schema?: any, format?: string) {
+    async patch(
+      url: string,
+      data: Record<string, unknown>,
+      _schema?: unknown,
+      _format?: string
+    ): Promise<unknown> {
       return { ...data, updated: true };
     }
 
-    async delete(url: string, schema?: any, format?: string) {
+    async delete(_url: string, _schema?: unknown, _format?: string): Promise<unknown> {
       return { success: true };
     }
 
-    buildQueryParams(params: Record<string, any>): string {
+    buildQueryParams(params: Record<string, unknown>): string {
       return Object.keys(params)
-        .map(key => `${key}=${encodeURIComponent(params[key])}`)
+        .map((key) => `${key}=${encodeURIComponent(params[key])}`)
         .join('&');
     }
   }
@@ -153,9 +185,14 @@ jest.mock('../src/services/float-api.ts', () => {
   return {
     FloatApi: MockFloatApi,
     floatApi: new MockFloatApi(),
-    stopCleanup: () => {},
+    stopCleanup: (): void => {},
     FloatApiError: class FloatApiError extends Error {
-      constructor(message: string, public status?: number, public data?: unknown, public code?: string) {
+      constructor(
+        message: string,
+        public status?: number,
+        public data?: unknown,
+        public code?: string
+      ) {
         super(message);
         this.status = status;
         this.data = data;
@@ -163,12 +200,12 @@ jest.mock('../src/services/float-api.ts', () => {
       }
     },
     FloatErrorHandler: {
-      formatErrorForMcp: (error: any) => ({
+      formatErrorForMcp: (error: Record<string, unknown>): Record<string, unknown> => ({
         success: false,
         error: error.message,
-        errorCode: error.code
-      })
-    }
+        errorCode: error.code,
+      }),
+    },
   };
 });
 
