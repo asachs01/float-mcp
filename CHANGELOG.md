@@ -86,7 +86,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Environment-based configuration
 - Setup script for easy installation
 
-[Unreleased]: https://github.com/asachs01/float-mcp/compare/v0.2.0...HEAD
+## [0.3.0] - 2025-07-09
+
+### Added
+- Comprehensive test mocking for all Float API endpoints
+- 100% test pass rate (189/189 tests passing)
+- Docker image and Docker Compose fully validated for MCP mode
+- Test isolation and state reset for reliable CI runs
+
+### Fixed
+- All ESLint and Prettier errors (reduced from 51 to 0)
+- Test data generation now uses proper helpers with required fields
+- Mock state pollution between tests resolved
+
+### Changed
+- Dramatic improvement in test execution time (217s → 28s)
+- CI/CD pipeline now fully reliable and compliant
+
+[Unreleased]: https://github.com/asachs01/float-mcp/compare/v0.3.0...HEAD
+[0.2.2]: https://github.com/asachs01/float-mcp/compare/v0.2.1...v0.2.2
+[0.2.1]: https://github.com/asachs01/float-mcp/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/asachs01/float-mcp/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/asachs01/float-mcp/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/asachs01/float-mcp/releases/tag/v0.1.0
+[0.3.0]: https://github.com/asachs01/float-mcp/compare/v0.2.2...v0.3.0
