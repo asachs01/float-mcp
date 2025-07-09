@@ -203,10 +203,12 @@ describe('People Tools Integration Tests', () => {
       });
 
       expect(result).toBeDefined();
-      
+
       // For real API, we may need to fetch the updated person to verify changes
       if (process.env.TEST_REAL_API === 'true') {
-        const updatedPerson = await executeToolWithRetry('get-person', { people_id: created.people_id });
+        const updatedPerson = await executeToolWithRetry('get-person', {
+          people_id: created.people_id,
+        });
         expect(updatedPerson.people_id).toBe(created.people_id);
         expect(updatedPerson.name).toBe(updatedName);
         expect(updatedPerson.job_title).toBe('Updated Title');
@@ -237,10 +239,12 @@ describe('People Tools Integration Tests', () => {
       });
 
       expect(result).toBeDefined();
-      
+
       // For real API, we may need to fetch the updated person to verify changes
       if (process.env.TEST_REAL_API === 'true') {
-        const updatedPerson = await executeToolWithRetry('get-person', { people_id: created.people_id });
+        const updatedPerson = await executeToolWithRetry('get-person', {
+          people_id: created.people_id,
+        });
         expect(updatedPerson.people_id).toBe(created.people_id);
         expect(updatedPerson.job_title).toBe('Lead Developer');
         expect(updatedPerson.name).toBe(personData.name); // Should remain unchanged

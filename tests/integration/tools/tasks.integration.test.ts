@@ -172,7 +172,7 @@ describe('Task Tools Integration Tests', () => {
       expect(result).toBeDefined();
       expect(result.task_id).toBeDefined();
       expect(result.people_id).toBe(taskData.people_id);
-      
+
       // For real API, some fields might not be returned in create response
       if (process.env.TEST_REAL_API === 'true') {
         // Just verify the task was created and has required fields
@@ -207,7 +207,7 @@ describe('Task Tools Integration Tests', () => {
       });
 
       expect(result).toBeDefined();
-      
+
       // For real API, we may need to fetch the updated task to verify changes
       if (process.env.TEST_REAL_API === 'true') {
         const updatedTask = await executeToolWithRetry('get-task', { task_id: created.task_id });
@@ -241,7 +241,7 @@ describe('Task Tools Integration Tests', () => {
       });
 
       expect(result).toBeDefined();
-      
+
       // For real API, we may need to fetch the updated task to verify changes
       if (process.env.TEST_REAL_API === 'true') {
         const updatedTask = await executeToolWithRetry('get-task', { task_id: created.task_id });

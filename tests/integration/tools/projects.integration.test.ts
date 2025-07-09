@@ -202,10 +202,12 @@ describe('Project Tools Integration Tests', () => {
       });
 
       expect(result).toBeDefined();
-      
+
       // For real API, we may need to fetch the updated project to verify changes
       if (process.env.TEST_REAL_API === 'true') {
-        const updatedProject = await executeToolWithRetry('get-project', { project_id: created.project_id });
+        const updatedProject = await executeToolWithRetry('get-project', {
+          project_id: created.project_id,
+        });
         expect(updatedProject.project_id).toBe(created.project_id);
         expect(updatedProject.name).toBe(updatedName);
         expect(updatedProject.color).toBe('#00FF00');
@@ -237,10 +239,12 @@ describe('Project Tools Integration Tests', () => {
       });
 
       expect(result).toBeDefined();
-      
+
       // For real API, we may need to fetch the updated project to verify changes
       if (process.env.TEST_REAL_API === 'true') {
-        const updatedProject = await executeToolWithRetry('get-project', { project_id: created.project_id });
+        const updatedProject = await executeToolWithRetry('get-project', {
+          project_id: created.project_id,
+        });
         expect(updatedProject.project_id).toBe(created.project_id);
         expect(updatedProject.color).toBe('#FFFF00');
         expect(updatedProject.name).toBe(projectData.name); // Should remain unchanged

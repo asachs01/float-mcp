@@ -9,25 +9,25 @@ jest.mock('../src/services/float-api.ts', () => {
   // Mock responses for common endpoints
   const mockResponses = {
     '/projects': [
-      { 
-        project_id: 1, 
-        name: 'Test Project 1', 
-        active: 1, 
+      {
+        project_id: 1,
+        name: 'Test Project 1',
+        active: 1,
         client_id: 1,
         project_manager: 1,
         color: '#FF0000',
         created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z'
+        updated_at: '2024-01-01T00:00:00Z',
       },
-      { 
-        project_id: 2, 
-        name: 'Test Project 2', 
-        active: 1, 
+      {
+        project_id: 2,
+        name: 'Test Project 2',
+        active: 1,
         client_id: 1,
         project_manager: 1,
         color: '#00FF00',
         created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z'
+        updated_at: '2024-01-01T00:00:00Z',
       },
     ],
     '/people': [
@@ -61,7 +61,7 @@ jest.mock('../src/services/float-api.ts', () => {
         start_date: null,
         end_date: null,
         created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z'
+        updated_at: '2024-01-01T00:00:00Z',
       },
       {
         task_id: 2,
@@ -73,7 +73,7 @@ jest.mock('../src/services/float-api.ts', () => {
         start_date: '2024-01-01',
         end_date: '2024-01-31',
         created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z'
+        updated_at: '2024-01-01T00:00:00Z',
       },
     ],
     '/timeoffs': [
@@ -144,8 +144,8 @@ jest.mock('../src/services/float-api.ts', () => {
   };
 
   // Create a mock FloatApi class
-    class MockFloatApi {
-    private createdEntities: Record<string, any[]> = {};
+  class MockFloatApi {
+    private createdEntities: Record<string, Record<string, unknown>[]> = {};
 
     constructor() {}
 
@@ -218,7 +218,7 @@ jest.mock('../src/services/float-api.ts', () => {
           const mockData = mockResponses[endpointUrl] || [];
           const createdData = this.createdEntities[endpointUrl] || [];
           const allData = [...mockData, ...createdData];
-          
+
           if (allData.length === 0) {
             throw new Error(`No mock data found for ${url}`);
           }
@@ -394,7 +394,7 @@ jest.mock('../src/services/float-api.ts', () => {
         const existingPeople = mockResponses['/people'] || [];
         const createdPeople = this.createdEntities['/people'] || [];
         const allPeople = [...existingPeople, ...createdPeople];
-        
+
         const duplicateEmail = allPeople.some(
           (person: Record<string, unknown>) => person.email === data.email
         );
@@ -408,15 +408,15 @@ jest.mock('../src/services/float-api.ts', () => {
       if (mockData && mockData.length > 0) {
         // Get a template entity to copy structure from
         const template = mockData[0] as Record<string, unknown>;
-        
+
         // Create new entity with template structure and provided data
         const newEntity = { ...template, ...data };
-        
+
         // Debug logging
         if (url === '/tasks') {
-
+          // Task creation debug logging (currently empty)
         }
-        
+
         // Generate new ID
         const idField = Object.keys(template).find((key) => key.endsWith('_id'));
         if (idField) {
@@ -424,7 +424,7 @@ jest.mock('../src/services/float-api.ts', () => {
             Math.max(...mockData.map((item: Record<string, unknown>) => item[idField] as number)) +
             1;
         }
-        
+
         // Set creation timestamp if applicable
         if ('created_at' in template) {
           newEntity.created_at = new Date().toISOString();
@@ -432,13 +432,13 @@ jest.mock('../src/services/float-api.ts', () => {
         if ('updated_at' in template) {
           newEntity.updated_at = new Date().toISOString();
         }
-        
+
         // Store the created entity for future duplicate checks and gets
         if (!this.createdEntities[url]) {
           this.createdEntities[url] = [];
         }
         this.createdEntities[url].push(newEntity);
-        
+
         return newEntity;
       }
 
@@ -458,7 +458,7 @@ jest.mock('../src/services/float-api.ts', () => {
           const idString = idMatch[1];
           const pathParts = url.split('/');
           const entityType = pathParts[pathParts.length - 2];
-          
+
           if (!/^\d+$/.test(idString)) {
             const entityTypeSingular = entityType.replace(/s$/, '');
             throw new Error(
@@ -466,15 +466,15 @@ jest.mock('../src/services/float-api.ts', () => {
             );
           }
 
-          const id = parseInt(idString, 10);
-          const baseUrl = `/${entityType}`;
-          
+          // Parse ID and validate (we don't need to store the values)
+          parseInt(idString, 10);
+
           // Get the existing entity
           const existingEntity = await this.get(url);
-          
+
           // Merge the updates with the existing entity
           const updatedEntity = { ...existingEntity, ...data };
-          
+
           return updatedEntity;
         }
       }
@@ -495,7 +495,7 @@ jest.mock('../src/services/float-api.ts', () => {
           const idString = idMatch[1];
           const pathParts = url.split('/');
           const entityType = pathParts[pathParts.length - 2];
-          
+
           if (!/^\d+$/.test(idString)) {
             const entityTypeSingular = entityType.replace(/s$/, '');
             throw new Error(
@@ -503,15 +503,15 @@ jest.mock('../src/services/float-api.ts', () => {
             );
           }
 
-          const id = parseInt(idString, 10);
-          const baseUrl = `/${entityType}`;
-          
+          // Parse ID and validate (we don't need to store the values)
+          parseInt(idString, 10);
+
           // Get the existing entity
           const existingEntity = await this.get(url);
-          
+
           // Merge the updates with the existing entity
           const updatedEntity = { ...existingEntity, ...data };
-          
+
           return updatedEntity;
         }
       }
@@ -531,7 +531,7 @@ jest.mock('../src/services/float-api.ts', () => {
   }
 
   const mockApiInstance = new MockFloatApi();
-  
+
   return {
     FloatApi: MockFloatApi,
     floatApi: mockApiInstance,
@@ -577,6 +577,7 @@ beforeAll(() => {
 beforeEach(() => {
   jest.clearAllMocks();
   // Reset mock state to prevent test pollution
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const floatApiModule = require('../src/services/float-api.js');
   if (floatApiModule.resetMockState) {
     floatApiModule.resetMockState();

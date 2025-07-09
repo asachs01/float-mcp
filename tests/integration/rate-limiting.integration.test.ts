@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { executeToolWithRetry, executeTool, executeBatch, sleep } from './utils/test-helpers.ts';
+import { executeTool, executeBatch, sleep } from './utils/test-helpers.ts';
 import { TEST_CONFIG } from './setup.ts';
 
 describe('Rate Limiting Integration Tests', () => {
@@ -173,9 +173,9 @@ describe('Rate Limiting Integration Tests', () => {
           const result = await executeTool('list-projects', { per_page: 1 });
           results.push(result);
           consecutiveSuccesses++;
-          
+
           // Wait progressively shorter intervals
-          await sleep(Math.max(1000, 5000 - (i * 800)));
+          await sleep(Math.max(1000, 5000 - i * 800));
         } catch (error) {
           console.log(`Request ${i} failed (expected):`, error.message);
           // Reset counter and wait longer
