@@ -131,17 +131,153 @@ jest.mock('../src/services/float-api.ts', () => {
 
     async get(url: string, _schema?: unknown, _format?: string): Promise<unknown> {
       const baseUrl = url.split('?')[0];
+
+      // For single entity requests (with ID), extract the ID and find the specific entity
+      if (url.includes('/') && /\/\w+$/.test(url)) {
+        const idMatch = url.match(/\/(\w+)$/);
+        if (idMatch) {
+          const idString = idMatch[1];
+          const pathParts = url.split('/');
+          const entityType = pathParts[pathParts.length - 2]; // Get the entity type before the ID
+          const endpointUrl = `/${entityType}`;
+
+          // Validate ID format - should be numeric
+          if (!/^\d+$/.test(idString)) {
+            const entityTypeSingular = entityType.replace(/s$/, ''); // Remove trailing 's'
+            throw new Error(
+              `Validation error: Invalid ${entityTypeSingular}_id format. Expected numeric value, got: ${idString}`
+            );
+          }
+
+          const id = parseInt(idString, 10);
+
+          const mockData = mockResponses[endpointUrl];
+          if (!mockData || mockData.length === 0) {
+            throw new Error(`No mock data found for ${url}`);
+          }
+
+          // Find the entity with matching ID based on entity type
+          let idField: string;
+          switch (entityType) {
+            case 'projects':
+              idField = 'project_id';
+              break;
+            case 'people':
+              idField = 'people_id';
+              break;
+            case 'tasks':
+              idField = 'task_id';
+              break;
+            case 'clients':
+              idField = 'client_id';
+              break;
+            case 'allocations':
+              idField = 'allocation_id';
+              break;
+            case 'departments':
+              idField = 'department_id';
+              break;
+            case 'statuses':
+              idField = 'status_id';
+              break;
+            case 'accounts':
+              idField = 'account_id';
+              break;
+            case 'roles':
+              idField = 'role_id';
+              break;
+            case 'milestones':
+              idField = 'milestone_id';
+              break;
+            case 'phases':
+              idField = 'phase_id';
+              break;
+            case 'project_tasks':
+              idField = 'project_task_id';
+              break;
+            case 'timeoffs':
+              idField = 'timeoff_id';
+              break;
+            case 'team-holidays':
+              idField = 'team_holiday_id';
+              break;
+            case 'public-holidays':
+              idField = 'public_holiday_id';
+              break;
+            case 'logged-time':
+              idField = 'logged_time_id';
+              break;
+            default:
+              // Fallback: try to find any field ending with _id
+              const entity = mockData[0];
+              const possibleIdField = Object.keys(entity).find((key) => key.endsWith('_id'));
+              idField = possibleIdField || 'id';
+          }
+
+          const entity = mockData.find((item: any) => item[idField] === id);
+          if (!entity) {
+            const entityTypeSingular = entityType.replace(/s$/, ''); // Remove trailing 's'
+            throw new Error(
+              `${entityTypeSingular.charAt(0).toUpperCase() + entityTypeSingular.slice(1)} not found: ${idField}=${id} does not exist`
+            );
+          }
+
+          return entity;
+        }
+      }
+
+      // For regular list requests
       const mockData = mockResponses[baseUrl];
       if (!mockData || mockData.length === 0) {
         throw new Error(`No mock data found for ${url}`);
       }
 
-      // For single entity requests (with ID)
-      if (url.includes('/') && /\/\d+$/.test(url)) {
-        return mockData[0]; // Return first item for single entity
-      }
-
       return mockData;
+    }
+
+    validateCreateData(entityType: string, data: Record<string, unknown>): void {
+      // Check for required fields and validate data formats
+      switch (entityType) {
+        case 'projects':
+          if (!data.name || data.name === '') {
+            throw new Error('Validation error: Missing required field name');
+          }
+          if (
+            data.client_id &&
+            typeof data.client_id === 'string' &&
+            !/^\d+$/.test(data.client_id as string)
+          ) {
+            throw new Error('Validation error: Invalid client_id format. Expected numeric value');
+          }
+          if (
+            data.start_date &&
+            typeof data.start_date === 'string' &&
+            !/^\d{4}-\d{2}-\d{2}$/.test(data.start_date)
+          ) {
+            throw new Error('Validation error: Invalid start_date format. Expected YYYY-MM-DD');
+          }
+          break;
+        case 'people':
+          if (!data.name || data.name === '') {
+            throw new Error('Validation error: Missing required field name');
+          }
+          if (data.email && typeof data.email === 'string' && !data.email.includes('@')) {
+            throw new Error('Validation error: Invalid email format');
+          }
+          break;
+        case 'tasks':
+          if (!data.name || data.name === '') {
+            throw new Error('Validation error: Missing required field name');
+          }
+          if (
+            data.project_id &&
+            typeof data.project_id === 'string' &&
+            !/^\d+$/.test(data.project_id as string)
+          ) {
+            throw new Error('Validation error: Invalid project_id format. Expected numeric value');
+          }
+          break;
+      }
     }
 
     async post(
@@ -150,6 +286,21 @@ jest.mock('../src/services/float-api.ts', () => {
       _schema?: unknown,
       _format?: string
     ): Promise<unknown> {
+      // Validate input data
+      const entityType = url.replace('/', '');
+      this.validateCreateData(entityType, data);
+
+      // Simulate creating a new entity
+      const mockData = mockResponses[url];
+      if (mockData && mockData.length > 0) {
+        const newEntity = { ...data };
+        const idField = Object.keys(mockData[0]).find((key) => key.endsWith('_id'));
+        if (idField) {
+          (newEntity as any)[idField] = Math.max(...mockData.map((item: any) => item[idField])) + 1;
+        }
+        return newEntity;
+      }
+
       return { ...data, id: Math.floor(Math.random() * 1000) + 100 };
     }
 
@@ -159,6 +310,22 @@ jest.mock('../src/services/float-api.ts', () => {
       _schema?: unknown,
       _format?: string
     ): Promise<unknown> {
+      // Extract entity type and ID from URL for validation
+      if (url.includes('/') && /\/\w+$/.test(url)) {
+        const idMatch = url.match(/\/(\w+)$/);
+        if (idMatch) {
+          const idString = idMatch[1];
+          if (!/^\d+$/.test(idString)) {
+            const pathParts = url.split('/');
+            const entityType = pathParts[pathParts.length - 2];
+            const entityTypeSingular = entityType.replace(/s$/, '');
+            throw new Error(
+              `Validation error: Invalid ${entityTypeSingular}_id format. Expected numeric value, got: ${idString}`
+            );
+          }
+        }
+      }
+
       return { ...data, updated: true };
     }
 
@@ -168,6 +335,22 @@ jest.mock('../src/services/float-api.ts', () => {
       _schema?: unknown,
       _format?: string
     ): Promise<unknown> {
+      // Extract entity type and ID from URL for validation
+      if (url.includes('/') && /\/\w+$/.test(url)) {
+        const idMatch = url.match(/\/(\w+)$/);
+        if (idMatch) {
+          const idString = idMatch[1];
+          if (!/^\d+$/.test(idString)) {
+            const pathParts = url.split('/');
+            const entityType = pathParts[pathParts.length - 2];
+            const entityTypeSingular = entityType.replace(/s$/, '');
+            throw new Error(
+              `Validation error: Invalid ${entityTypeSingular}_id format. Expected numeric value, got: ${idString}`
+            );
+          }
+        }
+      }
+
       return { ...data, updated: true };
     }
 
