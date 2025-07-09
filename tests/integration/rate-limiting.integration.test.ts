@@ -26,7 +26,7 @@ describe('Rate Limiting Integration Tests', () => {
       const duration = Date.now() - start;
 
       expect(results).toHaveLength(10);
-      
+
       // For real API tests, we're mainly testing that requests complete successfully
       // Rate limiting behavior varies by API implementation
       if (TEST_CONFIG.enableRealApiCalls) {
@@ -57,7 +57,7 @@ describe('Rate Limiting Integration Tests', () => {
       const duration = Date.now() - start;
 
       expect(results).toHaveLength(20);
-      
+
       // For real API tests, timing expectations are more flexible
       if (TEST_CONFIG.enableRealApiCalls) {
         console.log(`Burst request test completed in ${duration}ms`);
@@ -260,7 +260,7 @@ describe('Rate Limiting Integration Tests', () => {
         const duration = Date.now() - start;
 
         expect(results).toHaveLength(10);
-        
+
         // For real API tests, timing expectations are more flexible
         if (TEST_CONFIG.enableRealApiCalls) {
           console.log(`${toolName} rate limiting test completed in ${duration}ms`);
