@@ -15,15 +15,9 @@ on:
         default: false
 
 jobs:
-  integration-tests:
-    name: Integration Tests
+  integration-tests-mock:
+    name: Integration Tests (mock)
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        test-type: [mock]
-        include:
-          - test-type: real
-            condition: ${{ github.event_name == 'schedule' || github.event.inputs.run_real_tests == 'true' || contains(github.event.head_commit.message, '[test:real]') }}
 
     steps:
       - name: Checkout
@@ -44,32 +38,69 @@ jobs:
       - name: Setup test environment
         run: |
           cp .env.example .env
-          echo "TEST_MOCK_MODE=${{ matrix.test-type == 'mock' && 'true' || 'false' }}" >> .env
-          echo "TEST_REAL_API=${{ matrix.test-type == 'real' && 'true' || 'false' }}" >> .env
+          echo "TEST_MOCK_MODE=true" >> .env
+          echo "TEST_REAL_API=false" >> .env
           echo "LOG_LEVEL=error" >> .env
 
-      - name: Setup real API credentials
-        if: matrix.test-type == 'real'
-        run: |
-          echo "FLOAT_API_KEY=${{ secrets.FLOAT_API_KEY }}" >> .env
-          echo "FLOAT_API_BASE_URL=${{ secrets.FLOAT_API_BASE_URL || 'https://api.float.com/v3' }}" >> .env
+      - name: Run integration tests
+        run: npm run test:integration:mock
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-mock
+          path: |
+            coverage/
+            test-results/
+          retention-days: 7
+
+  integration-tests-real:
+    name: Integration Tests (real)
+    runs-on: ubuntu-latest
+    # Only run real API tests when explicitly requested
+    if: ${{ github.event_name == 'schedule' || github.event.inputs.run_real_tests == 'true' || contains(github.event.head_commit.message, '[test:real]') }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
 
       - name: Validate API credentials
-        if: matrix.test-type == 'real'
         run: |
           if [ -z "${{ secrets.FLOAT_API_KEY }}" ]; then
             echo "❌ FLOAT_API_KEY secret not configured"
             exit 1
           fi
 
+      - name: Setup test environment
+        run: |
+          cp .env.example .env
+          echo "TEST_MOCK_MODE=false" >> .env
+          echo "TEST_REAL_API=true" >> .env
+          echo "LOG_LEVEL=error" >> .env
+          echo "FLOAT_API_KEY=${{ secrets.FLOAT_API_KEY }}" >> .env
+          echo "FLOAT_API_BASE_URL=${{ secrets.FLOAT_API_BASE_URL || 'https://api.float.com/v3' }}" >> .env
+
       - name: Run integration tests
-        run: npm run test:integration:${{ matrix.test-type }}
+        run: npm run test:integration:real
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results-${{ matrix.test-type }}
+          name: test-results-real
           path: |
             coverage/
             test-results/
