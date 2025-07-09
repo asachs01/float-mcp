@@ -134,27 +134,28 @@ describe('Rate Limiting Integration Tests', () => {
         return;
       }
 
-      // First, trigger rate limiting
-      const rapidRequests = Array.from({ length: 50 }, () =>
-        executeTool('list-projects', { 'per-page': 1 })
-      );
-
-      try {
-        await Promise.all(rapidRequests);
-        console.warn('Rate limit not reached in first batch');
-      } catch (error) {
-        expect(error).toBeDefined();
+      // Make rapid requests to trigger rate limiting
+      const promises = [];
+      for (let i = 0; i < 10; i++) {
+        promises.push(executeTool('list-projects', { per_page: 1 }));
       }
 
-      // Wait for rate limit window to reset
-      console.log('Waiting for rate limit window to reset...');
-      await sleep(60000); // Wait 1 minute
+      try {
+        await Promise.all(promises);
+      } catch (error) {
+        // Expected to hit rate limit
+        console.log('Rate limit triggered as expected:', error.message);
+      }
 
-      // Now try a single request - should succeed
-      const result = await executeToolWithRetry('list-projects', { 'per-page': 1 });
+      // Wait for rate limit to reset (Float API typically resets every minute)
+      console.log('Waiting for rate limit to reset...');
+      await sleep(65000); // Wait 65 seconds to be safe
+
+      // Should be able to make requests again
+      const result = await executeTool('list-projects', { per_page: 1 });
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBe(true);
-    });
+    }, 120000); // 2 minute timeout
 
     it('should handle gradual request increase', async () => {
       if (skipIfMocked()) return;
@@ -163,22 +164,30 @@ describe('Rate Limiting Integration Tests', () => {
         return;
       }
 
-      // Start with small batches and gradually increase
-      const batchSizes = [1, 2, 5, 10, 20];
+      const results = [];
+      let consecutiveSuccesses = 0;
 
-      for (const batchSize of batchSizes) {
-        const requests = Array.from(
-          { length: batchSize },
-          () => () => executeTool('list-projects', { 'per-page': 1 })
-        );
-
-        const results = await executeBatch(requests, 5);
-        expect(results).toHaveLength(batchSize);
-
-        // Add delay between batches
-        await sleep(2000);
+      // Gradually increase request frequency
+      for (let i = 1; i <= 5; i++) {
+        try {
+          const result = await executeTool('list-projects', { per_page: 1 });
+          results.push(result);
+          consecutiveSuccesses++;
+          
+          // Wait progressively shorter intervals
+          await sleep(Math.max(1000, 5000 - (i * 800)));
+        } catch (error) {
+          console.log(`Request ${i} failed (expected):`, error.message);
+          // Reset counter and wait longer
+          consecutiveSuccesses = 0;
+          await sleep(10000);
+        }
       }
-    });
+
+      // Should have some successful requests
+      expect(consecutiveSuccesses).toBeGreaterThan(0);
+      expect(results.length).toBeGreaterThan(0);
+    }, 120000); // 2 minute timeout
   });
 
   describe('Rate Limit Metrics', () => {

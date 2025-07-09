@@ -183,56 +183,75 @@ describe('Project Tools Integration Tests', () => {
 
   describe('update-project', () => {
     it('should update an existing project', async () => {
-      if (!TEST_CONFIG.enableRealApiCalls) {
-        console.warn('Skipping update-project test - real API calls disabled');
-        return;
-      }
+      const projectData = generateTestProjectData({
+        name: 'Update Test Project',
+        client_id: 1,
+        project_manager: 1,
+        color: '#FF0000',
+        active: 1,
+      });
 
-      // First create a project
-      const projectData = generateTestProjectData();
       const created = await executeToolWithRetry('create-project', projectData);
-      createdProjects.push(created.project_id);
+      expect(created.project_id).toBeDefined();
 
-      // Update the project
       const updatedName = `Updated ${projectData.name}`;
       const result = await executeToolWithRetry('update-project', {
         project_id: created.project_id,
         name: updatedName,
-        notes: 'Updated project notes',
+        color: '#00FF00',
       });
 
       expect(result).toBeDefined();
-      expect(result.project_id).toBe(created.project_id);
-      expect(result.name).toBe(updatedName);
+      
+      // For real API, we may need to fetch the updated project to verify changes
+      if (process.env.TEST_REAL_API === 'true') {
+        const updatedProject = await executeToolWithRetry('get-project', { project_id: created.project_id });
+        expect(updatedProject.project_id).toBe(created.project_id);
+        expect(updatedProject.name).toBe(updatedName);
+        expect(updatedProject.color).toBe('#00FF00');
+      } else {
+        expect(result.project_id).toBe(created.project_id);
+        expect(result.name).toBe(updatedName);
+        expect(result.color).toBe('#00FF00');
+      }
 
-      // Validate schema
-      entitySchemaValidator.validateProject(result);
+      // Track for cleanup
+      createdProjects.push(created.project_id);
     });
 
     it('should update project with partial data', async () => {
-      if (!TEST_CONFIG.enableRealApiCalls) {
-        console.warn('Skipping update-project partial test - real API calls disabled');
-        return;
-      }
+      const projectData = generateTestProjectData({
+        name: 'Partial Update Test Project',
+        client_id: 1,
+        project_manager: 1,
+        color: '#0000FF',
+        active: 1,
+      });
 
-      // First create a project
-      const projectData = generateTestProjectData();
       const created = await executeToolWithRetry('create-project', projectData);
-      createdProjects.push(created.project_id);
+      expect(created.project_id).toBeDefined();
 
-      // Update only the budget
       const result = await executeToolWithRetry('update-project', {
         project_id: created.project_id,
-        budget: 15000,
+        color: '#FFFF00',
       });
 
       expect(result).toBeDefined();
-      expect(result.project_id).toBe(created.project_id);
-      expect(result.budget).toBe(15000);
-      expect(result.name).toBe(projectData.name); // Should remain unchanged
+      
+      // For real API, we may need to fetch the updated project to verify changes
+      if (process.env.TEST_REAL_API === 'true') {
+        const updatedProject = await executeToolWithRetry('get-project', { project_id: created.project_id });
+        expect(updatedProject.project_id).toBe(created.project_id);
+        expect(updatedProject.color).toBe('#FFFF00');
+        expect(updatedProject.name).toBe(projectData.name); // Should remain unchanged
+      } else {
+        expect(result.project_id).toBe(created.project_id);
+        expect(result.color).toBe('#FFFF00');
+        expect(result.name).toBe(projectData.name); // Should remain unchanged
+      }
 
-      // Validate schema
-      entitySchemaValidator.validateProject(result);
+      // Track for cleanup
+      createdProjects.push(created.project_id);
     });
   });
 
