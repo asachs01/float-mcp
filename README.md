@@ -36,7 +36,17 @@ A comprehensive **Model Context Protocol (MCP) server** that provides seamless i
 - Float.com account with API access
 - Valid Float API key
 
-### **1. Installation**
+### **1. Installation Options**
+
+#### **A. DXT Extension (Recommended)**
+
+For DXT-compatible environments, download the latest DXT package:
+
+**[📦 Download Float MCP Extension (.dxt)](https://github.com/asachs01/float-mcp/releases/latest)**
+
+Install the `.dxt` file through your DXT-compatible application.
+
+#### **B. Manual Installation**
 
 ```bash
 # Using npm
@@ -73,6 +83,12 @@ npm run dev
 ```
 
 ### **4. MCP Client Integration**
+
+#### **For DXT Installation**
+
+After installing the DXT extension, configure your Float API key in the extension settings. The extension will handle the MCP server configuration automatically.
+
+#### **For Manual Installation**
 
 Add to your MCP client configuration (e.g., Claude Desktop):
 

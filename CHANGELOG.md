@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2025-07-11
+
+### Added
+
+- DXT extension support for easy installation in DXT-compatible environments
+- Comprehensive DXT manifest with 24 key tools and user configuration options
+- DXT package creation integrated into release workflow
+- Enhanced GitHub release workflow with automatic DXT packaging
+
+### Fixed
+
+- Prettier CI errors by adding comprehensive .prettierignore file
+- DXT compatibility requirements to support broader range of platforms
+- Critical manifest.json restoration after accidental deletion
+
+### Changed
+
+- Release workflow now automatically creates and uploads DXT packages
+- Improved CI pipeline reliability with proper file formatting checks
+
 ## [0.3.0] - 2025-07-09
 
 ### Added
@@ -126,10 +146,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dramatic improvement in test execution time (217s → 28s)
 - CI/CD pipeline now fully reliable and compliant
 
-[Unreleased]: https://github.com/asachs01/float-mcp/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/asachs01/float-mcp/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/asachs01/float-mcp/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/asachs01/float-mcp/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/asachs01/float-mcp/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/asachs01/float-mcp/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/asachs01/float-mcp/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/asachs01/float-mcp/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/asachs01/float-mcp/releases/tag/v0.1.0
-[0.3.0]: https://github.com/asachs01/float-mcp/compare/v0.2.2...v0.3.0
