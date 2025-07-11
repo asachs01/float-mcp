@@ -120,7 +120,7 @@ jobs:
         run: npm run build
 
       - name: Install DXT CLI
-        run: npm install -g @dxt/cli
+        run: npm install -g @anthropic-ai/dxt
 
       - name: Create DXT package
         run: dxt pack . float-mcp-${{ github.ref_name }}.dxt
