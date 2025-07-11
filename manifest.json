@@ -23,7 +23,7 @@
     "entry_point": "dist/index.js",
     "mcp_config": {
       "command": "node",
-      "args": ["dist/index.js"],
+      "args": ["${__dirname}/dist/index.js"],
       "env": {
         "FLOAT_API_KEY": "${user_config.float_api_key}",
         "FLOAT_API_BASE_URL": "${user_config.float_api_base_url}",
