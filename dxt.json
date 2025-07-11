@@ -17,11 +17,7 @@
   "documentation": "https://github.com/asachs01/float-mcp/blob/main/docs/index.md",
   "support": "https://github.com/asachs01/float-mcp/issues",
   "icon": "assets/float-mcp-icon.png",
-  "screenshots": [
-    "assets/screenshots/dashboard-integration.png",
-    "assets/screenshots/project-management.png",
-    "assets/screenshots/resource-allocation.png"
-  ],
+  "screenshots": [],
   "server": {
     "type": "node",
     "entry_point": "dist/index.js",
