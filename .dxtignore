@@ -1,0 +1,17 @@
+# Ignore non-critical project files and directories for DXT packaging
+plans/
+coverage/
+.taskmaster/
+.roo/
+.husky/
+.cursor/
+.github/
+prompt_logs/
+docs/
+tests/
+scripts/
+jest.config.ts
+jest.resolver.js
+package-lock.json
+*.log
+*.test.* 

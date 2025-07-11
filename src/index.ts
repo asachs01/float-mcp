@@ -1,3 +1,19 @@
+// Debug/failsafe logging for MCP server entrypoint
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+  process.exit(1);
+});
+console.error('[DEBUG] MCP server entrypoint reached:', __filename, process.cwd(), process.argv, process.env);
+
+if (!process.env.FLOAT_API_KEY) {
+  console.error('[DEBUG] FLOAT_API_KEY is missing!');
+  process.exit(1);
+}
+
 import { config } from 'dotenv';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';

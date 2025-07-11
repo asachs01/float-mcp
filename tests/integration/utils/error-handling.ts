@@ -95,17 +95,17 @@ export class ErrorTestUtils {
       if (!toolResponse.success && toolResponse.error) {
         // This is an expected error response
         const errorMessage = toolResponse.error.toLowerCase();
-        expect(
-          errorMessage.includes('validation') ||
-            errorMessage.includes('invalid') ||
-            errorMessage.includes('required') ||
-            errorMessage.includes('400')
-        ).toBe(true);
+      expect(
+        errorMessage.includes('validation') ||
+          errorMessage.includes('invalid') ||
+          errorMessage.includes('required') ||
+          errorMessage.includes('400')
+      ).toBe(true);
 
         if (expectedField && process.env.TEST_REAL_API !== 'true') {
           // Real APIs may have different error message formats
           // Only enforce strict field validation in mock mode
-          expect(errorMessage.includes(expectedField.toLowerCase())).toBe(true);
+        expect(errorMessage.includes(expectedField.toLowerCase())).toBe(true);
         }
         return; // Test passed - we got the expected error response
       }
@@ -130,16 +130,16 @@ export class ErrorTestUtils {
       if (!toolResponse.success && toolResponse.error) {
         // This is an expected error response
         const errorMessage = toolResponse.error.toLowerCase();
-        expect(
-          errorMessage.includes('not found') ||
-            errorMessage.includes('404') ||
-            errorMessage.includes('does not exist')
-        ).toBe(true);
+      expect(
+        errorMessage.includes('not found') ||
+          errorMessage.includes('404') ||
+          errorMessage.includes('does not exist')
+      ).toBe(true);
 
         if (entityType && process.env.TEST_REAL_API !== 'true') {
           // Real APIs may have different error message formats
           // Only enforce strict entity type validation in mock mode
-          expect(errorMessage.includes(entityType.toLowerCase())).toBe(true);
+        expect(errorMessage.includes(entityType.toLowerCase())).toBe(true);
         }
         return; // Test passed - we got the expected error response
       }
