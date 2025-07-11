@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Extract version from tag
+        id: extract_version
+        run: |
+          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Extract release notes from CHANGELOG.md
+        id: extract_release_notes
+        run: |
+          version="${{ steps.extract_version.outputs.VERSION }}"
+          echo "Extracting release notes for version $version"
+          awk -v version="$version" '
+          BEGIN { found=0; content="" }
+          /^## \\[.*\\] - / {
+            if (found) exit
+            if (match($0, /\\[([^\\]]+)\\]/, arr) && arr[1] == version) found=1
+            next
+          }
+          /^## \\[.*\\] - / && found { exit }
+          found && !/^#/ {
+            if (content == "" && $0 == "") next
+            content = content $0 "\n"
+          }
+          END {
+            gsub(/\n+$/, "", content)
+            print content
+          }' CHANGELOG.md > release-notes.md
+          echo "Release notes extracted to release-notes.md"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: 'Release ${{ github.ref_name }}'
+          body_path: release-notes.md
+          draft: false
+          prerelease: ${{ contains(steps.extract_version.outputs.VERSION, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

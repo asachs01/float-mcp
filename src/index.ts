@@ -7,7 +7,13 @@ process.on('unhandledRejection', (reason) => {
   console.error('Unhandled Rejection:', reason);
   process.exit(1);
 });
-console.error('[DEBUG] MCP server entrypoint reached:', __filename, process.cwd(), process.argv, process.env);
+console.error(
+  '[DEBUG] MCP server entrypoint reached:',
+  __filename,
+  process.cwd(),
+  process.argv,
+  process.env
+);
 
 if (!process.env.FLOAT_API_KEY) {
   console.error('[DEBUG] FLOAT_API_KEY is missing!');
