@@ -85,8 +85,10 @@ Add to your MCP client configuration (e.g., Claude Desktop):
         "run",
         "--rm",
         "-i",
-        "-e", "FLOAT_API_KEY=YOURAPIKEY",
-        "-e", "LOG_LEVEL=debug",
+        "-e",
+        "FLOAT_API_KEY=YOURAPIKEY",
+        "-e",
+        "LOG_LEVEL=debug",
         "ghcr.io/asachs01/float-mcp:latest"
       ]
     }

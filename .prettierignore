@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+dist/
+build/
+coverage/
+
+# Logs
+*.log
+logs/
+prompt_logs/
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Git
+.git/
+.gitignore
+
+# Config files that might have specific formatting
+.eslintrc.*
+tsconfig*.json
+jest.config.*
+
+# Documentation that might have specific formatting requirements
+CHANGELOG.md
+README.md
+
+# Plans and other markdown files that might have intentional formatting
+plans/
+docs/
+
+# Environment files
+.env*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test artifacts
+__mocks__/
+
+# Taskmaster files
+.taskmaster/ 
