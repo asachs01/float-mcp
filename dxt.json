@@ -6,17 +6,16 @@
   "description": "A comprehensive MCP server providing seamless integration with Float.com for project management, resource allocation, time tracking, and team coordination.",
   "long_description": "Float MCP Server enables AI assistants to interact with Float.com's complete API suite through the Model Context Protocol. With 132 specialized tools, it provides full coverage of Float's resource management capabilities including people management, project planning, task coordination, time tracking, allocations, reporting, and team collaboration. Features include built-in rate limiting, type safety with Zod validation, comprehensive error handling, and extensive testing. Perfect for automating workforce planning, project management workflows, and resource optimization.",
   "author": {
-    "name": "Float MCP Team",
-    "email": "support@float-mcp.com",
-    "url": "https://github.com/yourusername/float-mcp"
+    "name": "Aaron Sachs",
+    "url": "https://github.com/asachs01/float-mcp"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/float-mcp"
+    "url": "https://github.com/asachs01/float-mcp"
   },
-  "homepage": "https://github.com/yourusername/float-mcp#readme",
-  "documentation": "https://github.com/yourusername/float-mcp/blob/main/docs/index.md",
-  "support": "https://github.com/yourusername/float-mcp/issues",
+  "homepage": "https://github.com/asachs01/float-mcp#readme",
+  "documentation": "https://github.com/asachs01/float-mcp/blob/main/docs/index.md",
+  "support": "https://github.com/asachs01/float-mcp/issues",
   "icon": "assets/float-mcp-icon.png",
   "screenshots": [
     "assets/screenshots/dashboard-integration.png",
