@@ -33,15 +33,15 @@
     "project-management",
     "task-management"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": "Aaron Sachs",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/float-mcp.git"
+    "url": "https://github.com/asachs01/float-mcp.git"
   },
-  "homepage": "https://github.com/yourusername/float-mcp#readme",
+  "homepage": "https://github.com/asachs01/float-mcp#readme",
   "bugs": {
-    "url": "https://github.com/yourusername/float-mcp/issues"
+    "url": "https://github.com/asachs01/float-mcp/issues"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.8.0",
