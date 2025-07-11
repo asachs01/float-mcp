@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.2] - 2025-07-11
+
+### Added
+- Robust debug logging and failsafe error handling at MCP server entrypoint for easier troubleshooting in Claude Desktop and DXT environments
+- `.dxtignore` file to exclude non-critical files and directories from DXT extension packages
+- New GitHub Actions release workflow to automatically extract release notes from `CHANGELOG.md` and use them in GitHub releases
+
+### Fixed
+- DXT extension startup issues in Claude Desktop by ensuring correct entrypoint, environment variable checks, and dependency packaging
+
+### Changed
+- Improved manifest.json and packaging process for DXT extension reliability
+- Updated release process to ensure accurate, automated release notes and DXT packaging
+
 ## [0.3.1] - 2025-07-11
 
 ### Added
@@ -146,7 +160,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dramatic improvement in test execution time (217s → 28s)
 - CI/CD pipeline now fully reliable and compliant
 
-[Unreleased]: https://github.com/asachs01/float-mcp/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/asachs01/float-mcp/compare/v0.3.2...HEAD
+[0.3.2]: https://github.com/asachs01/float-mcp/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/asachs01/float-mcp/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/asachs01/float-mcp/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/asachs01/float-mcp/compare/v0.2.1...v0.2.2
