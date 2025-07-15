@@ -333,7 +333,7 @@ We welcome contributions! Please see our [Contributing Guidelines](docs/guides/C
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/float-mcp.git
+git clone https://github.com/asachs01/float-mcp.git
 cd float-mcp
 
 # Install dependencies
@@ -393,9 +393,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙋 Support
 
 - **📖 Documentation**: See the [docs](docs/) directory
-- **🐛 Bug Reports**: [GitHub Issues](https://github.com/yourusername/float-mcp/issues)
-- **💬 Discussions**: [GitHub Discussions](https://github.com/yourusername/float-mcp/discussions)
-- **📧 Email**: [your.email@example.com](mailto:your.email@example.com)
+- **🐛 Bug Reports**: [GitHub Issues](https://github.com/asachs01/float-mcp/issues)
+- **💬 Discussions**: [GitHub Discussions](https://github.com/asachs01/float-mcp/discussions)
 
 ## 🏷️ Tags
 
