@@ -65,3 +65,4 @@ dev-debug.log
 
 # DXT packages
 *.dxt
+.serena
