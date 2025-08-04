@@ -2,9 +2,9 @@
   "dxt_version": "0.1",
   "name": "float-mcp",
   "display_name": "Float.com Resource Management MCP Server",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A comprehensive MCP server providing seamless integration with Float.com for project management, resource allocation, time tracking, and team coordination.",
-  "long_description": "Float MCP Server enables AI assistants to interact with Float.com's complete API suite through the Model Context Protocol. With 132 specialized tools, it provides full coverage of Float's resource management capabilities including people management, project planning, task coordination, time tracking, allocations, reporting, and team collaboration. Features include built-in rate limiting, type safety with Zod validation, comprehensive error handling, and extensive testing. Perfect for automating workforce planning, project management workflows, and resource optimization.",
+  "long_description": "Float MCP Server enables AI assistants to interact with Float.com's complete API suite through the Model Context Protocol. Optimized from 246+ granular tools to 4 efficient decision-tree tools (manage-entity, manage-project-workflow, manage-time-tracking, generate-report) while maintaining 100% functionality. Provides full coverage of Float's resource management capabilities including people management, project planning, task coordination, time tracking, allocations, reporting, and team collaboration. Features include built-in rate limiting, type safety with Zod validation, comprehensive error handling, and extensive testing. Perfect for automating workforce planning, project management workflows, and resource optimization.",
   "author": {
     "name": "Aaron Sachs",
     "url": "https://github.com/asachs01/float-mcp"
@@ -158,10 +158,10 @@
     "float_api_key": {
       "type": "string",
       "title": "Float API Key",
-      "description": "Your Float.com API key (JWT format). Get this from Float Settings > API > Personal Access Tokens.",
+      "description": "Your Float.com API key. Get this from Float Settings > API > Personal Access Tokens.",
       "sensitive": true,
       "required": true,
-      "placeholder": "your_jwt_token_here"
+      "placeholder": "your_float_api_key_here"
     },
     "float_api_base_url": {
       "type": "string",
