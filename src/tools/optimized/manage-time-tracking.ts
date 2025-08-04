@@ -272,6 +272,8 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
     case 'get':
       return floatApi.get(`/timeoffs/${id}`, timeOffSchema, format);
     case 'create':
+      // Debug logging
+      console.error('DEBUG: Timeoff create parameters:', JSON.stringify(otherParams, null, 2));
       return floatApi.post('/timeoffs', otherParams, timeOffSchema, format);
     case 'update':
       return floatApi.patch(`/timeoffs/${id}`, otherParams, timeOffSchema, format);
