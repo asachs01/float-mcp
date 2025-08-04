@@ -76,7 +76,7 @@ jest.mock('../src/services/float-api.ts', () => {
         updated_at: '2024-01-01T00:00:00Z',
       },
     ],
-    '/timeoffs': [
+    '/timeoff': [
       { timeoff_id: 1, people_id: 1, start_date: '2024-01-01', end_date: '2024-01-02', status: 1 },
       { timeoff_id: 2, people_id: 1, start_date: '2024-01-03', end_date: '2024-01-04', status: 2 },
       { timeoff_id: 3, people_id: 2, start_date: '2024-01-05', end_date: '2024-01-06', status: 1 },

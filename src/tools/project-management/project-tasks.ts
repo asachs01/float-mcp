@@ -71,7 +71,7 @@ export const createProjectTask = createTool(
     status: z.number().optional().describe('Task status (numeric)'),
   }),
   async (params) => {
-    const projectTask = await floatApi.post('/project_tasks', params, projectTaskSchema);
+    const projectTask = await floatApi.post('/project-tasks', params, projectTaskSchema);
     return projectTask;
   }
 );
