@@ -62,7 +62,7 @@ Create a `.env` file in the project root:
 
 ```env
 # Float API Configuration
-FLOAT_API_KEY=your_jwt_token_here
+FLOAT_API_KEY=your_float_api_key_here
 FLOAT_API_BASE_URL=https://api.float.com/v3
 
 # Optional: Enable debug logging
@@ -196,7 +196,7 @@ All original 246+ granular tools remain available for backward compatibility:
 
 | Variable             | Description                                      | Required | Default                    |
 | -------------------- | ------------------------------------------------ | -------- | -------------------------- |
-| `FLOAT_API_KEY`      | Your Float API key (JWT format)          | ✅ Yes   | -                          |
+| `FLOAT_API_KEY`      | Your Float API key                        | ✅ Yes   | -                          |
 | `FLOAT_API_BASE_URL` | Float API base URL                               | ❌ No    | `https://api.float.com/v3` |
 | `LOG_LEVEL`          | Logging level (`error`, `warn`, `info`, `debug`) | ❌ No    | `info`                     |
 | `MAX_RETRIES`        | Maximum API retry attempts                       | ❌ No    | `3`                        |
@@ -207,7 +207,7 @@ All original 246+ granular tools remain available for backward compatibility:
 1. Log in to your Float account
 2. Go to **Settings** > **API** > **Personal Access Tokens**
 3. Click **Generate New Token**
-4. Copy the JWT token
+4. Copy the API key
 5. Add it to your `.env` file
 
 ## 📖 Usage Examples
@@ -313,7 +313,7 @@ docker build -t float-mcp .
 # Run the container
 docker run -d \
   --name float-mcp \
-  -e FLOAT_API_KEY=your_jwt_token_here \
+  -e FLOAT_API_KEY=your_float_api_key_here \
   -p 3000:3000 \
   float-mcp
 ```
@@ -326,7 +326,7 @@ services:
   float-mcp:
     build: .
     environment:
-      - FLOAT_API_KEY=your_jwt_token_here
+      - FLOAT_API_KEY=your_float_api_key_here
       - LOG_LEVEL=info
     ports:
       - '3000:3000'

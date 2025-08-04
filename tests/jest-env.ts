@@ -2,4 +2,4 @@
 // This ensures NODE_ENV is set to 'test' so configuration validation allows tests to run
 process.env.NODE_ENV = 'test';
 // Set a valid test API key that meets the format requirements
-process.env.FLOAT_API_KEY = 'eyJ_test_jwt_token_for_jest_validation';
+process.env.FLOAT_API_KEY = 'atest_float_api_key_for_jest_validation=';

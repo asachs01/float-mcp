@@ -141,9 +141,9 @@ function validateEnvironment(mode) {
       process.exit(1);
     }
 
-    if (!apiKey.startsWith('eyJ')) {
+    if (apiKey.length < 10) {
       console.warn(
-        '⚠️  FLOAT_API_KEY does not appear to be a valid JWT token - should start with "eyJ"'
+        '⚠️  FLOAT_API_KEY appears to be too short to be valid'
       );
     }
   }

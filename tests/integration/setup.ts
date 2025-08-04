@@ -34,8 +34,8 @@ export const validateTestEnvironment = () => {
   }
 
   // Validate API key format if provided
-  if (process.env.FLOAT_API_KEY && !process.env.FLOAT_API_KEY.startsWith('eyJ')) {
-    errors.push('FLOAT_API_KEY should be a valid JWT token (starting with "eyJ")');
+  if (process.env.FLOAT_API_KEY && process.env.FLOAT_API_KEY.length < 10) {
+    errors.push('FLOAT_API_KEY appears to be too short to be valid');
   }
 
   if (errors.length > 0) {
