@@ -149,7 +149,7 @@ export const generateReport = createTool(
   'Consolidated tool for generating comprehensive reports and analytics from Float data. Supports various report types including time tracking, project performance, resource utilization, budget analysis, and team metrics with flexible filtering and formatting options.',
   generateReportSchema,
   async (params) => {
-    const { format, report_type, report_format: _report_format, ...restParams } = params;
+    const { format, report_type, ...restParams } = params;
 
     // Route based on report type
     switch (report_type) {
@@ -696,7 +696,7 @@ function calculateWorkingDays(
   startDate: Date,
   endDate: Date,
   excludeWeekends: boolean = true,
-  excludeHolidays: boolean = true
+  _excludeHolidays: boolean = true
 ): number {
   let workingDays = 0;
   const currentDate = new Date(startDate);

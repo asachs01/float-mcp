@@ -325,20 +325,23 @@ async function handleRoleOperations(operation: string, params: any, format: any)
       return { success: true, message: 'Role deleted successfully' };
     case 'get-roles-by-permission':
       return floatApi.getPaginated('/roles', { permission }, rolesResponseSchema, format);
-    case 'get-role-permissions':
+    case 'get-role-permissions': {
       const role = await floatApi.get(`/roles/${id}`, roleSchema, format);
       return { permissions: role.permissions || [] };
+    }
     case 'update-role-permissions':
       return floatApi.patch(`/roles/${id}`, { permissions: role_permissions }, roleSchema, format);
-    case 'get-role-hierarchy':
+    case 'get-role-hierarchy': {
       const roles = await floatApi.getPaginated('/roles', {}, rolesResponseSchema, format);
       return roles.sort((a, b) => (a.level || 0) - (b.level || 0));
-    case 'check-role-access':
+    }
+    case 'check-role-access': {
       const targetRole = await floatApi.get(`/roles/${id}`, roleSchema, format);
       return {
         has_permission: targetRole.permissions?.includes(permission) || false,
         permissions: targetRole.permissions || [],
       };
+    }
     default:
       throw new Error(`Unsupported role operation: ${operation}`);
   }
@@ -372,7 +375,7 @@ async function handleAccountOperations(operation: string, params: any, format: a
       return floatApi.patch(`/accounts/${id}`, { department_filter_id }, accountSchema, format);
     case 'manage-account-permissions':
       return floatApi.patch(`/accounts/${id}`, permissions_data, accountSchema, format);
-    case 'bulk-update-account-permissions':
+    case 'bulk-update-account-permissions': {
       // Bulk operation - expects array of account updates
       const results = [];
       const errors = [];
@@ -408,6 +411,7 @@ async function handleAccountOperations(operation: string, params: any, format: a
           failed: errors.length,
         },
       };
+    }
     default:
       throw new Error(`Unsupported account operation: ${operation}`);
   }
@@ -429,7 +433,7 @@ async function handleStatusOperations(operation: string, params: any, format: an
     case 'delete':
       await floatApi.delete(`/statuses/${id}`, undefined, format);
       return { success: true, message: 'Status deleted successfully' };
-    case 'get-default-status':
+    case 'get-default-status': {
       const statuses = await floatApi.getPaginated(
         '/statuses',
         { status_type },
@@ -438,6 +442,7 @@ async function handleStatusOperations(operation: string, params: any, format: an
       );
       const defaultStatus = statuses.find((s) => s.is_default);
       return defaultStatus || null;
+    }
     case 'set-default-status':
       return floatApi.patch(
         `/statuses/${default_status_id}`,
