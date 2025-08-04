@@ -272,8 +272,6 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
     case 'get':
       return floatApi.get(`/timeoffs/${id}`, timeOffSchema, format);
     case 'create':
-      // Debug logging
-      console.error('DEBUG: Timeoff create parameters:', JSON.stringify(otherParams, null, 2));
       return floatApi.post('/timeoffs', otherParams, timeOffSchema, format);
     case 'update':
       return floatApi.patch(`/timeoffs/${id}`, otherParams, timeOffSchema, format);
@@ -315,7 +313,7 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
       return floatApi.patch(
         `/timeoffs/${id}`,
         {
-          status: 'approved',
+          status: 2, // 2 = approved (numeric status)
           approved_by: approver_id,
           approved_at: new Date().toISOString(),
         },
@@ -327,7 +325,7 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
       return floatApi.patch(
         `/timeoffs/${id}`,
         {
-          status: 'rejected',
+          status: 3, // 3 = rejected (numeric status)
           rejected_by: rejector_id,
           rejected_at: new Date().toISOString(),
         },
