@@ -459,7 +459,7 @@ export class FloatApi {
       Authorization: `Bearer ${this.apiKey}`,
       'Content-Type': FormatConverter.getContentType(format),
       Accept: FormatConverter.getAcceptHeader(format),
-      'User-Agent': 'float-mcp/0.2.2 (support@example.com)', // Required by Float API
+      'User-Agent': 'Float MCP Server v0.3.1 (github.com/asachs01/float-mcp)', // Required by Float API
     };
 
     const requestUrl = `${this.baseURL}${url}`;
