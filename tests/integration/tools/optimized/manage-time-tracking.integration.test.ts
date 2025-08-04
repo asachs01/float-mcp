@@ -1,0 +1,928 @@
+import { describe, it, expect, afterEach } from '@jest/globals';
+import {
+  executeToolWithRetry,
+  generateManageTimeTrackingParams,
+  cleanupTestDataOptimized,
+} from '../../utils/test-helpers.ts';
+import { ErrorTestUtils, createErrorTestCases } from '../../utils/error-handling.ts';
+import { TEST_CONFIG } from '../../setup.ts';
+
+describe('Manage Time Tracking Tool Integration Tests', () => {
+  const createdEntities: { type: string; id: number }[] = [];
+
+  afterEach(async () => {
+    // Clean up created entities
+    for (const entity of createdEntities) {
+      await cleanupTestDataOptimized(entity.type, entity.id);
+    }
+    createdEntities.length = 0;
+  });
+
+  describe('Logged Time Management', () => {
+    describe('list operation', () => {
+      it('should list all logged time entries', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'logged-time',
+          operation: 'list',
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+
+        if (result.length > 0) {
+          result.forEach((entry: any) => {
+            expect(entry.logged_time_id).toBeDefined();
+            expect(entry.person_id).toBeDefined();
+            expect(entry.project_id).toBeDefined();
+            expect(entry.hours).toBeDefined();
+          });
+        }
+      });
+
+      it('should filter logged time by person', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'logged-time',
+          operation: 'list',
+          person_id: 1,
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+
+        result.forEach((entry: any) => {
+          expect(entry.person_id).toBe(1);
+        });
+      });
+
+      it('should filter logged time by project', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'logged-time',
+          operation: 'list',
+          project_id: 1,
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+
+        result.forEach((entry: any) => {
+          expect(entry.project_id).toBe(1);
+        });
+      });
+
+      it('should filter logged time by date range', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'logged-time',
+          operation: 'list',
+          start_date: '2024-01-01',
+          end_date: '2024-01-31',
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+      });
+    });
+
+    describe('get operation', () => {
+      it('should get a specific logged time entry by ID', async () => {
+        const entries = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'logged-time',
+          operation: 'list',
+          'per-page': 1,
+        });
+
+        if (entries.length === 0) {
+          console.warn('No logged time entries found to test get operation');
+          return;
+        }
+
+        const entryId = entries[0].logged_time_id;
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'logged-time',
+          operation: 'get',
+          id: entryId,
+        });
+
+        expect(result).toBeDefined();
+        expect(result.logged_time_id).toBe(entryId);
+      });
+    });
+
+    describe('create operation', () => {
+      it('should create a new logged time entry', async () => {
+        if (!TEST_CONFIG.enableRealApiCalls) {
+          console.warn('Skipping create-logged-time test - real API calls disabled');
+          return;
+        }
+
+        const params = generateManageTimeTrackingParams('logged-time', 'create');
+        const result = await executeToolWithRetry('manage-time-tracking', params);
+
+        expect(result).toBeDefined();
+        expect(result.logged_time_id).toBeDefined();
+        expect(result.person_id).toBe(params.person_id);
+        expect(result.project_id).toBe(params.project_id);
+        expect(result.hours).toBe(params.hours);
+
+        // Track for cleanup
+        createdEntities.push({ type: 'logged-time', id: result.logged_time_id });
+      });
+
+      it('should create logged time with task and notes', async () => {
+        if (!TEST_CONFIG.enableRealApiCalls) {
+          console.warn('Skipping create-logged-time with task test - real API calls disabled');
+          return;
+        }
+
+        const params = generateManageTimeTrackingParams('logged-time', 'create', {
+          task_id: 1,
+          notes: 'Development work on feature X',
+          billable: 1,
+        });
+
+        const result = await executeToolWithRetry('manage-time-tracking', params);
+
+        expect(result).toBeDefined();
+        expect(result.logged_time_id).toBeDefined();
+        expect(result.task_id).toBe(params.task_id);
+
+        // Track for cleanup
+        createdEntities.push({ type: 'logged-time', id: result.logged_time_id });
+      });
+    });
+
+    describe('bulk-create operation', () => {
+      it('should bulk create logged time entries', async () => {
+        if (!TEST_CONFIG.enableRealApiCalls) {
+          console.warn('Skipping bulk-create-logged-time test - real API calls disabled');
+          return;
+        }
+
+        const entries = [
+          {
+            person_id: 1,
+            project_id: 1,
+            task_id: 1,
+            hours: 4,
+            date: '2024-01-01',
+            notes: 'Morning work',
+          },
+          {
+            person_id: 1,
+            project_id: 1,
+            task_id: 1,
+            hours: 4,
+            date: '2024-01-02',
+            notes: 'Afternoon work',
+          },
+        ];
+
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'logged-time',
+          operation: 'bulk-create',
+          entries: entries,
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+        expect(result.length).toBe(2);
+
+        // Track for cleanup
+        result.forEach((entry: any) => {
+          createdEntities.push({ type: 'logged-time', id: entry.logged_time_id });
+        });
+      });
+    });
+
+    describe('reporting operations', () => {
+      it('should get person logged time summary', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'logged-time',
+          operation: 'person-summary',
+          person_id: 1,
+          start_date: '2024-01-01',
+          end_date: '2024-01-31',
+        });
+
+        expect(result).toBeDefined();
+        expect(result.person_id).toBe(1);
+        expect(result.total_hours).toBeDefined();
+        expect(typeof result.total_hours).toBe('number');
+      });
+
+      it('should get project logged time summary', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'logged-time',
+          operation: 'project-summary',
+          project_id: 1,
+          start_date: '2024-01-01',
+          end_date: '2024-01-31',
+        });
+
+        expect(result).toBeDefined();
+        expect(result.project_id).toBe(1);
+        expect(result.total_hours).toBeDefined();
+        expect(typeof result.total_hours).toBe('number');
+      });
+
+      it('should get logged time timesheet', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'logged-time',
+          operation: 'timesheet',
+          person_id: 1,
+          start_date: '2024-01-01',
+          end_date: '2024-01-07',
+        });
+
+        expect(result).toBeDefined();
+        expect(result.person_id).toBe(1);
+        expect(result.entries).toBeDefined();
+        expect(Array.isArray(result.entries)).toBe(true);
+      });
+
+      it('should get billable time report', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'logged-time',
+          operation: 'billable-analysis',
+          start_date: '2024-01-01',
+          end_date: '2024-01-31',
+        });
+
+        expect(result).toBeDefined();
+        expect(result.billable_hours).toBeDefined();
+        expect(result.non_billable_hours).toBeDefined();
+        expect(result.billable_percentage).toBeDefined();
+      });
+    });
+  });
+
+  describe('Time Off Management', () => {
+    describe('list operation', () => {
+      it('should list all time off requests', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'timeoff',
+          operation: 'list',
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+
+        if (result.length > 0) {
+          result.forEach((timeoff: any) => {
+            expect(timeoff.timeoff_id).toBeDefined();
+            expect(timeoff.person_id).toBeDefined();
+            expect(timeoff.start_date).toBeDefined();
+          });
+        }
+      });
+
+      it('should filter time off by person', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'timeoff',
+          operation: 'list',
+          person_id: 1,
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+
+        result.forEach((timeoff: any) => {
+          expect(timeoff.person_id).toBe(1);
+        });
+      });
+
+      it('should filter time off by status', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'timeoff',
+          operation: 'list',
+          status: 'approved',
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+
+        result.forEach((timeoff: any) => {
+          expect(timeoff.status).toBe('approved');
+        });
+      });
+    });
+
+    describe('create operation', () => {
+      it('should create a new time off request', async () => {
+        if (!TEST_CONFIG.enableRealApiCalls) {
+          console.warn('Skipping create-timeoff test - real API calls disabled');
+          return;
+        }
+
+        const params = generateManageTimeTrackingParams('timeoff', 'create');
+        const result = await executeToolWithRetry('manage-time-tracking', params);
+
+        expect(result).toBeDefined();
+        expect(result.timeoff_id).toBeDefined();
+        expect(result.person_id).toBe(params.person_id);
+        expect(result.start_date).toBe(params.start_date);
+
+        // Track for cleanup
+        createdEntities.push({ type: 'timeoff', id: result.timeoff_id });
+      });
+
+      it('should create time off with half day', async () => {
+        if (!TEST_CONFIG.enableRealApiCalls) {
+          console.warn('Skipping create-timeoff half-day test - real API calls disabled');
+          return;
+        }
+
+        const params = generateManageTimeTrackingParams('timeoff', 'create', {
+          full_day: 0,
+          hours: 4,
+          notes: 'Half day for appointment',
+        });
+
+        const result = await executeToolWithRetry('manage-time-tracking', params);
+
+        expect(result).toBeDefined();
+        expect(result.timeoff_id).toBeDefined();
+        expect(result.full_day).toBe(0);
+
+        // Track for cleanup
+        createdEntities.push({ type: 'timeoff', id: result.timeoff_id });
+      });
+    });
+
+    describe('bulk-create operation', () => {
+      it('should bulk create time off requests', async () => {
+        if (!TEST_CONFIG.enableRealApiCalls) {
+          console.warn('Skipping bulk-create-timeoff test - real API calls disabled');
+          return;
+        }
+
+        const requests = [
+          {
+            person_id: 1,
+            timeoff_type_id: 1,
+            start_date: '2024-07-01',
+            end_date: '2024-07-01',
+            full_day: 1,
+            notes: 'Vacation day 1',
+          },
+          {
+            person_id: 1,
+            timeoff_type_id: 1,
+            start_date: '2024-07-02',
+            end_date: '2024-07-02',
+            full_day: 1,
+            notes: 'Vacation day 2',
+          },
+        ];
+
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'timeoff',
+          operation: 'bulk-create',
+          requests: requests,
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+        expect(result.length).toBe(2);
+
+        // Track for cleanup
+        result.forEach((request: any) => {
+          createdEntities.push({ type: 'timeoff', id: request.timeoff_id });
+        });
+      });
+    });
+
+    describe('approval operations', () => {
+      it('should approve time off request', async () => {
+        if (!TEST_CONFIG.enableRealApiCalls) {
+          console.warn('Skipping approve-timeoff test - real API calls disabled');
+          return;
+        }
+
+        // Create a time off request first
+        const createParams = generateManageTimeTrackingParams('timeoff', 'create');
+        const created = await executeToolWithRetry('manage-time-tracking', createParams);
+        expect(created.timeoff_id).toBeDefined();
+
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'timeoff',
+          operation: 'approve',
+          id: created.timeoff_id,
+          notes: 'Approved by manager',
+        });
+
+        expect(result).toBeDefined();
+        expect(result.success).toBe(true);
+
+        // Track for cleanup
+        createdEntities.push({ type: 'timeoff', id: created.timeoff_id });
+      });
+
+      it('should reject time off request', async () => {
+        if (!TEST_CONFIG.enableRealApiCalls) {
+          console.warn('Skipping reject-timeoff test - real API calls disabled');
+          return;
+        }
+
+        // Create a time off request first
+        const createParams = generateManageTimeTrackingParams('timeoff', 'create');
+        const created = await executeToolWithRetry('manage-time-tracking', createParams);
+        expect(created.timeoff_id).toBeDefined();
+
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'timeoff',
+          operation: 'reject',
+          id: created.timeoff_id,
+          notes: 'Rejected due to coverage issues',
+        });
+
+        expect(result).toBeDefined();
+        expect(result.success).toBe(true);
+
+        // Track for cleanup
+        createdEntities.push({ type: 'timeoff', id: created.timeoff_id });
+      });
+    });
+
+    describe('reporting operations', () => {
+      it('should get time off calendar', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'timeoff',
+          operation: 'calendar',
+          start_date: '2024-01-01',
+          end_date: '2024-01-31',
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+      });
+
+      it('should get person time off summary', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'timeoff',
+          operation: 'person-summary',
+          person_id: 1,
+          year: 2024,
+        });
+
+        expect(result).toBeDefined();
+        expect(result.person_id).toBe(1);
+        expect(result.total_days).toBeDefined();
+        expect(result.remaining_days).toBeDefined();
+      });
+    });
+  });
+
+  describe('Public Holidays Management', () => {
+    describe('list operation', () => {
+      it('should list all public holidays', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'public-holidays',
+          operation: 'list',
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+
+        if (result.length > 0) {
+          result.forEach((holiday: any) => {
+            expect(holiday.public_holiday_id).toBeDefined();
+            expect(holiday.name).toBeDefined();
+            expect(holiday.date).toBeDefined();
+          });
+        }
+      });
+
+      it('should filter public holidays by country', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'public-holidays',
+          operation: 'list',
+          country: 'US',
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+
+        result.forEach((holiday: any) => {
+          expect(holiday.country).toBe('US');
+        });
+      });
+
+      it('should filter public holidays by year', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'public-holidays',
+          operation: 'list',
+          year: 2024,
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+
+        result.forEach((holiday: any) => {
+          expect(holiday.date).toMatch(/^2024-/);
+        });
+      });
+    });
+
+    describe('create operation', () => {
+      it('should create a new public holiday', async () => {
+        if (!TEST_CONFIG.enableRealApiCalls) {
+          console.warn('Skipping create-public-holiday test - real API calls disabled');
+          return;
+        }
+
+        const params = generateManageTimeTrackingParams('public-holidays', 'create');
+        const result = await executeToolWithRetry('manage-time-tracking', params);
+
+        expect(result).toBeDefined();
+        expect(result.public_holiday_id).toBeDefined();
+        expect(result.name).toBe(params.name);
+        expect(result.date).toBe(params.date);
+
+        // Track for cleanup
+        createdEntities.push({ type: 'public-holiday', id: result.public_holiday_id });
+      });
+    });
+  });
+
+  describe('Team Holidays Management', () => {
+    describe('list operation', () => {
+      it('should list all team holidays', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'team-holidays',
+          operation: 'list',
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+
+        if (result.length > 0) {
+          result.forEach((holiday: any) => {
+            expect(holiday.team_holiday_id).toBeDefined();
+            expect(holiday.name).toBeDefined();
+            expect(holiday.start_date).toBeDefined();
+          });
+        }
+      });
+
+      it('should filter team holidays by department', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'team-holidays',
+          operation: 'list-by-department',
+          department_id: 1,
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+
+        result.forEach((holiday: any) => {
+          expect(holiday.department_id).toBe(1);
+        });
+      });
+
+      it('should filter team holidays by date range', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'team-holidays',
+          operation: 'list-by-date-range',
+          start_date: '2024-01-01',
+          end_date: '2024-12-31',
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+      });
+
+      it('should get recurring team holidays', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'team-holidays',
+          operation: 'list-recurring',
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+
+        result.forEach((holiday: any) => {
+          expect(holiday.recurring).toBe(1);
+        });
+      });
+
+      it('should get upcoming team holidays', async () => {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'team-holidays',
+          operation: 'get-upcoming',
+          days_ahead: 90,
+        });
+
+        expect(result).toBeDefined();
+        expect(Array.isArray(result)).toBe(true);
+      });
+    });
+
+    describe('create operation', () => {
+      it('should create a new team holiday', async () => {
+        if (!TEST_CONFIG.enableRealApiCalls) {
+          console.warn('Skipping create-team-holiday test - real API calls disabled');
+          return;
+        }
+
+        const params = generateManageTimeTrackingParams('team-holidays', 'create');
+        const result = await executeToolWithRetry('manage-time-tracking', params);
+
+        expect(result).toBeDefined();
+        expect(result.team_holiday_id).toBeDefined();
+        expect(result.name).toBe(params.name);
+        expect(result.start_date).toBe(params.start_date);
+
+        // Track for cleanup
+        createdEntities.push({ type: 'team-holiday', id: result.team_holiday_id });
+      });
+
+      it('should create recurring team holiday', async () => {
+        if (!TEST_CONFIG.enableRealApiCalls) {
+          console.warn('Skipping create-recurring-team-holiday test - real API calls disabled');
+          return;
+        }
+
+        const params = generateManageTimeTrackingParams('team-holidays', 'create', {
+          recurring: 1,
+          recurring_type: 'yearly',
+          recurring_end_date: '2026-12-31',
+        });
+
+        const result = await executeToolWithRetry('manage-time-tracking', params);
+
+        expect(result).toBeDefined();
+        expect(result.team_holiday_id).toBeDefined();
+        expect(result.recurring).toBe(1);
+
+        // Track for cleanup
+        createdEntities.push({ type: 'team-holiday', id: result.team_holiday_id });
+      });
+    });
+  });
+
+  describe('Error Handling', () => {
+    const errorTestCases = createErrorTestCases('time-tracking');
+
+    errorTestCases.forEach(({ name, test }) => {
+      it(name, async () => {
+        const validParams = generateManageTimeTrackingParams('logged-time', 'get', { id: 1 });
+        await test('manage-time-tracking', validParams);
+      });
+    });
+
+    it('should handle invalid tracking_type', async () => {
+      await ErrorTestUtils.testValidationError('manage-time-tracking', {
+        tracking_type: 'invalid_tracking',
+        operation: 'list',
+      });
+    });
+
+    it('should handle invalid operation', async () => {
+      await ErrorTestUtils.testValidationError('manage-time-tracking', {
+        tracking_type: 'logged-time',
+        operation: 'invalid_operation',
+      });
+    });
+
+    it('should handle missing required parameters for create logged time', async () => {
+      await ErrorTestUtils.testValidationError('manage-time-tracking', {
+        tracking_type: 'logged-time',
+        operation: 'create',
+        // Missing person_id, project_id, hours, date
+      });
+    });
+
+    it('should handle invalid hours in logged time', async () => {
+      await ErrorTestUtils.testValidationError('manage-time-tracking', {
+        tracking_type: 'logged-time',
+        operation: 'create',
+        person_id: 1,
+        project_id: 1,
+        hours: -1, // Invalid negative hours
+        date: '2024-01-01',
+      });
+    });
+
+    it('should handle invalid date format', async () => {
+      await ErrorTestUtils.testValidationError('manage-time-tracking', {
+        tracking_type: 'logged-time',
+        operation: 'create',
+        person_id: 1,
+        project_id: 1,
+        hours: 8,
+        date: 'invalid-date',
+      });
+    });
+
+    it('should handle future date for logged time', async () => {
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 30);
+      const futureDateStr = futureDate.toISOString().split('T')[0];
+
+      await ErrorTestUtils.testValidationError('manage-time-tracking', {
+        tracking_type: 'logged-time',
+        operation: 'create',
+        person_id: 1,
+        project_id: 1,
+        hours: 8,
+        date: futureDateStr,
+      });
+    });
+
+    it('should handle invalid timeoff type', async () => {
+      await ErrorTestUtils.testValidationError('manage-time-tracking', {
+        tracking_type: 'timeoff',
+        operation: 'create',
+        person_id: 1,
+        timeoff_type_id: 999999999, // Non-existent type
+        start_date: '2024-01-01',
+        end_date: '2024-01-01',
+        full_day: 1,
+      });
+    });
+
+    it('should handle end date before start date in timeoff', async () => {
+      await ErrorTestUtils.testValidationError('manage-time-tracking', {
+        tracking_type: 'timeoff',
+        operation: 'create',
+        person_id: 1,
+        timeoff_type_id: 1,
+        start_date: '2024-12-31',
+        end_date: '2024-01-01', // End before start
+        full_day: 1,
+      });
+    });
+  });
+
+  describe('Performance Tests', () => {
+    it('should handle concurrent time tracking operations', async () => {
+      if (TEST_CONFIG.skipSlowTests) {
+        console.warn('Skipping performance test - slow tests disabled');
+        return;
+      }
+
+      const trackingTypes = ['logged-time', 'timeoff', 'public-holidays', 'team-holidays'];
+      const requests = trackingTypes.map((trackingType) =>
+        executeToolWithRetry('manage-time-tracking', {
+          tracking_type: trackingType,
+          operation: 'list',
+          'per-page': 3,
+        })
+      );
+
+      const results = await Promise.all(requests);
+
+      expect(results).toHaveLength(4);
+      results.forEach((result) => {
+        expect(Array.isArray(result)).toBe(true);
+      });
+    });
+
+    it('should handle mixed time tracking operations efficiently', async () => {
+      if (TEST_CONFIG.skipSlowTests) {
+        console.warn('Skipping performance test - slow tests disabled');
+        return;
+      }
+
+      const requests = [
+        executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'logged-time',
+          operation: 'person-summary',
+          person_id: 1,
+          start_date: '2024-01-01',
+          end_date: '2024-01-31',
+        }),
+        executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'timeoff',
+          operation: 'calendar',
+          start_date: '2024-01-01',
+          end_date: '2024-01-31',
+        }),
+        executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'public-holidays',
+          operation: 'list',
+          year: 2024,
+        }),
+        executeToolWithRetry('manage-time-tracking', {
+          tracking_type: 'team-holidays',
+          operation: 'get-upcoming',
+          days_ahead: 30,
+        }),
+      ];
+
+      const results = await Promise.all(requests);
+
+      expect(results).toHaveLength(4);
+      results.forEach((result) => {
+        expect(result).toBeDefined();
+      });
+    });
+  });
+
+  describe('Data Validation', () => {
+    it('should validate time tracking response structures', async () => {
+      const trackingTypes = ['logged-time', 'timeoff', 'public-holidays', 'team-holidays'];
+
+      for (const trackingType of trackingTypes) {
+        const result = await executeToolWithRetry('manage-time-tracking', {
+          tracking_type: trackingType,
+          operation: 'list',
+          'per-page': 2,
+        });
+
+        expect(Array.isArray(result)).toBe(true);
+
+        if (result.length > 0) {
+          result.forEach((item: any) => {
+            // Each item should have the appropriate ID field
+            let expectedIdField = '';
+            switch (trackingType) {
+              case 'logged-time':
+                expectedIdField = 'logged_time_id';
+                break;
+              case 'timeoff':
+                expectedIdField = 'timeoff_id';
+                break;
+              case 'public-holidays':
+                expectedIdField = 'public_holiday_id';
+                break;
+              case 'team-holidays':
+                expectedIdField = 'team_holiday_id';
+                break;
+            }
+
+            expect(item[expectedIdField]).toBeDefined();
+
+            // All time tracking items should have names (except logged-time)
+            if (trackingType !== 'logged-time') {
+              expect(item.name).toBeDefined();
+              expect(typeof item.name).toBe('string');
+              expect(item.name.length).toBeGreaterThan(0);
+            }
+          });
+        }
+      }
+    });
+
+    it('should validate date fields in time tracking entries', async () => {
+      const result = await executeToolWithRetry('manage-time-tracking', {
+        tracking_type: 'logged-time',
+        operation: 'list',
+        'per-page': 5,
+      });
+
+      result.forEach((entry: any) => {
+        if (entry.date) {
+          expect(entry.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+        }
+        if (entry.created_at) {
+          expect(entry.created_at).toMatch(/^\d{4}-\d{2}-\d{2}/);
+        }
+      });
+    });
+
+    it('should validate hours and numeric fields', async () => {
+      const result = await executeToolWithRetry('manage-time-tracking', {
+        tracking_type: 'logged-time',
+        operation: 'list',
+        'per-page': 5,
+      });
+
+      result.forEach((entry: any) => {
+        if (entry.hours !== null) {
+          expect(typeof entry.hours).toBe('number');
+          expect(entry.hours).toBeGreaterThan(0);
+          expect(entry.hours).toBeLessThanOrEqual(24); // Reasonable daily limit
+        }
+
+        expect(entry.person_id).toBeDefined();
+        expect(typeof entry.person_id).toBe('number');
+        expect(entry.project_id).toBeDefined();
+        expect(typeof entry.project_id).toBe('number');
+      });
+    });
+
+    it('should validate timeoff status values', async () => {
+      const result = await executeToolWithRetry('manage-time-tracking', {
+        tracking_type: 'timeoff',
+        operation: 'list',
+        'per-page': 5,
+      });
+
+      const validStatuses = ['pending', 'approved', 'rejected', 'cancelled'];
+
+      result.forEach((timeoff: any) => {
+        if (timeoff.status) {
+          expect(validStatuses).toContain(timeoff.status);
+        }
+
+        if (timeoff.full_day !== null) {
+          expect([0, 1]).toContain(timeoff.full_day);
+        }
+
+        expect(timeoff.person_id).toBeDefined();
+        expect(typeof timeoff.person_id).toBe('number');
+      });
+    });
+  });
+});
