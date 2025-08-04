@@ -158,7 +158,7 @@
     "float_api_key": {
       "type": "string",
       "title": "Float API Key",
-      "description": "Your Float.com API key. Get this from Float Settings > API > Personal Access Tokens.",
+      "description": "Your Float.com API key. Get this from Team Settings > Integrations tab in your Float workspace. See https://support.float.com/en/articles/55483-api for detailed instructions.",
       "sensitive": true,
       "required": true,
       "placeholder": "your_float_api_key_here"
