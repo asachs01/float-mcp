@@ -133,7 +133,7 @@ function validateEnvironment(mode) {
   // Check for API key if running real tests
   if (mode === 'real' || mode === 'performance') {
     const apiKey = process.env.FLOAT_API_KEY;
-    if (!apiKey || apiKey === 'flt_test_key_placeholder') {
+    if (!apiKey || apiKey === 'test_jwt_placeholder') {
       console.error('❌ FLOAT_API_KEY environment variable is required for real API tests');
       console.error(
         '   Please set a valid Float API key in .env.test or as an environment variable'
@@ -141,9 +141,9 @@ function validateEnvironment(mode) {
       process.exit(1);
     }
 
-    if (!apiKey.startsWith('flt_')) {
+    if (!apiKey.startsWith('eyJ')) {
       console.warn(
-        '⚠️  FLOAT_API_KEY does not start with "flt_" prefix - this may not be a valid Float API key'
+        '⚠️  FLOAT_API_KEY does not appear to be a valid JWT token - should start with "eyJ"'
       );
     }
   }

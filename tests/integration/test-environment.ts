@@ -68,7 +68,7 @@ export const validateTestEnvironment = () => {
 
 // Mock environment for testing
 export const mockEnvironment = {
-  FLOAT_API_KEY: 'flt_test_key_12345',
+  FLOAT_API_KEY: 'eyJ_test_jwt_token_12345',
   FLOAT_API_BASE_URL: 'https://api.float.com/v3',
   NODE_ENV: 'test',
   LOG_LEVEL: 'error',

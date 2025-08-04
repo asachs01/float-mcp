@@ -34,8 +34,8 @@ export const validateTestEnvironment = () => {
   }
 
   // Validate API key format if provided
-  if (process.env.FLOAT_API_KEY && !process.env.FLOAT_API_KEY.startsWith('flt_')) {
-    errors.push('FLOAT_API_KEY should start with "flt_" prefix');
+  if (process.env.FLOAT_API_KEY && !process.env.FLOAT_API_KEY.startsWith('eyJ')) {
+    errors.push('FLOAT_API_KEY should be a valid JWT token (starting with "eyJ")');
   }
 
   if (errors.length > 0) {

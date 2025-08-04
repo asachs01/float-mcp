@@ -158,10 +158,10 @@
     "float_api_key": {
       "type": "string",
       "title": "Float API Key",
-      "description": "Your Float.com API key (starts with 'flt_'). Get this from Float Settings > API > Personal Access Tokens.",
+      "description": "Your Float.com API key (JWT format). Get this from Float Settings > API > Personal Access Tokens.",
       "sensitive": true,
       "required": true,
-      "placeholder": "flt_your_api_key_here"
+      "placeholder": "your_jwt_token_here"
     },
     "float_api_base_url": {
       "type": "string",
