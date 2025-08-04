@@ -112,35 +112,78 @@ Add to your MCP client configuration (e.g., Claude Desktop):
 }
 ```
 
-## 📚 Available Tools
+## 🚀 Available Tools
 
-The Float MCP server provides **246+ tools** organized into logical categories:
+The Float MCP server provides **4 optimized decision-tree tools** that efficiently replace 246+ granular tools while maintaining complete functionality:
 
-### **Core Entity Management**
+## **🔧 Optimized Tools (Recommended)**
 
-- **People**: `list-people`, `get-person`, `create-person`, `update-person`, `delete-person`
-- **Departments**: `list-departments`, `get-department`, `create-department`, `update-department`, `delete-department`
-- **Roles**: `list-roles`, `get-role`, `create-role`, `update-role`, `delete-role`
-- **Accounts**: `list-accounts`, `get-account`, `create-account`, `update-account`, `deactivate-account`
+### **1. manage-entity** - Core Entity Management
+Consolidates all CRUD operations for core entities with decision tree routing:
 
-### **Project Management**
+```typescript
+manageEntity({
+  entity_type: "people" | "projects" | "tasks" | "clients" | "departments" | "roles" | "accounts" | "statuses",
+  operation: "list" | "get" | "create" | "update" | "delete" | "get-current-account" | "bulk-update-account-permissions",
+  // ... entity-specific parameters
+})
+```
 
-- **Projects**: `list-projects`, `get-project`, `create-project`, `update-project`, `delete-project`
-- **Tasks**: `list-tasks`, `get-task`, `create-task`, `update-task`, `delete-task`
-- **Phases**: `list-phases`, `get-phase`, `create-phase`, `update-phase`, `delete-phase`
-- **Milestones**: `list-milestones`, `get-milestone`, `create-milestone`, `complete-milestone`
-- **Clients**: `list-clients`, `get-client`, `create-client`, `update-client`, `delete-client`
+**Replaces:** All CRUD tools for people, departments, roles, accounts, projects, tasks, clients, and statuses (~120 tools)
 
-### **Resource Allocation**
+### **2. manage-project-workflow** - Project Operations  
+Handles all project-specific workflow operations:
 
-- **Allocations**: `list-allocations`, `get-allocation`, `create-allocation`, `update-allocation`, `delete-allocation`
-- **Project Tasks**: `list-project-tasks`, `get-project-task`, `bulk-create-project-tasks`, `reorder-project-tasks`
+```typescript
+manageProjectWorkflow({
+  workflow_type: "phases" | "milestones" | "project-tasks" | "allocations", 
+  operation: "list" | "get" | "create" | "update" | "delete" | "complete" | "archive" | "bulk-create" | "reorder",
+  // ... workflow-specific parameters
+})
+```
 
-### **Time Management**
+**Replaces:** Project phases, milestones, project tasks, allocations, dependencies, bulk operations (~60 tools)
 
-- **Time Off**: `list-timeoff`, `create-timeoff`, `approve-timeoff`, `reject-timeoff`, `get-timeoff-calendar`
-- **Logged Time**: `list-logged-time`, `create-logged-time`, `get-timesheet`, `get-billable-time-report`
-- **Holidays**: `list-public-holidays`, `list-team-holidays`, `create-public-holiday`
+### **3. manage-time-tracking** - Time Management
+Manages all time-related operations with comprehensive reporting:
+
+```typescript
+manageTimeTracking({
+  tracking_type: "logged-time" | "timeoff" | "public-holidays" | "team-holidays",
+  operation: "list" | "get" | "create" | "update" | "delete" | "approve" | "reject" | "bulk-create",
+  report_type?: "person-summary" | "project-summary" | "timesheet" | "billable-analysis",
+  // ... time-specific parameters  
+})
+```
+
+**Replaces:** Logged time, time off, holidays, approvals, timesheets, summaries (~45 tools)
+
+### **4. generate-report** - Analytics & Reporting
+Comprehensive reporting and analytics engine:
+
+```typescript  
+generateReport({
+  report_type: "time-report" | "project-report" | "people-utilization-report" | "capacity-report" | "budget-report",
+  // Advanced filtering and grouping options
+  group_by?: "person" | "project" | "client" | "department" | "date" | "week" | "month",
+  include_details?: boolean,
+  // ... extensive reporting parameters
+})
+```
+
+**Replaces:** All reporting tools with advanced analytics, grouping, filtering (~20 tools)
+
+## **📊 Optimization Benefits**
+
+- **🔥 Massive Efficiency**: 246+ tools → 4 optimized tools (98.4% reduction)  
+- **🧠 AI-Friendly**: Decision tree parameters instead of tool proliferation
+- **⚡ Better Performance**: Consolidated API calls and reduced overhead
+- **🔒 Full Compatibility**: Zero functionality loss, complete backward compatibility
+- **🛠️ Easier Maintenance**: Centralized logic with consistent patterns
+
+## **🔄 Legacy Tools (Backward Compatibility)**
+
+All original 246+ granular tools remain available for backward compatibility:
 
 ### **Reporting & Analytics**
 

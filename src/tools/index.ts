@@ -1,3 +1,7 @@
+// Optimized tools (4 consolidated tools replacing 246+ granular tools)
+import { optimizedTools } from './optimized/index.js';
+
+// Legacy granular tools (preserved for compatibility)
 import { listPeople, getPerson, createPerson, updatePerson, deletePerson } from './core/people.js';
 import {
   listDepartments,
@@ -167,7 +171,11 @@ import {
   getPeopleUtilizationReport,
 } from './reporting/reports.js';
 
-export const tools = [
+// Primary export: Optimized tools (4 consolidated tools replacing 246+ granular tools)
+export const tools = [...optimizedTools];
+
+// Legacy tools export (preserved for backward compatibility)
+export const legacyTools = [
   // Core entity tools
   listPeople,
   getPerson,
@@ -308,3 +316,6 @@ export const tools = [
   getProjectReport,
   getPeopleUtilizationReport,
 ];
+
+// Alternative export that includes both optimized and legacy tools
+export const allTools = [...optimizedTools, ...legacyTools];
