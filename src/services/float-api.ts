@@ -456,7 +456,7 @@ export class FloatApi {
     await waitForRateLimit();
 
     const headers: Record<string, string> = {
-      Authorization: `Bearer ${this.apiKey}`,
+      Authorization: this.apiKey,
       'Content-Type': FormatConverter.getContentType(format),
       Accept: FormatConverter.getAcceptHeader(format),
       'User-Agent': 'float-mcp/0.2.2 (support@example.com)', // Required by Float API
