@@ -264,7 +264,7 @@ async function handleLoggedTimeOperations(operation: string, params: any, format
 
 // Time off operations handler
 async function handleTimeOffOperations(operation: string, params: any, format: any) {
-  const { id, timeoff_entries, people_id, ...otherParams } = params;
+  const { id, timeoff_entries, ...otherParams } = params;
 
   switch (operation) {
     case 'list':
@@ -335,7 +335,7 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
     case 'get-timeoff-calendar':
       return generateTimeOffCalendar(otherParams, format);
     case 'get-person-timeoff-summary':
-      return generatePersonTimeOffSummary(people_id, otherParams, format);
+      return generatePersonTimeOffSummary(params.people_id, otherParams, format);
     default:
       throw new Error(`Unsupported time off operation: ${operation}`);
   }
