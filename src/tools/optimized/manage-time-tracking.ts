@@ -270,13 +270,13 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
     case 'list':
       return floatApi.getPaginated('/timeoffs', otherParams, timeOffResponseSchema, format);
     case 'get':
-      return floatApi.get(`/timeoff/${id}`, timeOffSchema, format);
+      return floatApi.get(`/timeoffs/${id}`, timeOffSchema, format);
     case 'create':
       return floatApi.post('/timeoffs', otherParams, timeOffSchema, format);
     case 'update':
-      return floatApi.patch(`/timeoff/${id}`, otherParams, timeOffSchema, format);
+      return floatApi.patch(`/timeoffs/${id}`, otherParams, timeOffSchema, format);
     case 'delete':
-      await floatApi.delete(`/timeoff/${id}`, undefined, format);
+      await floatApi.delete(`/timeoffs/${id}`, undefined, format);
       return { success: true, message: 'Time off entry deleted successfully' };
     case 'bulk-create-timeoff':
       const results = [];
@@ -311,7 +311,7 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
     case 'approve-timeoff':
       const approver_id = otherParams.approved_by || 1; // Default to system user
       return floatApi.patch(
-        `/timeoff/${id}`,
+        `/timeoffs/${id}`,
         {
           status: 'approved',
           approved_by: approver_id,
@@ -323,7 +323,7 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
     case 'reject-timeoff':
       const rejector_id = otherParams.rejected_by || 1; // Default to system user
       return floatApi.patch(
-        `/timeoff/${id}`,
+        `/timeoffs/${id}`,
         {
           status: 'rejected',
           rejected_by: rejector_id,
