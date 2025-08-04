@@ -25,7 +25,7 @@ export const listTimeOff = createTool(
     'per-page': z.number().optional().describe('Number of items per page (max 200)'),
   }),
   async (params) => {
-    const response = await floatApi.getPaginated('/timeoff', params, timeOffResponseSchema);
+    const response = await floatApi.getPaginated('/timeoffs', params, timeOffResponseSchema);
     return response;
   }
 );
@@ -38,7 +38,7 @@ export const getTimeOff = createTool(
     timeoff_id: z.union([z.string(), z.number()]).describe('The time off ID'),
   }),
   async (params) => {
-    const timeOff = await floatApi.get(`/timeoff/${params.timeoff_id}`, timeOffSchema);
+    const timeOff = await floatApi.get(`/timeoffs/${params.timeoff_id}`, timeOffSchema);
     return timeOff;
   }
 );
@@ -67,7 +67,7 @@ export const createTimeOff = createTool(
     repeat_end: z.string().optional().describe('End date for repeating time off (YYYY-MM-DD)'),
   }),
   async (params) => {
-    const timeOff = await floatApi.post('/timeoff', params, timeOffSchema);
+    const timeOff = await floatApi.post('/timeoffs', params, timeOffSchema);
     return timeOff;
   }
 );
@@ -103,7 +103,7 @@ export const updateTimeOff = createTool(
   }),
   async (params) => {
     const { timeoff_id, ...updateData } = params;
-    const timeOff = await floatApi.patch(`/timeoff/${timeoff_id}`, updateData, timeOffSchema);
+    const timeOff = await floatApi.patch(`/timeoffs/${timeoff_id}`, updateData, timeOffSchema);
     return timeOff;
   }
 );
@@ -116,7 +116,7 @@ export const deleteTimeOff = createTool(
     timeoff_id: z.union([z.string(), z.number()]).describe('The time off ID'),
   }),
   async (params) => {
-    await floatApi.delete(`/timeoff/${params.timeoff_id}`);
+    await floatApi.delete(`/timeoffs/${params.timeoff_id}`);
     return { success: true, message: 'Time off entry deleted successfully' };
   }
 );
@@ -160,7 +160,7 @@ export const bulkCreateTimeOff = createTool(
     for (let index = 0; index < params.timeoff_requests.length; index++) {
       const request = params.timeoff_requests[index];
       try {
-        const timeOff = await floatApi.post('/timeoff', request, timeOffSchema);
+        const timeOff = await floatApi.post('/timeoffs', request, timeOffSchema);
         results.push({ index, success: true, data: timeOff });
       } catch (error) {
         errors.push({
@@ -203,7 +203,7 @@ export const approveTimeOff = createTool(
       notes,
     };
 
-    const timeOff = await floatApi.patch(`/timeoff/${timeoff_id}`, updateData, timeOffSchema);
+    const timeOff = await floatApi.patch(`/timeoffs/${timeoff_id}`, updateData, timeOffSchema);
     return timeOff;
   }
 );
@@ -226,7 +226,7 @@ export const rejectTimeOff = createTool(
       notes,
     };
 
-    const timeOff = await floatApi.patch(`/timeoff/${timeoff_id}`, updateData, timeOffSchema);
+    const timeOff = await floatApi.patch(`/timeoffs/${timeoff_id}`, updateData, timeOffSchema);
     return timeOff;
   }
 );
@@ -241,7 +241,7 @@ export const listTimeOffTypes = createTool(
   }),
   async (params) => {
     const response = await floatApi.getPaginated(
-      '/timeoff-types',
+      '/timeoffs-types',
       params,
       timeOffTypesResponseSchema
     );
@@ -264,7 +264,7 @@ export const getTimeOffCalendar = createTool(
       .describe('Filter by time off type ID'),
   }),
   async (params) => {
-    const response = await floatApi.getPaginated('/timeoff', params, timeOffResponseSchema);
+    const response = await floatApi.getPaginated('/timeoffs', params, timeOffResponseSchema);
 
     // Group by date for calendar view
     const calendar: Record<string, TimeOff[]> = {};
@@ -307,7 +307,7 @@ export const getPersonTimeOffSummary = createTool(
     const endDate = `${year}-12-31`;
 
     const timeOffData = await floatApi.getPaginated(
-      '/timeoff',
+      '/timeoffs',
       {
         people_id: params.people_id,
         timeoff_type_id: params.timeoff_type_id,

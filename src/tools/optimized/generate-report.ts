@@ -617,7 +617,7 @@ async function generateMilestoneReport(params: any, format: any) {
 
 async function generateTimeOffReport(params: any, format: any) {
   const timeOffData = await floatApi.getPaginated(
-    '/timeoff',
+    '/timeoffs',
     params,
     timeOffResponseSchema,
     format

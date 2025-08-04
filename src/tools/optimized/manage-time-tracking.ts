@@ -268,11 +268,11 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
 
   switch (operation) {
     case 'list':
-      return floatApi.getPaginated('/timeoff', otherParams, timeOffResponseSchema, format);
+      return floatApi.getPaginated('/timeoffs', otherParams, timeOffResponseSchema, format);
     case 'get':
       return floatApi.get(`/timeoff/${id}`, timeOffSchema, format);
     case 'create':
-      return floatApi.post('/timeoff', otherParams, timeOffSchema, format);
+      return floatApi.post('/timeoffs', otherParams, timeOffSchema, format);
     case 'update':
       return floatApi.patch(`/timeoff/${id}`, otherParams, timeOffSchema, format);
     case 'delete':
@@ -286,7 +286,7 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
       for (let index = 0; index < entries.length; index++) {
         const entry = entries[index];
         try {
-          const timeOff = await floatApi.post('/timeoff', entry, timeOffSchema, format);
+          const timeOff = await floatApi.post('/timeoffs', entry, timeOffSchema, format);
           results.push({ index, success: true, data: timeOff });
         } catch (error) {
           errors.push({
@@ -754,7 +754,7 @@ async function generateBillableTimeReport(params: any, format: any) {
 
 async function generateTimeOffCalendar(params: any, format: any) {
   const timeOffData = await floatApi.getPaginated(
-    '/timeoff',
+    '/timeoffs',
     params,
     timeOffResponseSchema,
     format
@@ -798,7 +798,7 @@ async function generateTimeOffCalendar(params: any, format: any) {
 
 async function generatePersonTimeOffSummary(people_id: any, params: any, format: any) {
   const timeOffData = await floatApi.getPaginated(
-    '/timeoff',
+    '/timeoffs',
     {
       people_id,
       ...params,
