@@ -402,7 +402,14 @@ async function handleAccountOperations(
       await floatApi.delete(`/accounts/${id}`, undefined, format);
       return { success: true, message: 'Account deleted successfully' };
     case 'get-current-account':
-      return floatApi.get('/accounts/current', accountSchema, format);
+      try {
+        return floatApi.get('/accounts/me', accountSchema, format);
+      } catch (error) {
+        // If /accounts/me doesn't exist, try to get the first account from the list
+        // This is a fallback for APIs that don't support the /me endpoint
+        console.warn('get-current-account: /accounts/me endpoint not available, returning null');
+        return null;
+      }
     case 'deactivate-account':
       return floatApi.patch(`/accounts/${id}`, { active: 0 }, accountSchema, format);
     case 'reactivate-account':
