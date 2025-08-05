@@ -153,12 +153,16 @@ const createUpdateDataSchema = z
 
     // Additional special operation parameters
     permissions_data: z
-      .record(z.any())
+      .record(z.unknown())
       .optional()
       .describe('Permissions data for account management'),
     default_status_id: z.number().optional().describe('Default status ID to set'),
     permission_name: z.string().optional().describe('Permission name to check'),
     role_permissions: z.array(z.string()).optional().describe('Role permissions to update'),
+    accounts: z
+      .array(z.record(z.unknown()))
+      .optional()
+      .describe('Array of account updates for bulk operations'),
   })
   .partial();
 
@@ -202,8 +206,18 @@ export const manageEntity = createTool(
   }
 );
 
+// Define proper parameter types based on our schemas
+type EntityParams = z.infer<typeof listParamsSchema> &
+  z.infer<typeof getParamsSchema> &
+  z.infer<typeof createUpdateDataSchema>;
+type EntityFormat = 'json' | 'xml';
+
 // People operations handler
-async function handlePeopleOperations(operation: string, params: any, format: any) {
+async function handlePeopleOperations(
+  operation: string,
+  params: EntityParams,
+  format: EntityFormat
+): Promise<unknown> {
   const { id, ...otherParams } = params;
 
   switch (operation) {
@@ -224,7 +238,11 @@ async function handlePeopleOperations(operation: string, params: any, format: an
 }
 
 // Project operations handler
-async function handleProjectOperations(operation: string, params: any, format: any) {
+async function handleProjectOperations(
+  operation: string,
+  params: EntityParams,
+  format: EntityFormat
+): Promise<unknown> {
   const { id, ...otherParams } = params;
 
   switch (operation) {
@@ -245,7 +263,11 @@ async function handleProjectOperations(operation: string, params: any, format: a
 }
 
 // Task operations handler (allocations in Float API)
-async function handleTaskOperations(operation: string, params: any, format: any) {
+async function handleTaskOperations(
+  operation: string,
+  params: EntityParams,
+  format: EntityFormat
+): Promise<unknown> {
   const { id, ...otherParams } = params;
 
   switch (operation) {
@@ -266,7 +288,11 @@ async function handleTaskOperations(operation: string, params: any, format: any)
 }
 
 // Client operations handler
-async function handleClientOperations(operation: string, params: any, format: any) {
+async function handleClientOperations(
+  operation: string,
+  params: EntityParams,
+  format: EntityFormat
+): Promise<unknown> {
   const { id, ...otherParams } = params;
 
   switch (operation) {
@@ -287,7 +313,11 @@ async function handleClientOperations(operation: string, params: any, format: an
 }
 
 // Department operations handler
-async function handleDepartmentOperations(operation: string, params: any, format: any) {
+async function handleDepartmentOperations(
+  operation: string,
+  params: EntityParams,
+  format: EntityFormat
+): Promise<unknown> {
   const { id, ...otherParams } = params;
 
   switch (operation) {
@@ -308,7 +338,11 @@ async function handleDepartmentOperations(operation: string, params: any, format
 }
 
 // Role operations handler
-async function handleRoleOperations(operation: string, params: any, format: any) {
+async function handleRoleOperations(
+  operation: string,
+  params: EntityParams,
+  format: EntityFormat
+): Promise<unknown> {
   const { id, permission, role_permissions, ...otherParams } = params;
 
   switch (operation) {
@@ -338,7 +372,7 @@ async function handleRoleOperations(operation: string, params: any, format: any)
     case 'check-role-access': {
       const targetRole = await floatApi.get(`/roles/${id}`, roleSchema, format);
       return {
-        has_permission: targetRole.permissions?.includes(permission) || false,
+        has_permission: (permission && targetRole.permissions?.includes(permission)) || false,
         permissions: targetRole.permissions || [],
       };
     }
@@ -348,7 +382,11 @@ async function handleRoleOperations(operation: string, params: any, format: any)
 }
 
 // Account operations handler
-async function handleAccountOperations(operation: string, params: any, format: any) {
+async function handleAccountOperations(
+  operation: string,
+  params: EntityParams,
+  format: EntityFormat
+): Promise<unknown> {
   const { id, permissions_data, timezone, department_filter_id, ...otherParams } = params;
 
   switch (operation) {
@@ -418,7 +456,11 @@ async function handleAccountOperations(operation: string, params: any, format: a
 }
 
 // Status operations handler
-async function handleStatusOperations(operation: string, params: any, format: any) {
+async function handleStatusOperations(
+  operation: string,
+  params: EntityParams,
+  format: EntityFormat
+): Promise<unknown> {
   const { id, status_type, default_status_id, ...otherParams } = params;
 
   switch (operation) {

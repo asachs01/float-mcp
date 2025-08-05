@@ -159,16 +159,16 @@ const xmlParser = new XMLParser(xmlParserOptions);
 
 // Format conversion utilities
 export class FormatConverter {
-  static parseXmlToJson(xmlString: string): any {
+  static parseXmlToJson(xmlString: string): Record<string, unknown> {
     try {
-      return xmlParser.parse(xmlString);
+      return xmlParser.parse(xmlString) as Record<string, unknown>;
     } catch (error) {
       logger.error('Failed to parse XML:', error);
       throw new FloatApiError('Invalid XML format in response');
     }
   }
 
-  static jsonToXml(jsonData: any): string {
+  static jsonToXml(jsonData: Record<string, unknown>): string {
     try {
       const builder = new XMLBuilder({
         ignoreAttributes: false,
@@ -206,7 +206,11 @@ export class FormatConverter {
     }
   }
 
-  static processResponse(data: any, format: ResponseFormat, originalFormat: ResponseFormat): any {
+  static processResponse<T>(
+    data: T,
+    format: ResponseFormat,
+    originalFormat: ResponseFormat
+  ): T | string {
     // If requested format matches original format, return as-is
     if (format === originalFormat) {
       return data;
@@ -214,9 +218,9 @@ export class FormatConverter {
 
     // Convert between formats
     if (originalFormat === 'json' && format === 'xml') {
-      return FormatConverter.jsonToXml(data);
+      return FormatConverter.jsonToXml(data as Record<string, unknown>);
     } else if (originalFormat === 'xml' && format === 'json') {
-      return FormatConverter.parseXmlToJson(data);
+      return FormatConverter.parseXmlToJson(data as string) as T;
     }
 
     return data;
@@ -228,7 +232,7 @@ let requestQueue: number[] = [];
 let cleanupInterval: NodeJS.Timeout | null = null;
 
 // Clean up old requests
-const startCleanup = () => {
+const startCleanup = (): void => {
   if (cleanupInterval) return;
   cleanupInterval = setInterval(() => {
     const now = Date.now();
@@ -239,7 +243,7 @@ const startCleanup = () => {
 };
 
 // Stop cleanup
-export const stopCleanup = () => {
+export const stopCleanup = (): void => {
   if (cleanupInterval) {
     clearInterval(cleanupInterval);
     cleanupInterval = null;
@@ -257,7 +261,10 @@ const waitForRateLimit = async (): Promise<void> => {
 
 // Centralized error handler for Float API responses
 class FloatErrorHandler {
-  static createErrorFromResponse(response: Response, errorData: any): FloatApiError {
+  static createErrorFromResponse(
+    response: Response,
+    errorData: Record<string, unknown> | null
+  ): FloatApiError {
     const status = response.status;
     const statusText = response.statusText;
 
@@ -265,7 +272,9 @@ class FloatErrorHandler {
       case 400:
         return new FloatValidationError(
           `Validation failed: ${errorData?.message || statusText}`,
-          errorData?.errors || errorData?.validation_errors,
+          (errorData?.errors || errorData?.validation_errors) as
+            | Record<string, string[]>
+            | undefined,
           errorData
         );
 
@@ -284,8 +293,8 @@ class FloatErrorHandler {
       case 404:
         return new FloatNotFoundError(
           `Resource not found: ${errorData?.message || statusText}`,
-          errorData?.resource_type,
-          errorData?.resource_id
+          errorData?.resource_type as string | undefined,
+          errorData?.resource_id as string | undefined
         );
 
       case 429: {
@@ -350,9 +359,14 @@ class FloatErrorHandler {
     success: false;
     error: string;
     errorCode?: string;
-    details?: any;
+    details?: Record<string, unknown>;
   } {
-    const result: any = {
+    const result: {
+      success: false;
+      error: string;
+      errorCode?: string;
+      details?: Record<string, unknown>;
+    } = {
       success: false,
       error: error.message,
     };
@@ -470,7 +484,7 @@ export class FloatApi {
 
     if (data) {
       if (format === 'xml') {
-        requestOptions.body = FormatConverter.jsonToXml(data);
+        requestOptions.body = FormatConverter.jsonToXml(data as Record<string, unknown>);
       } else {
         requestOptions.body = JSON.stringify(data);
       }
@@ -483,7 +497,7 @@ export class FloatApi {
         format,
         data: data
           ? format === 'xml'
-            ? FormatConverter.jsonToXml(data)
+            ? FormatConverter.jsonToXml(data as Record<string, unknown>)
             : JSON.stringify(data)
           : undefined,
       });
@@ -532,7 +546,7 @@ export class FloatApi {
     requestedFormat: ResponseFormat = 'json'
   ): Promise<T> {
     if (!response.ok) {
-      let errorData: any = null;
+      let errorData: Record<string, unknown> | null = null;
       try {
         const contentType = response.headers.get('content-type') || '';
         if (contentType.includes('application/xml') || contentType.includes('text/xml')) {
@@ -556,7 +570,7 @@ export class FloatApi {
       throw FloatErrorHandler.createErrorFromResponse(response, errorData);
     }
 
-    let data: any;
+    let data: unknown;
     let originalFormat: ResponseFormat = 'json';
 
     try {
@@ -593,7 +607,7 @@ export class FloatApi {
       try {
         const validatedData = schema.parse(data);
         // Apply format conversion after validation
-        return FormatConverter.processResponse(validatedData, requestedFormat, originalFormat);
+        return FormatConverter.processResponse(validatedData, requestedFormat, originalFormat) as T;
       } catch (error) {
         logger.error('Schema validation failed:', {
           error: error instanceof Error ? error.message : 'Unknown validation error',
@@ -653,7 +667,7 @@ export class FloatApi {
   }
 
   // Helper method to build query parameters
-  buildQueryParams(params: Record<string, any>): string {
+  buildQueryParams(params: Record<string, unknown>): string {
     const queryParams = new URLSearchParams();
 
     Object.entries(params).forEach(([key, value]) => {
@@ -669,7 +683,7 @@ export class FloatApi {
   // Helper method for paginated requests
   async getPaginated<T>(
     url: string,
-    params?: Record<string, any>,
+    params?: Record<string, unknown>,
     schema?: z.ZodType<T[]>,
     format: ResponseFormat = 'json'
   ): Promise<T[]> {

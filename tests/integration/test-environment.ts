@@ -41,14 +41,14 @@ export const TEST_ENV = {
 } as const;
 
 // Apply test environment variables
-export const applyTestEnvironment = () => {
+export const applyTestEnvironment = (): void => {
   Object.entries(TEST_ENV).forEach(([key, value]) => {
     process.env[key] = String(value);
   });
 };
 
 // Validate test environment
-export const validateTestEnvironment = () => {
+export const validateTestEnvironment = (): void => {
   const errors: string[] = [];
 
   if (TEST_ENV.TEST_REAL_API) {
@@ -80,7 +80,7 @@ export const mockEnvironment = {
 };
 
 // Setup test environment
-export const setupTestEnvironment = () => {
+export const setupTestEnvironment = (): void => {
   // Apply test environment
   applyTestEnvironment();
 
@@ -92,7 +92,7 @@ export const setupTestEnvironment = () => {
 };
 
 // Teardown test environment
-export const teardownTestEnvironment = () => {
+export const teardownTestEnvironment = (): void => {
   // Reset environment variables if needed
   Object.keys(TEST_ENV).forEach((key) => {
     delete process.env[key];

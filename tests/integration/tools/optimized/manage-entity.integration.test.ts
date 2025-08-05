@@ -2,10 +2,6 @@ import { describe, it, expect, afterEach } from '@jest/globals';
 import {
   executeToolWithRetry,
   generateManageEntityParams,
-  generateTestPersonData,
-  generateTestProjectData,
-  generateTestTaskData,
-  generateTestClientData,
   cleanupTestDataOptimized,
 } from '../../utils/test-helpers.ts';
 import { entitySchemaValidator } from '../../utils/schema-validator.ts';
@@ -162,7 +158,9 @@ describe('Manage Entity Tool Integration Tests', () => {
 
       it('should create person with all optional fields', async () => {
         if (!TEST_CONFIG.enableRealApiCalls) {
-          console.warn('Skipping create-person with optional fields test - real API calls disabled');
+          console.warn(
+            'Skipping create-person with optional fields test - real API calls disabled'
+          );
           return;
         }
 

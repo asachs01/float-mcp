@@ -1,8 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import {
-  executeToolWithRetry,
-  generateReportParams,
-} from '../../utils/test-helpers.ts';
+import { executeToolWithRetry, generateReportParams } from '../../utils/test-helpers.ts';
 import { ErrorTestUtils, createErrorTestCases } from '../../utils/error-handling.ts';
 import { TEST_CONFIG } from '../../setup.ts';
 
@@ -830,7 +827,10 @@ describe('Generate Report Tool Integration Tests', () => {
 
       if (result.data.length > 0) {
         result.data.forEach((person: any) => {
-          if (person.utilization_percentage !== null && person.utilization_percentage !== undefined) {
+          if (
+            person.utilization_percentage !== null &&
+            person.utilization_percentage !== undefined
+          ) {
             expect(typeof person.utilization_percentage).toBe('number');
             expect(person.utilization_percentage).toBeGreaterThanOrEqual(0);
             expect(person.utilization_percentage).toBeLessThanOrEqual(200); // Allow for overtime

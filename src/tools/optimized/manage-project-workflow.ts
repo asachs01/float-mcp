@@ -191,8 +191,18 @@ export const manageProjectWorkflow = createTool(
   }
 );
 
+// Define proper parameter types based on our schemas
+type WorkflowParams = z.infer<typeof workflowListParamsSchema> &
+  z.infer<typeof workflowGetParamsSchema> &
+  z.infer<typeof workflowCreateUpdateDataSchema>;
+type WorkflowFormat = 'json' | 'xml';
+
 // Phase operations handler
-async function handlePhaseOperations(operation: string, params: any, format: any) {
+async function handlePhaseOperations(
+  operation: string,
+  params: WorkflowParams,
+  format: WorkflowFormat
+): Promise<unknown> {
   const { id, project_id, start_date, end_date, ...otherParams } = params;
 
   switch (operation) {
@@ -218,7 +228,7 @@ async function handlePhaseOperations(operation: string, params: any, format: any
       );
     case 'get-active-phases':
       return floatApi.getPaginated('/phases', { active: 1 }, phasesResponseSchema, format);
-    case 'get-phase-schedule':
+    case 'get-phase-schedule': {
       const phases = await floatApi.getPaginated(
         '/phases',
         { project_id },
@@ -231,13 +241,18 @@ async function handlePhaseOperations(operation: string, params: any, format: any
         const dateB = new Date(b.start_date || '').getTime();
         return dateA - dateB;
       });
+    }
     default:
       throw new Error(`Unsupported phase operation: ${operation}`);
   }
 }
 
 // Milestone operations handler
-async function handleMilestoneOperations(operation: string, params: any, format: any) {
+async function handleMilestoneOperations(
+  operation: string,
+  params: WorkflowParams,
+  format: WorkflowFormat
+): Promise<unknown> {
   const { id, project_id, ...otherParams } = params;
 
   switch (operation) {
@@ -254,7 +269,7 @@ async function handleMilestoneOperations(operation: string, params: any, format:
       return { success: true, message: 'Milestone deleted successfully' };
     case 'get-project-milestones':
       return floatApi.getPaginated('/milestones', { project_id }, milestonesResponseSchema, format);
-    case 'get-upcoming-milestones':
+    case 'get-upcoming-milestones': {
       const today = new Date().toISOString().split('T')[0];
       const upcomingMilestones = await floatApi.getPaginated(
         '/milestones',
@@ -270,7 +285,8 @@ async function handleMilestoneOperations(operation: string, params: any, format:
         const dateB = new Date(b.date || b.start_date || '').getTime();
         return dateA - dateB;
       });
-    case 'get-overdue-milestones':
+    }
+    case 'get-overdue-milestones': {
       const currentDate = new Date().toISOString().split('T')[0];
       const overdueMilestones = await floatApi.getPaginated(
         '/milestones',
@@ -285,7 +301,8 @@ async function handleMilestoneOperations(operation: string, params: any, format:
         const milestoneDate = new Date(m.date || m.end_date || '');
         return milestoneDate < new Date();
       });
-    case 'complete-milestone':
+    }
+    case 'complete-milestone': {
       const completedDate = new Date().toISOString().split('T')[0];
       return floatApi.patch(
         `/milestones/${id}`,
@@ -296,6 +313,7 @@ async function handleMilestoneOperations(operation: string, params: any, format:
         milestoneSchema,
         format
       );
+    }
     case 'get-milestone-reminders':
       return floatApi.getPaginated(
         '/milestones',
@@ -312,7 +330,11 @@ async function handleMilestoneOperations(operation: string, params: any, format:
 }
 
 // Project task operations handler
-async function handleProjectTaskOperations(operation: string, params: any, format: any) {
+async function handleProjectTaskOperations(
+  operation: string,
+  params: WorkflowParams,
+  format: WorkflowFormat
+): Promise<unknown> {
   const { id, project_id, phase_id, project_tasks, task_order, ...otherParams } = params;
 
   switch (operation) {
@@ -346,7 +368,7 @@ async function handleProjectTaskOperations(operation: string, params: any, forma
         projectTasksResponseSchema,
         format
       );
-    case 'bulk-create-project-tasks':
+    case 'bulk-create-project-tasks': {
       const results = [];
       const errors = [];
       const tasks = project_tasks || [];
@@ -376,7 +398,8 @@ async function handleProjectTaskOperations(operation: string, params: any, forma
           failed: errors.length,
         },
       };
-    case 'reorder-project-tasks':
+    }
+    case 'reorder-project-tasks': {
       const reorderResults = [];
       const reorderErrors = [];
       const orderUpdates = task_order || [];
@@ -411,9 +434,10 @@ async function handleProjectTaskOperations(operation: string, params: any, forma
           failed: reorderErrors.length,
         },
       };
+    }
     case 'archive-project-task':
       return floatApi.patch(`/project-tasks/${id}`, { active: 0 }, projectTaskSchema, format);
-    case 'get-project-task-dependencies':
+    case 'get-project-task-dependencies': {
       const task = await floatApi.get(`/project-tasks/${id}`, projectTaskSchema, format);
       const dependencies = task.dependencies || [];
 
@@ -437,13 +461,18 @@ async function handleProjectTaskOperations(operation: string, params: any, forma
         dependencies,
         dependency_details: dependencyDetails,
       };
+    }
     default:
       throw new Error(`Unsupported project task operation: ${operation}`);
   }
 }
 
 // Allocation operations handler
-async function handleAllocationOperations(operation: string, params: any, format: any) {
+async function handleAllocationOperations(
+  operation: string,
+  params: WorkflowParams,
+  format: WorkflowFormat
+): Promise<unknown> {
   const { id, ...otherParams } = params;
 
   switch (operation) {

@@ -14,7 +14,7 @@ import { z } from 'zod';
 let testServer: Server | null = null;
 
 // Create test server for testing (simplified approach)
-export const createTestServer = () => {
+export const createTestServer = (): Server => {
   if (testServer) {
     return testServer;
   }
@@ -103,7 +103,9 @@ export const executeTool = async <T>(toolName: string, params: Record<string, an
 };
 
 // Get all available tools
-export const getAvailableTools = async () => {
+export const getAvailableTools = async (): Promise<
+  Array<{ name: string; description: string; inputSchema: any }>
+> => {
   return tools.map((tool) => ({
     name: tool.name,
     description: tool.description,
@@ -124,7 +126,7 @@ export const validateToolResponse = <T>(response: any, schema: z.ZodSchema<T>): 
 };
 
 // Test data generators
-export const generateTestProjectData = (overrides: Partial<any> = {}) => {
+export const generateTestProjectData = (overrides: Partial<any> = {}): Record<string, any> => {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8);
 
@@ -139,7 +141,7 @@ export const generateTestProjectData = (overrides: Partial<any> = {}) => {
   };
 };
 
-export const generateTestPersonData = (overrides: Partial<any> = {}) => {
+export const generateTestPersonData = (overrides: Partial<any> = {}): Record<string, any> => {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8);
 
@@ -153,7 +155,7 @@ export const generateTestPersonData = (overrides: Partial<any> = {}) => {
   };
 };
 
-export const generateTestTaskData = (overrides: Partial<any> = {}) => {
+export const generateTestTaskData = (overrides: Partial<any> = {}): Record<string, any> => {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8);
 
@@ -168,7 +170,7 @@ export const generateTestTaskData = (overrides: Partial<any> = {}) => {
   };
 };
 
-export const generateTestClientData = (overrides: Partial<any> = {}) => {
+export const generateTestClientData = (overrides: Partial<any> = {}): Record<string, any> => {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8);
 
@@ -179,7 +181,7 @@ export const generateTestClientData = (overrides: Partial<any> = {}) => {
   };
 };
 
-export const generateTestAllocationData = (overrides: Partial<any> = {}) => {
+export const generateTestAllocationData = (overrides: Partial<any> = {}): Record<string, any> => {
   return {
     person_id: 1,
     project_id: 1,
@@ -196,7 +198,7 @@ export const generateManageEntityParams = (
   entity_type: string,
   operation: string,
   overrides: Partial<any> = {}
-) => {
+): Record<string, any> => {
   const baseParams = {
     entity_type,
     operation,
@@ -246,7 +248,7 @@ export const generateManageProjectWorkflowParams = (
   entity_type: string,
   operation: string,
   overrides: Partial<any> = {}
-) => {
+): Record<string, any> => {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8);
 
@@ -319,7 +321,7 @@ export const generateManageTimeTrackingParams = (
   entity_type: string,
   operation: string,
   overrides: Partial<any> = {}
-) => {
+): Record<string, any> => {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8);
 
@@ -390,7 +392,7 @@ export const generateManageTimeTrackingParams = (
 export const generateReportParams = (
   report_type: string,
   overrides: Partial<any> = {}
-) => {
+): Record<string, any> => {
   const baseParams = {
     report_type,
     start_date: '2024-01-01',
@@ -493,7 +495,7 @@ export const toolExists = (toolName: string): boolean => {
 };
 
 // Helper to get tool schema
-export const getToolSchema = (toolName: string) => {
+export const getToolSchema = (toolName: string): any => {
   const tool = tools.find((t) => t.name === toolName);
   if (!tool) {
     throw new Error(`Tool ${toolName} not found`);

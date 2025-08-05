@@ -203,8 +203,40 @@ export const manageTimeTracking = createTool(
   }
 );
 
+// Define proper parameter types based on our schemas
+type TimeTrackingParams = z.infer<typeof timeTrackingListParamsSchema> &
+  z.infer<typeof timeTrackingGetParamsSchema> &
+  z.infer<typeof timeTrackingCreateUpdateDataSchema>;
+type TimeTrackingFormat = 'json' | 'xml';
+
+// Helper function to convert numeric status to string status
+function convertStatusToString(status: unknown): 'pending' | 'approved' | 'rejected' | 'unknown' {
+  if (typeof status === 'number') {
+    switch (status) {
+      case 1:
+        return 'pending';
+      case 2:
+        return 'approved';
+      case 3:
+        return 'rejected';
+      default:
+        return 'unknown';
+    }
+  }
+  if (typeof status === 'string') {
+    if (status === 'pending' || status === 'approved' || status === 'rejected') {
+      return status;
+    }
+  }
+  return 'unknown';
+}
+
 // Logged time operations handler
-async function handleLoggedTimeOperations(operation: string, params: any, format: any) {
+async function handleLoggedTimeOperations(
+  operation: string,
+  params: TimeTrackingParams,
+  format: TimeTrackingFormat
+): Promise<unknown> {
   const { id, logged_time_entries, people_id, project_id, ...otherParams } = params;
 
   switch (operation) {
@@ -219,7 +251,7 @@ async function handleLoggedTimeOperations(operation: string, params: any, format
     case 'delete':
       await floatApi.delete(`/logged-time/${id}`, undefined, format);
       return { success: true, message: 'Logged time entry deleted successfully' };
-    case 'bulk-create-logged-time':
+    case 'bulk-create-logged-time': {
       const results = [];
       const errors = [];
       const entries = logged_time_entries || [];
@@ -249,9 +281,12 @@ async function handleLoggedTimeOperations(operation: string, params: any, format
           failed: errors.length,
         },
       };
+    }
     case 'get-person-logged-time-summary':
+      if (!people_id) throw new Error('people_id is required for person logged time summary');
       return generatePersonLoggedTimeSummary(people_id, otherParams, format);
     case 'get-project-logged-time-summary':
+      if (!project_id) throw new Error('project_id is required for project logged time summary');
       return generateProjectLoggedTimeSummary(project_id, otherParams, format);
     case 'get-logged-time-timesheet':
       return generateLoggedTimeTimesheet(otherParams, format);
@@ -263,7 +298,11 @@ async function handleLoggedTimeOperations(operation: string, params: any, format
 }
 
 // Time off operations handler
-async function handleTimeOffOperations(operation: string, params: any, format: any) {
+async function handleTimeOffOperations(
+  operation: string,
+  params: TimeTrackingParams,
+  format: TimeTrackingFormat
+): Promise<unknown> {
   const { id, timeoff_entries, ...otherParams } = params;
 
   switch (operation) {
@@ -278,7 +317,7 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
     case 'delete':
       await floatApi.delete(`/timeoffs/${id}`, undefined, format);
       return { success: true, message: 'Time off entry deleted successfully' };
-    case 'bulk-create-timeoff':
+    case 'bulk-create-timeoff': {
       const results = [];
       const errors = [];
       const entries = timeoff_entries || [];
@@ -308,7 +347,8 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
           failed: errors.length,
         },
       };
-    case 'approve-timeoff':
+    }
+    case 'approve-timeoff': {
       const approver_id = otherParams.approved_by || 1; // Default to system user
       return floatApi.patch(
         `/timeoffs/${id}`,
@@ -320,7 +360,8 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
         timeOffSchema,
         format
       );
-    case 'reject-timeoff':
+    }
+    case 'reject-timeoff': {
       const rejector_id = otherParams.rejected_by || 1; // Default to system user
       return floatApi.patch(
         `/timeoffs/${id}`,
@@ -332,9 +373,11 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
         timeOffSchema,
         format
       );
+    }
     case 'get-timeoff-calendar':
       return generateTimeOffCalendar(otherParams, format);
     case 'get-person-timeoff-summary':
+      if (!params.people_id) throw new Error('people_id is required for person time-off summary');
       return generatePersonTimeOffSummary(params.people_id, otherParams, format);
     default:
       throw new Error(`Unsupported time off operation: ${operation}`);
@@ -342,7 +385,11 @@ async function handleTimeOffOperations(operation: string, params: any, format: a
 }
 
 // Time off type operations handler
-async function handleTimeOffTypeOperations(operation: string, params: any, format: any) {
+async function handleTimeOffTypeOperations(
+  operation: string,
+  params: TimeTrackingParams,
+  format: TimeTrackingFormat
+): Promise<unknown> {
   const { id, ...otherParams } = params;
 
   switch (operation) {
@@ -368,7 +415,11 @@ async function handleTimeOffTypeOperations(operation: string, params: any, forma
 }
 
 // Public holiday operations handler
-async function handlePublicHolidayOperations(operation: string, params: any, format: any) {
+async function handlePublicHolidayOperations(
+  operation: string,
+  params: TimeTrackingParams,
+  format: TimeTrackingFormat
+): Promise<unknown> {
   const { id, ...otherParams } = params;
 
   switch (operation) {
@@ -394,7 +445,11 @@ async function handlePublicHolidayOperations(operation: string, params: any, for
 }
 
 // Team holiday operations handler
-async function handleTeamHolidayOperations(operation: string, params: any, format: any) {
+async function handleTeamHolidayOperations(
+  operation: string,
+  params: TimeTrackingParams,
+  format: TimeTrackingFormat
+): Promise<unknown> {
   const { id, department_id, start_date, end_date, ...otherParams } = params;
 
   switch (operation) {
@@ -435,7 +490,7 @@ async function handleTeamHolidayOperations(operation: string, params: any, forma
         teamHolidaysResponseSchema,
         format
       );
-    case 'get-upcoming-team-holidays':
+    case 'get-upcoming-team-holidays': {
       const today = new Date().toISOString().split('T')[0];
       const upcomingHolidays = await floatApi.getPaginated(
         '/team-holidays',
@@ -451,6 +506,7 @@ async function handleTeamHolidayOperations(operation: string, params: any, forma
         const dateB = new Date(b.start_date).getTime();
         return dateA - dateB;
       });
+    }
     default:
       throw new Error(`Unsupported team holiday operation: ${operation}`);
   }
@@ -458,7 +514,11 @@ async function handleTeamHolidayOperations(operation: string, params: any, forma
 
 // Helper functions for complex operations
 
-async function generatePersonLoggedTimeSummary(people_id: any, params: any, format: any) {
+async function generatePersonLoggedTimeSummary(
+  people_id: string | number,
+  params: TimeTrackingParams,
+  format: TimeTrackingFormat
+): Promise<Record<string, unknown>> {
   const loggedTimeData = await floatApi.getPaginated(
     '/logged-time',
     {
@@ -535,7 +595,11 @@ async function generatePersonLoggedTimeSummary(people_id: any, params: any, form
   return summary;
 }
 
-async function generateProjectLoggedTimeSummary(project_id: any, params: any, format: any) {
+async function generateProjectLoggedTimeSummary(
+  project_id: string | number,
+  params: TimeTrackingParams,
+  format: TimeTrackingFormat
+): Promise<Record<string, unknown>> {
   const loggedTimeData = await floatApi.getPaginated(
     '/logged-time',
     {
@@ -608,7 +672,10 @@ async function generateProjectLoggedTimeSummary(project_id: any, params: any, fo
   return summary;
 }
 
-async function generateLoggedTimeTimesheet(params: any, format: any) {
+async function generateLoggedTimeTimesheet(
+  params: TimeTrackingParams,
+  format: TimeTrackingFormat
+): Promise<Record<string, unknown>> {
   const loggedTimeData = await floatApi.getPaginated(
     '/logged-time',
     params,
@@ -657,7 +724,10 @@ async function generateLoggedTimeTimesheet(params: any, format: any) {
   };
 }
 
-async function generateBillableTimeReport(params: any, format: any) {
+async function generateBillableTimeReport(
+  params: TimeTrackingParams,
+  format: TimeTrackingFormat
+): Promise<Record<string, unknown>> {
   const loggedTimeData = await floatApi.getPaginated(
     '/logged-time',
     params,
@@ -677,8 +747,8 @@ async function generateBillableTimeReport(params: any, format: any) {
       billable_percentage: 0,
       total_entries: loggedTimeData.length,
     },
-    by_person: {} as Record<string, any>,
-    by_project: {} as Record<string, any>,
+    by_person: {} as Record<string, unknown>,
+    by_project: {} as Record<string, unknown>,
   };
 
   loggedTimeData.forEach((entry) => {
@@ -703,11 +773,16 @@ async function generateBillableTimeReport(params: any, format: any) {
           billable_percentage: 0,
         };
       }
-      report.by_person[peopleId].total_hours += hours;
+      (report.by_person[peopleId] as Record<string, unknown>).total_hours =
+        ((report.by_person[peopleId] as Record<string, unknown>).total_hours as number) + hours;
       if (isBillable) {
-        report.by_person[peopleId].billable_hours += hours;
+        (report.by_person[peopleId] as Record<string, unknown>).billable_hours =
+          ((report.by_person[peopleId] as Record<string, unknown>).billable_hours as number) +
+          hours;
       } else {
-        report.by_person[peopleId].non_billable_hours += hours;
+        (report.by_person[peopleId] as Record<string, unknown>).non_billable_hours =
+          ((report.by_person[peopleId] as Record<string, unknown>).non_billable_hours as number) +
+          hours;
       }
     }
 
@@ -722,11 +797,16 @@ async function generateBillableTimeReport(params: any, format: any) {
           billable_percentage: 0,
         };
       }
-      report.by_project[projectId].total_hours += hours;
+      (report.by_project[projectId] as Record<string, unknown>).total_hours =
+        ((report.by_project[projectId] as Record<string, unknown>).total_hours as number) + hours;
       if (isBillable) {
-        report.by_project[projectId].billable_hours += hours;
+        (report.by_project[projectId] as Record<string, unknown>).billable_hours =
+          ((report.by_project[projectId] as Record<string, unknown>).billable_hours as number) +
+          hours;
       } else {
-        report.by_project[projectId].non_billable_hours += hours;
+        (report.by_project[projectId] as Record<string, unknown>).non_billable_hours =
+          ((report.by_project[projectId] as Record<string, unknown>).non_billable_hours as number) +
+          hours;
       }
     }
   });
@@ -737,22 +817,29 @@ async function generateBillableTimeReport(params: any, format: any) {
       (report.summary.billable_hours / report.summary.total_hours) * 100;
   }
 
-  Object.values(report.by_person).forEach((person: any) => {
-    if (person.total_hours > 0) {
-      person.billable_percentage = (person.billable_hours / person.total_hours) * 100;
+  Object.values(report.by_person).forEach((person) => {
+    const personRecord = person as Record<string, unknown>;
+    if ((personRecord.total_hours as number) > 0) {
+      personRecord.billable_percentage =
+        ((personRecord.billable_hours as number) / (personRecord.total_hours as number)) * 100;
     }
   });
 
-  Object.values(report.by_project).forEach((project: any) => {
-    if (project.total_hours > 0) {
-      project.billable_percentage = (project.billable_hours / project.total_hours) * 100;
+  Object.values(report.by_project).forEach((project) => {
+    const projectRecord = project as Record<string, unknown>;
+    if ((projectRecord.total_hours as number) > 0) {
+      projectRecord.billable_percentage =
+        ((projectRecord.billable_hours as number) / (projectRecord.total_hours as number)) * 100;
     }
   });
 
   return report;
 }
 
-async function generateTimeOffCalendar(params: any, format: any) {
+async function generateTimeOffCalendar(
+  params: TimeTrackingParams,
+  format: TimeTrackingFormat
+): Promise<Record<string, unknown>> {
   const timeOffData = await floatApi.getPaginated(
     '/timeoffs',
     params,
@@ -760,7 +847,7 @@ async function generateTimeOffCalendar(params: any, format: any) {
     format
   );
 
-  const calendar: Record<string, any[]> = {};
+  const calendar: Record<string, unknown[]> = {};
   const summary = {
     total_entries: timeOffData.length,
     by_status: { pending: 0, approved: 0, rejected: 0 },
@@ -777,8 +864,10 @@ async function generateTimeOffCalendar(params: any, format: any) {
 
     // Status summary
     if (entry.status) {
-      summary.by_status[entry.status as keyof typeof summary.by_status] =
-        (summary.by_status[entry.status as keyof typeof summary.by_status] || 0) + 1;
+      const statusString = convertStatusToString(entry.status);
+      if (statusString !== 'unknown') {
+        summary.by_status[statusString] = (summary.by_status[statusString] || 0) + 1;
+      }
     }
 
     // Type summary
@@ -796,7 +885,11 @@ async function generateTimeOffCalendar(params: any, format: any) {
   };
 }
 
-async function generatePersonTimeOffSummary(people_id: any, params: any, format: any) {
+async function generatePersonTimeOffSummary(
+  people_id: string | number,
+  params: TimeTrackingParams,
+  format: TimeTrackingFormat
+): Promise<Record<string, unknown>> {
   const timeOffData = await floatApi.getPaginated(
     '/timeoffs',
     {
@@ -837,8 +930,10 @@ async function generatePersonTimeOffSummary(people_id: any, params: any, format:
 
     // By status
     if (entry.status) {
-      summary.by_status[entry.status as keyof typeof summary.by_status] =
-        (summary.by_status[entry.status as keyof typeof summary.by_status] || 0) + 1;
+      const statusString = convertStatusToString(entry.status);
+      if (statusString !== 'unknown') {
+        summary.by_status[statusString] = (summary.by_status[statusString] || 0) + 1;
+      }
     }
   });
 

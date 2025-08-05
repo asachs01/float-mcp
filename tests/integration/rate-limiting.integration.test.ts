@@ -4,7 +4,7 @@ import { TEST_CONFIG } from './setup.ts';
 
 describe('Rate Limiting Integration Tests', () => {
   // Skip rate limiting tests if not using real API
-  const skipIfMocked = () => {
+  const skipIfMocked = (): boolean => {
     if (!TEST_CONFIG.enableRealApiCalls) {
       console.warn('Skipping rate limiting test - real API calls disabled');
       return true;
@@ -18,7 +18,7 @@ describe('Rate Limiting Integration Tests', () => {
 
       const requests = Array.from(
         { length: 10 },
-        () => () => executeTool('list-projects', { 'per-page': 1 })
+        () => (): Promise<unknown> => executeTool('list-projects', { 'per-page': 1 })
       );
 
       const start = Date.now();
@@ -368,7 +368,7 @@ describe('Rate Limiting Integration Tests', () => {
       }
 
       // Measure performance with deliberate pacing
-      const pacedRequests = async () => {
+      const pacedRequests = async (): Promise<number> => {
         const start = Date.now();
         for (let i = 0; i < 5; i++) {
           await executeTool('list-projects', { 'per-page': 1 });
@@ -378,7 +378,7 @@ describe('Rate Limiting Integration Tests', () => {
       };
 
       // Measure performance without pacing (will likely hit rate limits)
-      const rapidRequests = async () => {
+      const rapidRequests = async (): Promise<number> => {
         const start = Date.now();
         const requests = Array.from({ length: 5 }, () =>
           executeTool('list-projects', { 'per-page': 1 })

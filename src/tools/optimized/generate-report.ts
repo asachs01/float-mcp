@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { createTool, withFormatParam } from '../base.js';
-import { floatApi } from '../../services/float-api.js';
+import { floatApi, ResponseFormat } from '../../services/float-api.js';
 import {
   loggedTimeResponseSchema,
   projectsResponseSchema,
@@ -181,13 +181,49 @@ export const generateReport = createTool(
   }
 );
 
+// Define proper parameter types based on our schemas
+type ReportParams = z.infer<typeof reportFilterParamsSchema> &
+  z.infer<typeof reportConfigParamsSchema>;
+type ReportFormat = z.infer<typeof reportFormatSchema>;
+
+// Define report structure interfaces
+interface ReportSummary {
+  total_entries: number;
+  total_hours: number;
+  billable_hours: number;
+  non_billable_hours: number;
+  unique_people: Set<number> | number;
+  unique_projects: Set<number> | number;
+}
+
+interface ProjectPerformance {
+  [key: string]: unknown;
+  budget_variance_percentage?: number;
+  over_budget?: boolean;
+  budget_warning?: boolean;
+}
+
+interface TimeReportWithPercentages {
+  [key: string]: unknown;
+  summary: ReportSummary;
+  percentages?: {
+    billable_percentage: number;
+    non_billable_percentage: number;
+  };
+}
+
 // Time report generator
-async function generateTimeReport(params: any, format: any) {
+async function generateTimeReport(
+  params: ReportParams,
+  format: ReportFormat
+): Promise<Record<string, unknown>> {
+  // API only supports json/xml, so use json for data fetching
+  const apiFormat = (format === 'csv' ? 'json' : format) as ResponseFormat;
   const loggedTimeData = await floatApi.getPaginated(
     '/logged-time',
     params,
     loggedTimeResponseSchema,
-    format
+    apiFormat
   );
 
   const report = {
@@ -206,11 +242,11 @@ async function generateTimeReport(params: any, format: any) {
       unique_people: new Set<number>(),
       unique_projects: new Set<number>(),
     },
-    data: [] as any[],
+    data: [] as Record<string, unknown>[],
     breakdown: {
-      by_person: {} as Record<string, any>,
-      by_project: {} as Record<string, any>,
-      by_date: {} as Record<string, any>,
+      by_person: {} as Record<string, unknown>,
+      by_project: {} as Record<string, unknown>,
+      by_date: {} as Record<string, unknown>,
     },
   };
 
@@ -242,14 +278,22 @@ async function generateTimeReport(params: any, format: any) {
                 entries: [],
               };
             }
-            report.breakdown.by_person[key].total_hours += hours;
+            (report.breakdown.by_person[key] as Record<string, unknown>).total_hours =
+              ((report.breakdown.by_person[key] as Record<string, unknown>).total_hours as number) +
+              hours;
             if (isBillable) {
-              report.breakdown.by_person[key].billable_hours += hours;
+              (report.breakdown.by_person[key] as Record<string, unknown>).billable_hours =
+                ((report.breakdown.by_person[key] as Record<string, unknown>)
+                  .billable_hours as number) + hours;
             } else {
-              report.breakdown.by_person[key].non_billable_hours += hours;
+              (report.breakdown.by_person[key] as Record<string, unknown>).non_billable_hours =
+                ((report.breakdown.by_person[key] as Record<string, unknown>)
+                  .non_billable_hours as number) + hours;
             }
             if (params.include_details) {
-              report.breakdown.by_person[key].entries.push(entry);
+              (
+                (report.breakdown.by_person[key] as Record<string, unknown>).entries as unknown[]
+              ).push(entry);
             }
           }
           break;
@@ -264,14 +308,22 @@ async function generateTimeReport(params: any, format: any) {
                 entries: [],
               };
             }
-            report.breakdown.by_project[key].total_hours += hours;
+            (report.breakdown.by_project[key] as Record<string, unknown>).total_hours =
+              ((report.breakdown.by_project[key] as Record<string, unknown>)
+                .total_hours as number) + hours;
             if (isBillable) {
-              report.breakdown.by_project[key].billable_hours += hours;
+              (report.breakdown.by_project[key] as Record<string, unknown>).billable_hours =
+                ((report.breakdown.by_project[key] as Record<string, unknown>)
+                  .billable_hours as number) + hours;
             } else {
-              report.breakdown.by_project[key].non_billable_hours += hours;
+              (report.breakdown.by_project[key] as Record<string, unknown>).non_billable_hours =
+                ((report.breakdown.by_project[key] as Record<string, unknown>)
+                  .non_billable_hours as number) + hours;
             }
             if (params.include_details) {
-              report.breakdown.by_project[key].entries.push(entry);
+              (
+                (report.breakdown.by_project[key] as Record<string, unknown>).entries as unknown[]
+              ).push(entry);
             }
           }
           break;
@@ -285,14 +337,23 @@ async function generateTimeReport(params: any, format: any) {
                 entries: [],
               };
             }
-            report.breakdown.by_date[entry.date].total_hours += hours;
+            (report.breakdown.by_date[entry.date] as Record<string, unknown>).total_hours =
+              ((report.breakdown.by_date[entry.date] as Record<string, unknown>)
+                .total_hours as number) + hours;
             if (isBillable) {
-              report.breakdown.by_date[entry.date].billable_hours += hours;
+              (report.breakdown.by_date[entry.date] as Record<string, unknown>).billable_hours =
+                ((report.breakdown.by_date[entry.date] as Record<string, unknown>)
+                  .billable_hours as number) + hours;
             } else {
-              report.breakdown.by_date[entry.date].non_billable_hours += hours;
+              (report.breakdown.by_date[entry.date] as Record<string, unknown>).non_billable_hours =
+                ((report.breakdown.by_date[entry.date] as Record<string, unknown>)
+                  .non_billable_hours as number) + hours;
             }
             if (params.include_details) {
-              report.breakdown.by_date[entry.date].entries.push(entry);
+              (
+                (report.breakdown.by_date[entry.date] as Record<string, unknown>)
+                  .entries as unknown[]
+              ).push(entry);
             }
           }
           break;
@@ -301,12 +362,16 @@ async function generateTimeReport(params: any, format: any) {
   });
 
   // Convert sets to counts
-  (report.summary as any).unique_people = report.summary.unique_people.size;
-  (report.summary as any).unique_projects = report.summary.unique_projects.size;
+  (report.summary as ReportSummary).unique_people = (
+    report.summary.unique_people as Set<number>
+  ).size;
+  (report.summary as ReportSummary).unique_projects = (
+    report.summary.unique_projects as Set<number>
+  ).size;
 
   // Add percentages if requested
   if (params.include_percentages && report.summary.total_hours > 0) {
-    (report as any).percentages = {
+    (report as TimeReportWithPercentages).percentages = {
       billable_percentage: (report.summary.billable_hours / report.summary.total_hours) * 100,
       non_billable_percentage:
         (report.summary.non_billable_hours / report.summary.total_hours) * 100,
@@ -322,18 +387,23 @@ async function generateTimeReport(params: any, format: any) {
 }
 
 // Project report generator
-async function generateProjectReport(params: any, format: any) {
+async function generateProjectReport(
+  params: ReportParams,
+  format: ReportFormat
+): Promise<Record<string, unknown>> {
+  // API only supports json/xml, so use json for data fetching
+  const apiFormat = (format === 'csv' ? 'json' : format) as ResponseFormat;
   const projectsData = await floatApi.getPaginated(
     '/projects',
     params,
     projectsResponseSchema,
-    format
+    apiFormat
   );
   const loggedTimeData = await floatApi.getPaginated(
     '/logged-time',
     params,
     loggedTimeResponseSchema,
-    format
+    apiFormat
   );
 
   const report = {
@@ -351,11 +421,11 @@ async function generateProjectReport(params: any, format: any) {
       total_logged_hours: 0,
       total_billable_hours: 0,
     },
-    projects: [] as any[],
+    projects: [] as Record<string, unknown>[],
   };
 
   // Create project performance map
-  const projectPerformance: Record<string, any> = {};
+  const projectPerformance: Record<string, unknown> = {};
 
   loggedTimeData.forEach((entry) => {
     if (entry.project_id) {
@@ -370,15 +440,22 @@ async function generateProjectReport(params: any, format: any) {
       }
 
       const hours = entry.hours || 0;
-      projectPerformance[projectId].total_hours += hours;
+      (projectPerformance[projectId] as Record<string, unknown>).total_hours =
+        ((projectPerformance[projectId] as Record<string, unknown>).total_hours as number) + hours;
       if (entry.billable === 1) {
-        projectPerformance[projectId].billable_hours += hours;
+        (projectPerformance[projectId] as Record<string, unknown>).billable_hours =
+          ((projectPerformance[projectId] as Record<string, unknown>).billable_hours as number) +
+          hours;
       } else {
-        projectPerformance[projectId].non_billable_hours += hours;
+        (projectPerformance[projectId] as Record<string, unknown>).non_billable_hours =
+          ((projectPerformance[projectId] as Record<string, unknown>)
+            .non_billable_hours as number) + hours;
       }
 
       if (entry.people_id) {
-        projectPerformance[projectId].unique_people.add(entry.people_id);
+        (
+          (projectPerformance[projectId] as Record<string, unknown>).unique_people as Set<number>
+        ).add(entry.people_id);
       }
     }
   });
@@ -392,13 +469,17 @@ async function generateProjectReport(params: any, format: any) {
       ...project,
       performance: performance
         ? {
-            total_hours: performance.total_hours,
-            billable_hours: performance.billable_hours,
-            non_billable_hours: performance.non_billable_hours,
-            team_size: performance.unique_people.size,
-            budget_used: performance.billable_hours * (project.hourly_rate || 0),
+            total_hours: (performance as Record<string, unknown>).total_hours,
+            billable_hours: (performance as Record<string, unknown>).billable_hours,
+            non_billable_hours: (performance as Record<string, unknown>).non_billable_hours,
+            team_size: ((performance as Record<string, unknown>).unique_people as Set<number>).size,
+            budget_used:
+              ((performance as Record<string, unknown>).billable_hours as number) *
+              (project.hourly_rate || 0),
             budget_remaining:
-              (project.budget || 0) - performance.billable_hours * (project.hourly_rate || 0),
+              (project.budget || 0) -
+              ((performance as Record<string, unknown>).billable_hours as number) *
+                (project.hourly_rate || 0),
           }
         : {
             total_hours: 0,
@@ -414,9 +495,9 @@ async function generateProjectReport(params: any, format: any) {
     if (params.include_budget_variance && project.budget) {
       const budgetUsed = projectReport.performance.budget_used;
       const budgetVariance = ((budgetUsed - (project.budget || 0)) / (project.budget || 1)) * 100;
-      (projectReport.performance as any).budget_variance_percentage = budgetVariance;
-      (projectReport.performance as any).over_budget = budgetVariance > 0;
-      (projectReport.performance as any).budget_warning =
+      (projectReport.performance as ProjectPerformance).budget_variance_percentage = budgetVariance;
+      (projectReport.performance as ProjectPerformance).over_budget = budgetVariance > 0;
+      (projectReport.performance as ProjectPerformance).budget_warning =
         budgetVariance > (params.budget_warning_threshold || 80);
     }
 
@@ -424,27 +505,38 @@ async function generateProjectReport(params: any, format: any) {
 
     // Update summary
     report.summary.total_budget += project.budget || 0;
-    report.summary.total_logged_hours += projectReport.performance.total_hours;
-    report.summary.total_billable_hours += projectReport.performance.billable_hours;
+    report.summary.total_logged_hours += (projectReport.performance.total_hours as number) || 0;
+    report.summary.total_billable_hours +=
+      (projectReport.performance.billable_hours as number) || 0;
   });
 
   return report;
 }
 
 // People utilization report generator
-async function generatePeopleUtilizationReport(params: any, format: any) {
-  const peopleData = await floatApi.getPaginated('/people', params, peopleResponseSchema, format);
+async function generatePeopleUtilizationReport(
+  params: ReportParams,
+  format: ReportFormat
+): Promise<Record<string, unknown>> {
+  // API only supports json/xml, so use json for data fetching
+  const apiFormat = (format === 'csv' ? 'json' : format) as ResponseFormat;
+  const peopleData = await floatApi.getPaginated(
+    '/people',
+    params,
+    peopleResponseSchema,
+    apiFormat
+  );
   const loggedTimeData = await floatApi.getPaginated(
     '/logged-time',
     params,
     loggedTimeResponseSchema,
-    format
+    apiFormat
   );
   const allocationsData = await floatApi.getPaginated(
     '/tasks',
     params,
     allocationsResponseSchema,
-    format
+    apiFormat
   );
 
   const targetHoursPerDay = params.target_hours_per_day || 8;
@@ -478,10 +570,10 @@ async function generatePeopleUtilizationReport(params: any, format: any) {
       over_utilized_count: 0,
       under_utilized_count: 0,
     },
-    people: [] as any[],
+    people: [] as Record<string, unknown>[],
   };
 
-  const peoplePerformance: Record<string, any> = {};
+  const peoplePerformance: Record<string, unknown> = {};
 
   // Calculate logged time per person
   loggedTimeData.forEach((entry) => {
@@ -497,11 +589,16 @@ async function generatePeopleUtilizationReport(params: any, format: any) {
       }
 
       const hours = entry.hours || 0;
-      peoplePerformance[peopleId].logged_hours += hours;
+      (peoplePerformance[peopleId] as Record<string, unknown>).logged_hours =
+        ((peoplePerformance[peopleId] as Record<string, unknown>).logged_hours as number) + hours;
       if (entry.billable === 1) {
-        peoplePerformance[peopleId].billable_hours += hours;
+        (peoplePerformance[peopleId] as Record<string, unknown>).billable_hours =
+          ((peoplePerformance[peopleId] as Record<string, unknown>).billable_hours as number) +
+          hours;
       } else {
-        peoplePerformance[peopleId].non_billable_hours += hours;
+        (peoplePerformance[peopleId] as Record<string, unknown>).non_billable_hours =
+          ((peoplePerformance[peopleId] as Record<string, unknown>).non_billable_hours as number) +
+          hours;
       }
     }
   });
@@ -519,7 +616,9 @@ async function generatePeopleUtilizationReport(params: any, format: any) {
         };
       }
 
-      peoplePerformance[peopleId].scheduled_hours += allocation.hours || 0;
+      (peoplePerformance[peopleId] as Record<string, unknown>).scheduled_hours =
+        ((peoplePerformance[peopleId] as Record<string, unknown>).scheduled_hours as number) +
+        (allocation.hours || 0);
     }
   });
 
@@ -530,8 +629,9 @@ async function generatePeopleUtilizationReport(params: any, format: any) {
     const peopleId = person.people_id?.toString();
     const performance = peopleId ? peoplePerformance[peopleId] : null;
 
-    const loggedHours = performance?.logged_hours || 0;
-    const scheduledHours = performance?.scheduled_hours || 0;
+    const loggedHours = ((performance as Record<string, unknown>)?.logged_hours as number) || 0;
+    const scheduledHours =
+      ((performance as Record<string, unknown>)?.scheduled_hours as number) || 0;
     const utilization = targetTotalHours > 0 ? (loggedHours / targetTotalHours) * 100 : 0;
     const scheduledUtilization =
       targetTotalHours > 0 ? (scheduledHours / targetTotalHours) * 100 : 0;
@@ -541,8 +641,9 @@ async function generatePeopleUtilizationReport(params: any, format: any) {
       utilization: {
         logged_hours: loggedHours,
         scheduled_hours: scheduledHours,
-        billable_hours: performance?.billable_hours || 0,
-        non_billable_hours: performance?.non_billable_hours || 0,
+        billable_hours: ((performance as Record<string, unknown>)?.billable_hours as number) || 0,
+        non_billable_hours:
+          ((performance as Record<string, unknown>)?.non_billable_hours as number) || 0,
         target_hours: targetTotalHours,
         utilization_percentage: utilization,
         scheduled_utilization_percentage: scheduledUtilization,
@@ -566,12 +667,17 @@ async function generatePeopleUtilizationReport(params: any, format: any) {
 }
 
 // Placeholder implementations for other report types
-async function generateCapacityReport(params: any, format: any) {
+async function generateCapacityReport(
+  params: ReportParams,
+  format: ReportFormat
+): Promise<Record<string, unknown>> {
+  // API only supports json/xml, so use json for data fetching
+  const apiFormat = (format === 'csv' ? 'json' : format) as ResponseFormat;
   const allocationsData = await floatApi.getPaginated(
     '/tasks',
     params,
     allocationsResponseSchema,
-    format
+    apiFormat
   );
 
   // Implement capacity forecasting logic
@@ -583,12 +689,17 @@ async function generateCapacityReport(params: any, format: any) {
   };
 }
 
-async function generateBudgetReport(params: any, format: any) {
+async function generateBudgetReport(
+  params: ReportParams,
+  format: ReportFormat
+): Promise<Record<string, unknown>> {
+  // API only supports json/xml, so use json for data fetching
+  const apiFormat = (format === 'csv' ? 'json' : format) as ResponseFormat;
   const projectsData = await floatApi.getPaginated(
     '/projects',
     params,
     projectsResponseSchema,
-    format
+    apiFormat
   );
 
   return {
@@ -599,12 +710,17 @@ async function generateBudgetReport(params: any, format: any) {
   };
 }
 
-async function generateMilestoneReport(params: any, format: any) {
+async function generateMilestoneReport(
+  params: ReportParams,
+  format: ReportFormat
+): Promise<Record<string, unknown>> {
+  // API only supports json/xml, so use json for data fetching
+  const apiFormat = (format === 'csv' ? 'json' : format) as ResponseFormat;
   const milestonesData = await floatApi.getPaginated(
     '/milestones',
     params,
     milestonesResponseSchema,
-    format
+    apiFormat
   );
 
   return {
@@ -615,12 +731,17 @@ async function generateMilestoneReport(params: any, format: any) {
   };
 }
 
-async function generateTimeOffReport(params: any, format: any) {
+async function generateTimeOffReport(
+  params: ReportParams,
+  format: ReportFormat
+): Promise<Record<string, unknown>> {
+  // API only supports json/xml, so use json for data fetching
+  const apiFormat = (format === 'csv' ? 'json' : format) as ResponseFormat;
   const timeOffData = await floatApi.getPaginated(
     '/timeoffs',
     params,
     timeOffResponseSchema,
-    format
+    apiFormat
   );
 
   return {
@@ -631,8 +752,18 @@ async function generateTimeOffReport(params: any, format: any) {
   };
 }
 
-async function generateTeamPerformanceReport(params: any, format: any) {
-  const peopleData = await floatApi.getPaginated('/people', params, peopleResponseSchema, format);
+async function generateTeamPerformanceReport(
+  params: ReportParams,
+  format: ReportFormat
+): Promise<Record<string, unknown>> {
+  // API only supports json/xml, so use json for data fetching
+  const apiFormat = (format === 'csv' ? 'json' : format) as ResponseFormat;
+  const peopleData = await floatApi.getPaginated(
+    '/people',
+    params,
+    peopleResponseSchema,
+    apiFormat
+  );
 
   return {
     report_type: 'team-performance-report',
@@ -642,12 +773,17 @@ async function generateTeamPerformanceReport(params: any, format: any) {
   };
 }
 
-async function generateResourceAllocationReport(params: any, format: any) {
+async function generateResourceAllocationReport(
+  params: ReportParams,
+  format: ReportFormat
+): Promise<Record<string, unknown>> {
+  // API only supports json/xml, so use json for data fetching
+  const apiFormat = (format === 'csv' ? 'json' : format) as ResponseFormat;
   const allocationsData = await floatApi.getPaginated(
     '/tasks',
     params,
     allocationsResponseSchema,
-    format
+    apiFormat
   );
 
   return {
@@ -658,14 +794,24 @@ async function generateResourceAllocationReport(params: any, format: any) {
   };
 }
 
-async function generateProjectTimelineReport(params: any, format: any) {
+async function generateProjectTimelineReport(
+  params: ReportParams,
+  format: ReportFormat
+): Promise<Record<string, unknown>> {
+  // API only supports json/xml, so use json for data fetching
+  const apiFormat = (format === 'csv' ? 'json' : format) as ResponseFormat;
   const projectsData = await floatApi.getPaginated(
     '/projects',
     params,
     projectsResponseSchema,
-    format
+    apiFormat
   );
-  const phasesData = await floatApi.getPaginated('/phases', params, phasesResponseSchema, format);
+  const phasesData = await floatApi.getPaginated(
+    '/phases',
+    params,
+    phasesResponseSchema,
+    apiFormat
+  );
 
   return {
     report_type: 'project-timeline-report',
@@ -675,12 +821,17 @@ async function generateProjectTimelineReport(params: any, format: any) {
   };
 }
 
-async function generateBillableAnalysisReport(params: any, format: any) {
+async function generateBillableAnalysisReport(
+  params: ReportParams,
+  format: ReportFormat
+): Promise<Record<string, unknown>> {
+  // API only supports json/xml, so use json for data fetching
+  const apiFormat = (format === 'csv' ? 'json' : format) as ResponseFormat;
   const loggedTimeData = await floatApi.getPaginated(
     '/logged-time',
     params,
     loggedTimeResponseSchema,
-    format
+    apiFormat
   );
 
   return {

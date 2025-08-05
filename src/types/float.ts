@@ -266,7 +266,7 @@ export const timeOffSchema = z.object({
   people_id: z.number().optional(), // Float API uses people_id, not person_id
   people_ids: z.array(z.number()).optional(), // Array of people IDs (returned by API)
   timeoff_type_id: z.number().optional(), // Reference to time off type
-  timeoff_type_name: z.string().optional(), // Time off type name (returned by API) 
+  timeoff_type_name: z.string().optional(), // Time off type name (returned by API)
   start_date: z.string().nullable().optional(), // ISO date format (YYYY-MM-DD)
   end_date: z.string().nullable().optional(), // ISO date format (YYYY-MM-DD)
   start_time: z.string().nullable().optional(), // Start time (returned by API)
@@ -287,7 +287,7 @@ export const timeOffSchema = z.object({
   rejected_at: z.string().nullable().optional(), // Rejection timestamp
   repeat_state: z.number().nullable().optional(), // Repeat configuration
   repeat_end: z.string().nullable().optional(), // End date for repeating time off
-});;
+});
 
 // Project Task schema - template tasks that can be assigned to projects and phases
 export const projectTaskSchema = z.object({

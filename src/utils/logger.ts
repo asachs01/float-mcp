@@ -7,7 +7,7 @@ const isMCPServer =
   process.argv.includes('--mcp') || (!process.stdin.isTTY && !process.stdout.isTTY);
 
 // Conditionally create transport only when needed and available
-let transport: any = undefined;
+let transport: pino.DestinationStream | undefined = undefined;
 
 if (appConfig.logFormat === 'pretty' && !isMCPServer) {
   try {
@@ -28,7 +28,20 @@ if (appConfig.logFormat === 'pretty' && !isMCPServer) {
 }
 
 // Create logger configuration
-const loggerConfig: any = {
+interface LoggerConfig {
+  level: string;
+  formatters: {
+    level: (label: string) => { level: string };
+  };
+  transport?: {
+    target: string;
+    options: {
+      destination: number;
+    };
+  };
+}
+
+const loggerConfig: LoggerConfig = {
   level: isMCPServer ? 'silent' : appConfig.logLevel, // Disable logging for MCP server
   formatters: {
     level: (label: string) => {

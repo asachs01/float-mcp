@@ -285,23 +285,28 @@ export class ErrorScenarioRunner {
 }
 
 // Common error test cases
-export const createErrorTestCases = (entityType: string) => {
+export const createErrorTestCases = (
+  entityType: string
+): Array<{
+  name: string;
+  test: (toolName: string, validParams: Record<string, any>) => Promise<void>;
+}> => {
   return [
     {
       name: `${entityType} - Invalid API Key`,
-      test: async (toolName: string, validParams: Record<string, any>) => {
+      test: async (toolName: string, validParams: Record<string, any>): Promise<void> => {
         await ErrorTestUtils.testAuthenticationError(toolName, validParams);
       },
     },
     {
       name: `${entityType} - Missing Required Fields`,
-      test: async (toolName: string, _validParams: Record<string, any>) => {
+      test: async (toolName: string, _validParams: Record<string, any>): Promise<void> => {
         await ErrorTestUtils.testValidationError(toolName, {});
       },
     },
     {
       name: `${entityType} - Invalid ID Format`,
-      test: async (toolName: string, validParams: Record<string, any>) => {
+      test: async (toolName: string, validParams: Record<string, any>): Promise<void> => {
         const invalidParams = { ...validParams };
         // Handle special case where "person" uses "people_id" instead of "person_id"
         const idField = entityType === 'person' ? 'people_id' : `${entityType}_id`;
@@ -312,7 +317,7 @@ export const createErrorTestCases = (entityType: string) => {
     },
     {
       name: `${entityType} - Non-existent ID`,
-      test: async (toolName: string, validParams: Record<string, any>) => {
+      test: async (toolName: string, validParams: Record<string, any>): Promise<void> => {
         const invalidParams = { ...validParams };
         // Handle special case where "person" uses "people_id" instead of "person_id"
         const idField = entityType === 'person' ? 'people_id' : `${entityType}_id`;
@@ -326,7 +331,7 @@ export const createErrorTestCases = (entityType: string) => {
     },
     {
       name: `${entityType} - Error Recovery`,
-      test: async (toolName: string, validParams: Record<string, any>) => {
+      test: async (toolName: string, validParams: Record<string, any>): Promise<void> => {
         const invalidParams = { ...validParams };
         // Handle special case where "person" uses "people_id" instead of "person_id"
         const idField = entityType === 'person' ? 'people_id' : `${entityType}_id`;
