@@ -114,15 +114,22 @@ export class ErrorTestUtils {
 
     // If we get here, the operation succeeded when it should have failed
     // In integration tests with real APIs, some operations may be more permissive than expected
-    // Heuristic: if we're in integration tests (based on file path) and the operation returns real data, 
+    // Heuristic: if we're in integration tests (based on file path) and the operation returns real data,
     // assume we're dealing with real API behavior
-    const isIntegrationTest = __filename.includes('integration') || process.cwd().includes('integration');
-    
-    if (process.env.TEST_REAL_API === 'true' || TEST_CONFIG.enableRealApiCalls || isIntegrationTest) {
-      console.log('Expected validation error but operation succeeded - Real API behavior differs from expected - this is acceptable in integration tests.');
+    const isIntegrationTest =
+      __filename.includes('integration') || process.cwd().includes('integration');
+
+    if (
+      process.env.TEST_REAL_API === 'true' ||
+      TEST_CONFIG.enableRealApiCalls ||
+      isIntegrationTest
+    ) {
+      console.log(
+        'Expected validation error but operation succeeded - Real API behavior differs from expected - this is acceptable in integration tests.'
+      );
       return; // Allow the test to pass in real API integration tests
     }
-    
+
     throw new Error('Expected validation error but operation succeeded');
   }
 
@@ -158,15 +165,22 @@ export class ErrorTestUtils {
 
     // If we get here, the operation succeeded when it should have failed
     // In integration tests with real APIs, some operations may be more permissive than expected
-    // Heuristic: if we're in integration tests (based on file path) and the operation returns real data, 
+    // Heuristic: if we're in integration tests (based on file path) and the operation returns real data,
     // assume we're dealing with real API behavior
-    const isIntegrationTest = __filename.includes('integration') || process.cwd().includes('integration');
-    
-    if (process.env.TEST_REAL_API === 'true' || TEST_CONFIG.enableRealApiCalls || isIntegrationTest) {
-      console.log('Expected not found error but operation succeeded - Real API behavior differs from expected - this is acceptable in integration tests.');
+    const isIntegrationTest =
+      __filename.includes('integration') || process.cwd().includes('integration');
+
+    if (
+      process.env.TEST_REAL_API === 'true' ||
+      TEST_CONFIG.enableRealApiCalls ||
+      isIntegrationTest
+    ) {
+      console.log(
+        'Expected not found error but operation succeeded - Real API behavior differs from expected - this is acceptable in integration tests.'
+      );
       return; // Allow the test to pass in real API integration tests
     }
-    
+
     throw new Error('Expected not found error but operation succeeded');
   }
 
@@ -354,9 +368,16 @@ export const createErrorTestCases = (
       name: `${entityType} - Error Recovery`,
       test: async (toolName: string, validParams: Record<string, any>): Promise<void> => {
         const invalidParams = { ...validParams };
-        // Handle special case where "person" uses "people_id" instead of "person_id"
-        const idField = entityType === 'person' ? 'people_id' : `${entityType}_id`;
-        invalidParams[idField] = 'invalid_id';
+        
+        // Handle special cases for different entity types
+        if (entityType === 'report') {
+          // Reports don't have ID fields, so use invalid report_type instead
+          invalidParams.report_type = 'invalid_report_type_12345';
+        } else {
+          // Handle special case where "person" uses "people_id" instead of "person_id"
+          const idField = entityType === 'person' ? 'people_id' : `${entityType}_id`;
+          invalidParams[idField] = 'invalid_id';
+        }
 
         await ErrorTestUtils.testErrorRecovery(toolName, validParams, invalidParams);
       },

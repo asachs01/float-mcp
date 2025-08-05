@@ -4,35 +4,45 @@ import { ErrorTestUtils, createErrorTestCases } from '../../utils/error-handling
 import { TEST_CONFIG } from '../../setup.ts';
 
 // Helper function to validate report responses in a flexible way for integration tests
-const validateReportResponse = (result: any, expectedReportType?: string, expectedFields?: string[]) => {
+const validateReportResponse = (
+  result: any,
+  expectedReportType?: string,
+  expectedFields?: string[]
+) => {
   expect(result).toBeDefined();
-  
+
   // Check basic report structure, but be flexible with real API responses
   if (result.report_type && expectedReportType) {
     expect(result.report_type).toBe(expectedReportType);
   } else if (expectedReportType) {
-    console.log(`report_type field not present in API response - expected '${expectedReportType}' - this is acceptable for integration tests`);
+    console.log(
+      `report_type field not present in API response - expected '${expectedReportType}' - this is acceptable for integration tests`
+    );
   }
-  
+
   // Check for data presence in various possible formats
   const hasData = result.data || result.items || result.report_data || result.results;
   if (hasData) {
     console.log('Successfully generated report with data - API integration working');
   } else {
-    console.log('Report generated but data structure differs from expectations - this is acceptable for integration tests');
+    console.log(
+      'Report generated but data structure differs from expectations - this is acceptable for integration tests'
+    );
   }
-  
+
   // Check optional expected fields if provided
   if (expectedFields) {
-    expectedFields.forEach(field => {
+    expectedFields.forEach((field) => {
       if (result[field] !== undefined) {
         console.log(`Field '${field}' present in response`);
       } else {
-        console.log(`Field '${field}' not present in API response - this is acceptable for integration tests`);
+        console.log(
+          `Field '${field}' not present in API response - this is acceptable for integration tests`
+        );
       }
     });
   }
-  
+
   return hasData;
 };
 
@@ -77,23 +87,27 @@ describe('Generate Report Tool Integration Tests', () => {
         const result = await executeToolWithRetry('generate-report', params);
 
         expect(result).toBeDefined();
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.report_type) {
           expect(result.report_type).toBe('time-report');
         } else {
-          console.log('report_type field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'report_type field not present in API response - this is acceptable for integration tests'
+          );
         }
-        
+
         if (result.grouping) {
           expect(result.grouping).toBe('person');
         } else {
-          console.log('grouping field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'grouping field not present in API response - this is acceptable for integration tests'
+          );
         }
-        
+
         if (result.summary) {
           expect(result.summary).toBeDefined();
-          
+
           // Validate grouped structure
           if (result.data && result.data.length > 0) {
             if (result.summary.total_hours !== undefined) {
@@ -101,14 +115,18 @@ describe('Generate Report Tool Integration Tests', () => {
             }
           }
         } else {
-          console.log('summary field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'summary field not present in API response - this is acceptable for integration tests'
+          );
         }
 
         // Validate that we got some kind of meaningful response
         if (result.data || result.items || result.report_data) {
           console.log('Successfully generated report with data - API integration working');
         } else {
-          console.log('Report generated but data structure differs from expectations - this is acceptable for integration tests');
+          console.log(
+            'Report generated but data structure differs from expectations - this is acceptable for integration tests'
+          );
         }
       });
 
@@ -131,7 +149,7 @@ describe('Generate Report Tool Integration Tests', () => {
         const result = await executeToolWithRetry('generate-report', params);
 
         expect(result).toBeDefined();
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.filters) {
           if (result.filters.include_billable !== undefined) {
@@ -141,7 +159,9 @@ describe('Generate Report Tool Integration Tests', () => {
             expect(result.filters.include_non_billable).toBe(false);
           }
         } else {
-          console.log('filters field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'filters field not present in API response - this is acceptable for integration tests'
+          );
         }
 
         // Validate billable entries only if data structure matches expectations
@@ -153,7 +173,9 @@ describe('Generate Report Tool Integration Tests', () => {
               expect(entry.billable).toBe(1);
             });
           } else {
-            console.log('billable field not present in API response - this is acceptable for integration tests');
+            console.log(
+              'billable field not present in API response - this is acceptable for integration tests'
+            );
           }
         }
       });
@@ -167,24 +189,30 @@ describe('Generate Report Tool Integration Tests', () => {
         const result = await executeToolWithRetry('generate-report', params);
 
         expect(result).toBeDefined();
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.report_type) {
           expect(result.report_type).toBe('time-report');
         } else {
-          console.log('report_type field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'report_type field not present in API response - this is acceptable for integration tests'
+          );
         }
-        
+
         if (result.grouping) {
           expect(result.grouping).toBe('task');
         } else {
-          console.log('grouping field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'grouping field not present in API response - this is acceptable for integration tests'
+          );
         }
-        
+
         if (result.filters && result.filters.include_tasks !== undefined) {
           expect(result.filters.include_tasks).toBe(true);
         } else {
-          console.log('filters.include_tasks field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'filters.include_tasks field not present in API response - this is acceptable for integration tests'
+          );
         }
       });
     });
@@ -199,7 +227,7 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         expect(result).toBeDefined();
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.date_range) {
           if (result.date_range.start_date) {
@@ -209,13 +237,17 @@ describe('Generate Report Tool Integration Tests', () => {
             expect(result.date_range.end_date).toBe('2024-01-20');
           }
         } else {
-          console.log('date_range field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'date_range field not present in API response - this is acceptable for integration tests'
+          );
         }
-        
+
         if (result.grouping) {
           expect(result.grouping).toBe('date');
         } else {
-          console.log('grouping field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'grouping field not present in API response - this is acceptable for integration tests'
+          );
         }
       });
 
@@ -229,12 +261,14 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         expect(result).toBeDefined();
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.filters && result.filters.department_id !== undefined) {
           expect(result.filters.department_id).toBe(1);
         } else {
-          console.log('filters.department_id field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'filters.department_id field not present in API response - this is acceptable for integration tests'
+          );
         }
       });
 
@@ -247,12 +281,14 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         expect(result).toBeDefined();
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.report_format) {
           expect(result.report_format).toBe('csv');
         } else {
-          console.log('report_format field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'report_format field not present in API response - this is acceptable for integration tests'
+          );
         }
         // CSV format may be processed differently
       });
@@ -308,12 +344,14 @@ describe('Generate Report Tool Integration Tests', () => {
         const result = await executeToolWithRetry('generate-report', params);
 
         validateReportResponse(result, 'project-report', ['filters', 'projects']);
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.filters && result.filters.include_allocations !== undefined) {
           expect(result.filters.include_allocations).toBe(true);
         } else {
-          console.log('filters.include_allocations field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'filters.include_allocations field not present in API response - this is acceptable for integration tests'
+          );
         }
 
         const projectsArray = result.projects || result.data || result.items;
@@ -334,12 +372,14 @@ describe('Generate Report Tool Integration Tests', () => {
         const result = await executeToolWithRetry('generate-report', params);
 
         validateReportResponse(result, 'project-report', ['filters', 'projects']);
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.filters && result.filters.include_time_entries !== undefined) {
           expect(result.filters.include_time_entries).toBe(true);
         } else {
-          console.log('filters.include_time_entries field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'filters.include_time_entries field not present in API response - this is acceptable for integration tests'
+          );
         }
 
         const projectsArray = result.projects || result.data || result.items;
@@ -361,12 +401,14 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         validateReportResponse(result, 'project-report', ['filters', 'projects']);
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.filters && result.filters.include_budget_analysis !== undefined) {
           expect(result.filters.include_budget_analysis).toBe(true);
         } else {
-          console.log('filters.include_budget_analysis field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'filters.include_budget_analysis field not present in API response - this is acceptable for integration tests'
+          );
         }
 
         const projectsArray = result.projects || result.data || result.items;
@@ -425,7 +467,7 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         validateReportResponse(result, 'people-utilization-report', ['data']);
-        
+
         const dataArray = result.data || result.items || result.report_data;
         if (dataArray && Array.isArray(dataArray) && dataArray.length > 0) {
           dataArray.forEach((person: any) => {
@@ -448,12 +490,14 @@ describe('Generate Report Tool Integration Tests', () => {
         const result = await executeToolWithRetry('generate-report', params);
 
         validateReportResponse(result, 'people-utilization-report', ['filters', 'data']);
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.filters && result.filters.department_id !== undefined) {
           expect(result.filters.department_id).toBe(1);
         } else {
-          console.log('filters.department_id field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'filters.department_id field not present in API response - this is acceptable for integration tests'
+          );
         }
 
         const dataArray = result.data || result.items || result.report_data;
@@ -474,12 +518,14 @@ describe('Generate Report Tool Integration Tests', () => {
         const result = await executeToolWithRetry('generate-report', params);
 
         validateReportResponse(result, 'people-utilization-report', ['filters', 'data']);
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.filters && result.filters.utilization_threshold !== undefined) {
           expect(result.filters.utilization_threshold).toBe(80);
         } else {
-          console.log('filters.utilization_threshold field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'filters.utilization_threshold field not present in API response - this is acceptable for integration tests'
+          );
         }
 
         const dataArray = result.data || result.items || result.report_data;
@@ -500,12 +546,14 @@ describe('Generate Report Tool Integration Tests', () => {
         const result = await executeToolWithRetry('generate-report', params);
 
         validateReportResponse(result, 'people-utilization-report', ['filters']);
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.filters && result.filters.include_contractors !== undefined) {
           expect(result.filters.include_contractors).toBe(true);
         } else {
-          console.log('filters.include_contractors field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'filters.include_contractors field not present in API response - this is acceptable for integration tests'
+          );
         }
       });
 
@@ -518,12 +566,14 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         validateReportResponse(result, 'people-utilization-report', ['filters', 'data']);
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.filters && result.filters.include_capacity_analysis !== undefined) {
           expect(result.filters.include_capacity_analysis).toBe(true);
         } else {
-          console.log('filters.include_capacity_analysis field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'filters.include_capacity_analysis field not present in API response - this is acceptable for integration tests'
+          );
         }
 
         const dataArray = result.data || result.items || result.report_data;
@@ -550,18 +600,22 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         validateReportResponse(result, 'people-utilization-report', ['filters', 'grouping']);
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.filters && result.filters.include_trends !== undefined) {
           expect(result.filters.include_trends).toBe(true);
         } else {
-          console.log('filters.include_trends field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'filters.include_trends field not present in API response - this is acceptable for integration tests'
+          );
         }
-        
+
         if (result.grouping) {
           expect(result.grouping).toBe('month');
         } else {
-          console.log('grouping field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'grouping field not present in API response - this is acceptable for integration tests'
+          );
         }
 
         if (result.trend_data) {
@@ -581,7 +635,7 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         validateReportResponse(result, 'revenue-report', ['summary']);
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.summary) {
           if (result.summary.total_revenue !== undefined) {
@@ -589,7 +643,9 @@ describe('Generate Report Tool Integration Tests', () => {
             expect(typeof result.summary.total_revenue).toBe('number');
           }
         } else {
-          console.log('summary field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'summary field not present in API response - this is acceptable for integration tests'
+          );
         }
       });
 
@@ -613,12 +669,14 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         validateReportResponse(result, 'revenue-report', ['grouping', 'data']);
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.grouping) {
           expect(result.grouping).toBe('client');
         } else {
-          console.log('grouping field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'grouping field not present in API response - this is acceptable for integration tests'
+          );
         }
 
         const dataArray = result.data || result.items || result.report_data;
@@ -643,14 +701,19 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         validateReportResponse(result, 'profitability-report', ['summary']);
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.summary) {
-          if (result.summary.total_revenue !== undefined) expect(result.summary.total_revenue).toBeDefined();
-          if (result.summary.total_costs !== undefined) expect(result.summary.total_costs).toBeDefined();
-          if (result.summary.profit_margin !== undefined) expect(result.summary.profit_margin).toBeDefined();
+          if (result.summary.total_revenue !== undefined)
+            expect(result.summary.total_revenue).toBeDefined();
+          if (result.summary.total_costs !== undefined)
+            expect(result.summary.total_costs).toBeDefined();
+          if (result.summary.profit_margin !== undefined)
+            expect(result.summary.profit_margin).toBeDefined();
         } else {
-          console.log('summary field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'summary field not present in API response - this is acceptable for integration tests'
+          );
         }
       });
 
@@ -677,15 +740,21 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         validateReportResponse(result, 'dashboard-summary', ['summary']);
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.summary) {
-          if (result.summary.active_projects !== undefined) expect(result.summary.active_projects).toBeDefined();
-          if (result.summary.active_people !== undefined) expect(result.summary.active_people).toBeDefined();
-          if (result.summary.total_hours_logged !== undefined) expect(result.summary.total_hours_logged).toBeDefined();
-          if (result.summary.utilization_average !== undefined) expect(result.summary.utilization_average).toBeDefined();
+          if (result.summary.active_projects !== undefined)
+            expect(result.summary.active_projects).toBeDefined();
+          if (result.summary.active_people !== undefined)
+            expect(result.summary.active_people).toBeDefined();
+          if (result.summary.total_hours_logged !== undefined)
+            expect(result.summary.total_hours_logged).toBeDefined();
+          if (result.summary.utilization_average !== undefined)
+            expect(result.summary.utilization_average).toBeDefined();
         } else {
-          console.log('summary field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'summary field not present in API response - this is acceptable for integration tests'
+          );
         }
       });
     });
@@ -699,7 +768,7 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         validateReportResponse(result, 'capacity-forecast', ['forecast_data']);
-        
+
         // The real API may return different response structures than expected in integration tests
         const forecastData = result.forecast_data || result.data || result.items;
         if (forecastData) {
@@ -708,14 +777,19 @@ describe('Generate Report Tool Integration Tests', () => {
             if (forecastData.length > 0) {
               forecastData.forEach((period: any) => {
                 if (period.period !== undefined) expect(period.period).toBeDefined();
-                if (period.available_capacity !== undefined) expect(period.available_capacity).toBeDefined();
-                if (period.allocated_capacity !== undefined) expect(period.allocated_capacity).toBeDefined();
-                if (period.utilization_forecast !== undefined) expect(period.utilization_forecast).toBeDefined();
+                if (period.available_capacity !== undefined)
+                  expect(period.available_capacity).toBeDefined();
+                if (period.allocated_capacity !== undefined)
+                  expect(period.allocated_capacity).toBeDefined();
+                if (period.utilization_forecast !== undefined)
+                  expect(period.utilization_forecast).toBeDefined();
               });
             }
           }
         } else {
-          console.log('forecast_data field not present in API response - this is acceptable for integration tests');
+          console.log(
+            'forecast_data field not present in API response - this is acceptable for integration tests'
+          );
         }
       });
     });
@@ -840,14 +914,18 @@ describe('Generate Report Tool Integration Tests', () => {
         if (result.report_type) {
           expect(result.report_type).toBe(reportTypes[index]);
         } else {
-          console.log(`report_type field not present in API response for ${reportTypes[index]} - this is acceptable for integration tests`);
+          console.log(
+            `report_type field not present in API response for ${reportTypes[index]} - this is acceptable for integration tests`
+          );
         }
-        
+
         const dataArray = result.data || result.items || result.report_data;
         if (dataArray) {
           expect(dataArray).toBeDefined();
         } else {
-          console.log(`data field not present in API response for ${reportTypes[index]} - this is acceptable for integration tests`);
+          console.log(
+            `data field not present in API response for ${reportTypes[index]} - this is acceptable for integration tests`
+          );
         }
       });
     });
@@ -871,13 +949,15 @@ describe('Generate Report Tool Integration Tests', () => {
       const executionTime = endTime - startTime;
 
       expect(result).toBeDefined();
-      
+
       // The real API may return different response structures than expected in integration tests
       const dataArray = result.data || result.items || result.report_data;
       if (dataArray) {
         expect(dataArray).toBeDefined();
       } else {
-        console.log('data field not present in API response - this is acceptable for integration tests');
+        console.log(
+          'data field not present in API response - this is acceptable for integration tests'
+        );
       }
       expect(executionTime).toBeLessThan(30000); // Should complete within 30 seconds
     });
@@ -901,25 +981,31 @@ describe('Generate Report Tool Integration Tests', () => {
       });
 
       expect(result).toBeDefined();
-      
+
       // The real API may return different response structures than expected in integration tests
       const dataArray = result.data || result.items || result.report_data;
       if (dataArray) {
         expect(dataArray).toBeDefined();
       } else {
-        console.log('data field not present in API response - this is acceptable for integration tests');
+        console.log(
+          'data field not present in API response - this is acceptable for integration tests'
+        );
       }
-      
+
       if (result.filters) {
         expect(result.filters).toBeDefined();
       } else {
-        console.log('filters field not present in API response - this is acceptable for integration tests');
+        console.log(
+          'filters field not present in API response - this is acceptable for integration tests'
+        );
       }
-      
+
       if (result.summary) {
         expect(result.summary).toBeDefined();
       } else {
-        console.log('summary field not present in API response - this is acceptable for integration tests');
+        console.log(
+          'summary field not present in API response - this is acceptable for integration tests'
+        );
       }
     });
   });
@@ -936,14 +1022,16 @@ describe('Generate Report Tool Integration Tests', () => {
         });
 
         expect(result).toBeDefined();
-        
+
         // The real API may return different response structures than expected in integration tests
         if (result.report_type) {
           expect(result.report_type).toBe(reportType);
         } else {
-          console.log(`report_type field not present in API response for ${reportType} - this is acceptable for integration tests`);
+          console.log(
+            `report_type field not present in API response for ${reportType} - this is acceptable for integration tests`
+          );
         }
-        
+
         if (result.start_date) {
           expect(result.start_date).toBe('2024-01-01');
         }
@@ -953,7 +1041,7 @@ describe('Generate Report Tool Integration Tests', () => {
         if (result.generated_at) {
           expect(result.generated_at).toBeDefined();
         }
-        
+
         const dataArray = result.data || result.items || result.report_data;
         if (dataArray) {
           expect(dataArray).toBeDefined();
@@ -961,7 +1049,9 @@ describe('Generate Report Tool Integration Tests', () => {
             expect(Array.isArray(dataArray)).toBe(true);
           }
         } else {
-          console.log(`data field not present in API response for ${reportType} - this is acceptable for integration tests`);
+          console.log(
+            `data field not present in API response for ${reportType} - this is acceptable for integration tests`
+          );
         }
 
         // Check for summary section

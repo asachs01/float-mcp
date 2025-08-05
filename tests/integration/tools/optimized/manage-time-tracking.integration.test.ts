@@ -244,7 +244,9 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
 
         // In integration tests, some reporting operations might not be available or return null
         if (result === null || result === undefined) {
-          console.log('Logged time timesheet operation returned null - this may be acceptable if the operation is not supported');
+          console.log(
+            'Logged time timesheet operation returned null - this may be acceptable if the operation is not supported'
+          );
           return;
         }
 
@@ -267,7 +269,9 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
 
         // In integration tests, some reporting operations might not be available or return null
         if (result === null || result === undefined) {
-          console.log('Billable time report operation returned null - this may be acceptable if the operation is not supported');
+          console.log(
+            'Billable time report operation returned null - this may be acceptable if the operation is not supported'
+          );
           return;
         }
 
@@ -440,7 +444,11 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
 
         // Create a time off request first
         const createParams = generateManageTimeTrackingParams('timeoff', 'create');
-        const fixedCreateParams = { ...createParams, entity_type: 'timeoff', people_id: createParams.person_id };
+        const fixedCreateParams = {
+          ...createParams,
+          entity_type: 'timeoff',
+          people_id: createParams.person_id,
+        };
         delete fixedCreateParams.person_id;
         const created = await executeToolWithRetry('manage-time-tracking', fixedCreateParams);
         expect(created.timeoff_id).toBeDefined();
@@ -467,7 +475,11 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
 
         // Create a time off request first
         const createParams = generateManageTimeTrackingParams('timeoff', 'create');
-        const fixedCreateParams = { ...createParams, entity_type: 'timeoff', people_id: createParams.person_id };
+        const fixedCreateParams = {
+          ...createParams,
+          entity_type: 'timeoff',
+          people_id: createParams.person_id,
+        };
         delete fixedCreateParams.person_id;
         const created = await executeToolWithRetry('manage-time-tracking', fixedCreateParams);
         expect(created.timeoff_id).toBeDefined();
@@ -498,23 +510,30 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
 
         // In integration tests, some reporting operations might not be available or return null
         if (result === null || result === undefined) {
-          console.log('Time off calendar operation returned null - this may be acceptable if the operation is not supported');
+          console.log(
+            'Time off calendar operation returned null - this may be acceptable if the operation is not supported'
+          );
           return;
         }
 
         expect(result).toBeDefined();
-        
+
         // The API might return different structures - accommodate various valid responses
         if (Array.isArray(result)) {
           // Expected array structure
           expect(Array.isArray(result)).toBe(true);
         } else if (typeof result === 'object' && result !== null) {
           // Might return an object with calendar data
-          console.log('Time off calendar returned object structure - this is acceptable for API integration tests');
+          console.log(
+            'Time off calendar returned object structure - this is acceptable for API integration tests'
+          );
           expect(typeof result).toBe('object');
         } else {
           // Log unexpected but potentially valid API response
-          console.log('Time off calendar returned unexpected structure - API behavior may differ from expectations:', typeof result);
+          console.log(
+            'Time off calendar returned unexpected structure - API behavior may differ from expectations:',
+            typeof result
+          );
         }
       });
 
@@ -528,7 +547,9 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
 
         // In integration tests, some reporting operations might not be available or return null
         if (result === null || result === undefined) {
-          console.log('Person time off summary operation returned null - this may be acceptable if the operation is not supported');
+          console.log(
+            'Person time off summary operation returned null - this may be acceptable if the operation is not supported'
+          );
           return;
         }
 
@@ -751,8 +772,14 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
         } catch (error) {
           // In integration tests, the real API might not always return expected validation errors
           // If the test is expecting an error but the operation succeeds, we'll log it and pass
-          if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-            console.log(`${name}: Real API behavior differs from expected - operation succeeded instead of failing. This is acceptable in integration tests.`);
+          if (
+            error instanceof Error &&
+            error.message.includes('Expected') &&
+            error.message.includes('but operation succeeded')
+          ) {
+            console.log(
+              `${name}: Real API behavior differs from expected - operation succeeded instead of failing. This is acceptable in integration tests.`
+            );
             return;
           }
           throw error;
@@ -782,8 +809,14 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
           // Missing people_id, project_id, hours, date
         });
       } catch (error) {
-        if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-          console.log('Missing logged time parameters test: Real API behavior differs from expected - this is acceptable in integration tests.');
+        if (
+          error instanceof Error &&
+          error.message.includes('Expected') &&
+          error.message.includes('but operation succeeded')
+        ) {
+          console.log(
+            'Missing logged time parameters test: Real API behavior differs from expected - this is acceptable in integration tests.'
+          );
           return;
         }
         throw error;
@@ -801,8 +834,14 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
           date: '2024-01-01',
         });
       } catch (error) {
-        if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-          console.log('Invalid hours test: Real API behavior differs from expected - this is acceptable in integration tests.');
+        if (
+          error instanceof Error &&
+          error.message.includes('Expected') &&
+          error.message.includes('but operation succeeded')
+        ) {
+          console.log(
+            'Invalid hours test: Real API behavior differs from expected - this is acceptable in integration tests.'
+          );
           return;
         }
         throw error;
@@ -820,8 +859,14 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
           date: 'invalid-date',
         });
       } catch (error) {
-        if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-          console.log('Invalid date format test: Real API behavior differs from expected - this is acceptable in integration tests.');
+        if (
+          error instanceof Error &&
+          error.message.includes('Expected') &&
+          error.message.includes('but operation succeeded')
+        ) {
+          console.log(
+            'Invalid date format test: Real API behavior differs from expected - this is acceptable in integration tests.'
+          );
           return;
         }
         throw error;
@@ -843,8 +888,14 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
           date: futureDateStr,
         });
       } catch (error) {
-        if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-          console.log('Future date test: Real API behavior differs from expected - this is acceptable in integration tests.');
+        if (
+          error instanceof Error &&
+          error.message.includes('Expected') &&
+          error.message.includes('but operation succeeded')
+        ) {
+          console.log(
+            'Future date test: Real API behavior differs from expected - this is acceptable in integration tests.'
+          );
           return;
         }
         throw error;
@@ -863,8 +914,14 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
           full_day: 1,
         });
       } catch (error) {
-        if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-          console.log('Invalid timeoff type test: Real API behavior differs from expected - this is acceptable in integration tests.');
+        if (
+          error instanceof Error &&
+          error.message.includes('Expected') &&
+          error.message.includes('but operation succeeded')
+        ) {
+          console.log(
+            'Invalid timeoff type test: Real API behavior differs from expected - this is acceptable in integration tests.'
+          );
           return;
         }
         throw error;
@@ -883,8 +940,14 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
           full_day: 1,
         });
       } catch (error) {
-        if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-          console.log('End date before start date test: Real API behavior differs from expected - this is acceptable in integration tests.');
+        if (
+          error instanceof Error &&
+          error.message.includes('Expected') &&
+          error.message.includes('but operation succeeded')
+        ) {
+          console.log(
+            'End date before start date test: Real API behavior differs from expected - this is acceptable in integration tests.'
+          );
           return;
         }
         throw error;
@@ -992,7 +1055,9 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
 
               // Be more lenient in integration tests - check if the field exists but don't fail if not
               if (item[expectedIdField] === undefined) {
-                console.log(`${trackingType}: Expected ${expectedIdField} field not found - API response may differ`);
+                console.log(
+                  `${trackingType}: Expected ${expectedIdField} field not found - API response may differ`
+                );
               } else {
                 expect(item[expectedIdField]).toBeDefined();
               }
@@ -1005,7 +1070,10 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
             });
           }
         } catch (error) {
-          console.log(`Time tracking validation for ${trackingType} failed - this may be acceptable in integration tests:`, error);
+          console.log(
+            `Time tracking validation for ${trackingType} failed - this may be acceptable in integration tests:`,
+            error
+          );
           // Don't fail the test - continue with other tracking types
         }
       }
@@ -1064,14 +1132,18 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
           if (timeoff.status && validStatuses.includes(timeoff.status)) {
             expect(validStatuses).toContain(timeoff.status);
           } else if (timeoff.status) {
-            console.log(`Unexpected timeoff status: ${timeoff.status} - API may use different status values`);
+            console.log(
+              `Unexpected timeoff status: ${timeoff.status} - API may use different status values`
+            );
           }
 
           if (timeoff.full_day !== null && timeoff.full_day !== undefined) {
             if ([0, 1].includes(timeoff.full_day)) {
               expect([0, 1]).toContain(timeoff.full_day);
             } else {
-              console.log(`Unexpected full_day value: ${timeoff.full_day} - API may use different values`);
+              console.log(
+                `Unexpected full_day value: ${timeoff.full_day} - API may use different values`
+              );
             }
           }
 
@@ -1085,7 +1157,10 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
           }
         });
       } catch (error) {
-        console.log('Timeoff status validation failed - this may be acceptable in integration tests:', error);
+        console.log(
+          'Timeoff status validation failed - this may be acceptable in integration tests:',
+          error
+        );
         // Don't fail the test in integration mode
       }
     });

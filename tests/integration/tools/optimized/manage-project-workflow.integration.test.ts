@@ -627,8 +627,14 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
         } catch (error) {
           // In integration tests, the real API might not always return expected validation errors
           // If the test is expecting an error but the operation succeeds, we'll log it and pass
-          if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-            console.log(`${name}: Real API behavior differs from expected - operation succeeded instead of failing. This is acceptable in integration tests.`);
+          if (
+            error instanceof Error &&
+            error.message.includes('Expected') &&
+            error.message.includes('but operation succeeded')
+          ) {
+            console.log(
+              `${name}: Real API behavior differs from expected - operation succeeded instead of failing. This is acceptable in integration tests.`
+            );
             return;
           }
           throw error;
@@ -658,8 +664,14 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
           // Missing name and project_id
         });
       } catch (error) {
-        if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-          console.log('Missing parameters test: Real API behavior differs from expected - this is acceptable in integration tests.');
+        if (
+          error instanceof Error &&
+          error.message.includes('Expected') &&
+          error.message.includes('but operation succeeded')
+        ) {
+          console.log(
+            'Missing parameters test: Real API behavior differs from expected - this is acceptable in integration tests.'
+          );
           return;
         }
         throw error;
@@ -675,8 +687,14 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
           project_id: 'invalid',
         });
       } catch (error) {
-        if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-          console.log('Invalid project_id test: Real API behavior differs from expected - this is acceptable in integration tests.');
+        if (
+          error instanceof Error &&
+          error.message.includes('Expected') &&
+          error.message.includes('but operation succeeded')
+        ) {
+          console.log(
+            'Invalid project_id test: Real API behavior differs from expected - this is acceptable in integration tests.'
+          );
           return;
         }
         throw error;
@@ -692,8 +710,14 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
           project_id: 999999999,
         });
       } catch (error) {
-        if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-          console.log('Non-existent project_id test: Real API behavior differs from expected - this is acceptable in integration tests.');
+        if (
+          error instanceof Error &&
+          error.message.includes('Expected') &&
+          error.message.includes('but operation succeeded')
+        ) {
+          console.log(
+            'Non-existent project_id test: Real API behavior differs from expected - this is acceptable in integration tests.'
+          );
           return;
         }
         throw error;
@@ -710,8 +734,14 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
           start_date: 'invalid-date',
         });
       } catch (error) {
-        if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-          console.log('Invalid date format test: Real API behavior differs from expected - this is acceptable in integration tests.');
+        if (
+          error instanceof Error &&
+          error.message.includes('Expected') &&
+          error.message.includes('but operation succeeded')
+        ) {
+          console.log(
+            'Invalid date format test: Real API behavior differs from expected - this is acceptable in integration tests.'
+          );
           return;
         }
         throw error;
@@ -729,8 +759,14 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
           end_date: '2024-01-01',
         });
       } catch (error) {
-        if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-          console.log('End date before start date test: Real API behavior differs from expected - this is acceptable in integration tests.');
+        if (
+          error instanceof Error &&
+          error.message.includes('Expected') &&
+          error.message.includes('but operation succeeded')
+        ) {
+          console.log(
+            'End date before start date test: Real API behavior differs from expected - this is acceptable in integration tests.'
+          );
           return;
         }
         throw error;
@@ -847,7 +883,9 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
               // Be more lenient in integration tests - check if the field exists but don't fail if not
               if (item[expectedIdField] === undefined) {
-                console.log(`${workflowType}: Expected ${expectedIdField} field not found - API response may differ`);
+                console.log(
+                  `${workflowType}: Expected ${expectedIdField} field not found - API response may differ`
+                );
               } else {
                 expect(item[expectedIdField]).toBeDefined();
               }
@@ -865,7 +903,10 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
             });
           }
         } catch (error) {
-          console.log(`Workflow validation for ${workflowType} failed - this may be acceptable in integration tests:`, error);
+          console.log(
+            `Workflow validation for ${workflowType} failed - this may be acceptable in integration tests:`,
+            error
+          );
           // Don't fail the test - continue with other workflow types
         }
       }
@@ -920,7 +961,10 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
           }
         });
       } catch (error) {
-        console.log('Allocation validation failed - this may be acceptable in integration tests:', error);
+        console.log(
+          'Allocation validation failed - this may be acceptable in integration tests:',
+          error
+        );
         // Don't fail the test in integration mode
       }
     });

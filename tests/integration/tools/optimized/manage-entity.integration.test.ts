@@ -583,7 +583,9 @@ describe('Manage Entity Tool Integration Tests', () => {
         // If the /accounts/me endpoint doesn't exist, the operation might return an error or null
         if (result === null || result === undefined || (result && result.success === false)) {
           // This is acceptable - the endpoint might not be available or might return an error
-          console.log('Current account endpoint not available or returned error - this is acceptable');
+          console.log(
+            'Current account endpoint not available or returned error - this is acceptable'
+          );
           return;
         }
 
@@ -696,8 +698,14 @@ describe('Manage Entity Tool Integration Tests', () => {
         } catch (error) {
           // In integration tests, the real API might not always return expected validation errors
           // If the test is expecting an error but the operation succeeds, we'll log it and pass
-          if (error instanceof Error && error.message.includes('Expected') && error.message.includes('but operation succeeded')) {
-            console.log(`${name}: Real API behavior differs from expected - operation succeeded instead of failing. This is acceptable in integration tests.`);
+          if (
+            error instanceof Error &&
+            error.message.includes('Expected') &&
+            error.message.includes('but operation succeeded')
+          ) {
+            console.log(
+              `${name}: Real API behavior differs from expected - operation succeeded instead of failing. This is acceptable in integration tests.`
+            );
             return;
           }
           throw error;
