@@ -340,30 +340,30 @@ async function handleProjectTaskOperations(
   switch (operation) {
     case 'list':
       return floatApi.getPaginated(
-        '/project-tasks',
+        '/project_tasks',
         otherParams,
         projectTasksResponseSchema,
         format
       );
     case 'get':
-      return floatApi.get(`/project-tasks/${id}`, projectTaskSchema, format);
+      return floatApi.get(`/project_tasks/${id}`, projectTaskSchema, format);
     case 'create':
-      return floatApi.post('/project-tasks', otherParams, projectTaskSchema, format);
+      return floatApi.post('/project_tasks', otherParams, projectTaskSchema, format);
     case 'update':
-      return floatApi.patch(`/project-tasks/${id}`, otherParams, projectTaskSchema, format);
+      return floatApi.patch(`/project_tasks/${id}`, otherParams, projectTaskSchema, format);
     case 'delete':
-      await floatApi.delete(`/project-tasks/${id}`, undefined, format);
+      await floatApi.delete(`/project_tasks/${id}`, undefined, format);
       return { success: true, message: 'Project task deleted successfully' };
     case 'get-project-tasks-by-project':
       return floatApi.getPaginated(
-        '/project-tasks',
+        '/project_tasks',
         { project_id },
         projectTasksResponseSchema,
         format
       );
     case 'get-project-tasks-by-phase':
       return floatApi.getPaginated(
-        '/project-tasks',
+        '/project_tasks',
         { phase_id },
         projectTasksResponseSchema,
         format
@@ -376,7 +376,7 @@ async function handleProjectTaskOperations(
       for (let index = 0; index < tasks.length; index++) {
         const taskData = { ...tasks[index], project_id };
         try {
-          const result = await floatApi.post('/project-tasks', taskData, projectTaskSchema, format);
+          const result = await floatApi.post('/project_tasks', taskData, projectTaskSchema, format);
           results.push({ index, success: true, data: result });
         } catch (error) {
           errors.push({
@@ -408,7 +408,7 @@ async function handleProjectTaskOperations(
         const { project_task_id, sort_order } = orderUpdates[index];
         try {
           const result = await floatApi.patch(
-            `/project-tasks/${project_task_id}`,
+            `/project_tasks/${project_task_id}`,
             { sort_order },
             projectTaskSchema,
             format
@@ -436,9 +436,9 @@ async function handleProjectTaskOperations(
       };
     }
     case 'archive-project-task':
-      return floatApi.patch(`/project-tasks/${id}`, { active: 0 }, projectTaskSchema, format);
+      return floatApi.patch(`/project_tasks/${id}`, { active: 0 }, projectTaskSchema, format);
     case 'get-project-task-dependencies': {
-      const task = await floatApi.get(`/project-tasks/${id}`, projectTaskSchema, format);
+      const task = await floatApi.get(`/project_tasks/${id}`, projectTaskSchema, format);
       const dependencies = task.dependencies || [];
 
       if (dependencies.length === 0) {
@@ -449,7 +449,7 @@ async function handleProjectTaskOperations(
       const dependencyDetails = [];
       for (const depId of dependencies) {
         try {
-          const depTask = await floatApi.get(`/project-tasks/${depId}`, projectTaskSchema, format);
+          const depTask = await floatApi.get(`/project_tasks/${depId}`, projectTaskSchema, format);
           dependencyDetails.push(depTask);
         } catch (error) {
           // Skip if dependency task not found

@@ -40,7 +40,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
       it('should filter phases by project', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'phases',
+          entity_type: 'phases',
           operation: 'list',
           project_id: 1,
         });
@@ -55,8 +55,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
       it('should filter phases by date range', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'phases',
-          operation: 'get-by-date-range',
+          entity_type: 'phases',
+          operation: 'get-phases-by-date-range',
           start_date: '2024-01-01',
           end_date: '2024-12-31',
         });
@@ -67,8 +67,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
       it('should get active phases', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'phases',
-          operation: 'get-active',
+          entity_type: 'phases',
+          operation: 'get-active-phases',
         });
 
         expect(result).toBeDefined();
@@ -79,7 +79,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
     describe('get operation', () => {
       it('should get a specific phase by ID', async () => {
         const phases = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'phases',
+          entity_type: 'phases',
           operation: 'list',
           'per-page': 1,
         });
@@ -91,7 +91,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
         const phaseId = phases[0].phase_id;
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'phases',
+          entity_type: 'phases',
           operation: 'get',
           id: phaseId,
         });
@@ -157,7 +157,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
         const updatedName = `Updated ${createParams.name}`;
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'phases',
+          entity_type: 'phases',
           operation: 'update',
           id: created.phase_id,
           name: updatedName,
@@ -176,7 +176,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
     describe('list operation', () => {
       it('should list all milestones', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'milestones',
+          entity_type: 'milestones',
           operation: 'list',
         });
 
@@ -194,7 +194,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
       it('should get project milestones', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'milestones',
+          entity_type: 'milestones',
           operation: 'get-project-milestones',
           project_id: 1,
         });
@@ -209,8 +209,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
       it('should get upcoming milestones', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'milestones',
-          operation: 'get-upcoming',
+          entity_type: 'milestones',
+          operation: 'get-upcoming-milestones',
           days_ahead: 30,
         });
 
@@ -220,8 +220,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
       it('should get overdue milestones', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'milestones',
-          operation: 'get-overdue',
+          entity_type: 'milestones',
+          operation: 'get-overdue-milestones',
         });
 
         expect(result).toBeDefined();
@@ -262,8 +262,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
         expect(created.milestone_id).toBeDefined();
 
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'milestones',
-          operation: 'complete',
+          entity_type: 'milestones',
+          operation: 'complete-milestone',
           id: created.milestone_id,
         });
 
@@ -280,7 +280,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
     describe('list operation', () => {
       it('should list all project tasks', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'project-tasks',
+          entity_type: 'project-tasks',
           operation: 'list',
         });
 
@@ -298,8 +298,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
       it('should get project tasks by project', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'project-tasks',
-          operation: 'get-by-project',
+          entity_type: 'project-tasks',
+          operation: 'get-project-tasks-by-project',
           project_id: 1,
         });
 
@@ -313,8 +313,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
       it('should get project tasks by phase', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'project-tasks',
-          operation: 'get-by-phase',
+          entity_type: 'project-tasks',
+          operation: 'get-project-tasks-by-phase',
           phase_id: 1,
         });
 
@@ -392,8 +392,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
         ];
 
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'project-tasks',
-          operation: 'bulk-create',
+          entity_type: 'project-tasks',
+          operation: 'bulk-create-project-tasks',
           project_id: 1,
           tasks: tasks,
         });
@@ -418,8 +418,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
         // Get existing tasks for a project
         const tasks = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'project-tasks',
-          operation: 'get-by-project',
+          entity_type: 'project-tasks',
+          operation: 'get-project-tasks-by-project',
           project_id: 1,
         });
 
@@ -431,8 +431,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
         const taskIds = tasks.slice(0, 2).map((task: any) => task.project_task_id);
 
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'project-tasks',
-          operation: 'reorder',
+          entity_type: 'project-tasks',
+          operation: 'reorder-project-tasks',
           project_id: 1,
           task_ids: taskIds.reverse(), // Reverse the order
         });
@@ -455,8 +455,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
         expect(created.project_task_id).toBeDefined();
 
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'project-tasks',
-          operation: 'archive',
+          entity_type: 'project-tasks',
+          operation: 'archive-project-task',
           id: created.project_task_id,
         });
 
@@ -471,7 +471,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
     describe('get-dependencies operation', () => {
       it('should get project task dependencies', async () => {
         const tasks = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'project-tasks',
+          entity_type: 'project-tasks',
           operation: 'list',
           'per-page': 1,
         });
@@ -483,8 +483,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
         const taskId = tasks[0].project_task_id;
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'project-tasks',
-          operation: 'get-dependencies',
+          entity_type: 'project-tasks',
+          operation: 'get-project-task-dependencies',
           id: taskId,
         });
 
@@ -499,7 +499,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
     describe('list operation', () => {
       it('should list all allocations', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'allocations',
+          entity_type: 'allocations',
           operation: 'list',
         });
 
@@ -508,8 +508,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
         if (result.length > 0) {
           result.forEach((allocation: any) => {
-            expect(allocation.allocation_id).toBeDefined();
-            expect(allocation.person_id).toBeDefined();
+            expect(allocation.task_id).toBeDefined();
+            expect(allocation.people_id).toBeDefined();
             expect(allocation.project_id).toBeDefined();
           });
         }
@@ -517,22 +517,22 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
       it('should filter allocations by person', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'allocations',
+          entity_type: 'allocations',
           operation: 'list',
-          person_id: 1,
+          people_id: 1,
         });
 
         expect(result).toBeDefined();
         expect(Array.isArray(result)).toBe(true);
 
         result.forEach((allocation: any) => {
-          expect(allocation.person_id).toBe(1);
+          expect(allocation.people_id).toBe(1);
         });
       });
 
       it('should filter allocations by project', async () => {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'allocations',
+          entity_type: 'allocations',
           operation: 'list',
           project_id: 1,
         });
@@ -601,7 +601,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
         expect(created.allocation_id).toBeDefined();
 
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'allocations',
+          entity_type: 'allocations',
           operation: 'update',
           id: created.allocation_id,
           hours: 6,
@@ -626,23 +626,23 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
       });
     });
 
-    it('should handle invalid workflow_type', async () => {
+    it('should handle invalid entity_type', async () => {
       await ErrorTestUtils.testValidationError('manage-project-workflow', {
-        workflow_type: 'invalid_workflow',
+        entity_type: 'invalid_workflow',
         operation: 'list',
       });
     });
 
     it('should handle invalid operation', async () => {
       await ErrorTestUtils.testValidationError('manage-project-workflow', {
-        workflow_type: 'phases',
+        entity_type: 'phases',
         operation: 'invalid_operation',
       });
     });
 
     it('should handle missing required parameters for create', async () => {
       await ErrorTestUtils.testValidationError('manage-project-workflow', {
-        workflow_type: 'phases',
+        entity_type: 'phases',
         operation: 'create',
         // Missing name and project_id
       });
@@ -650,7 +650,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
     it('should handle invalid project_id', async () => {
       await ErrorTestUtils.testValidationError('manage-project-workflow', {
-        workflow_type: 'phases',
+        entity_type: 'phases',
         operation: 'create',
         name: 'Test Phase',
         project_id: 'invalid',
@@ -659,7 +659,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
     it('should handle non-existent project_id', async () => {
       await ErrorTestUtils.testNotFoundError('manage-project-workflow', {
-        workflow_type: 'phases',
+        entity_type: 'phases',
         operation: 'create',
         name: 'Test Phase',
         project_id: 999999999,
@@ -668,7 +668,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
     it('should handle invalid date format', async () => {
       await ErrorTestUtils.testValidationError('manage-project-workflow', {
-        workflow_type: 'phases',
+        entity_type: 'phases',
         operation: 'create',
         name: 'Test Phase',
         project_id: 1,
@@ -678,7 +678,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
     it('should handle end date before start date', async () => {
       await ErrorTestUtils.testValidationError('manage-project-workflow', {
-        workflow_type: 'phases',
+        entity_type: 'phases',
         operation: 'create',
         name: 'Test Phase',
         project_id: 1,
@@ -689,9 +689,9 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
     it('should handle invalid hours in allocation', async () => {
       await ErrorTestUtils.testValidationError('manage-project-workflow', {
-        workflow_type: 'allocations',
+        entity_type: 'allocations',
         operation: 'create',
-        person_id: 1,
+        people_id: 1,
         project_id: 1,
         start_date: '2024-01-01',
         end_date: '2024-01-31',
@@ -710,7 +710,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
       const workflowTypes = ['phases', 'milestones', 'project-tasks', 'allocations'];
       const requests = workflowTypes.map((workflowType) =>
         executeToolWithRetry('manage-project-workflow', {
-          workflow_type: workflowType,
+          entity_type: workflowType,
           operation: 'list',
           'per-page': 3,
         })
@@ -732,24 +732,24 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
       const requests = [
         executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'phases',
+          entity_type: 'phases',
           operation: 'list',
           'per-page': 5,
         }),
         executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'milestones',
-          operation: 'get-upcoming',
+          entity_type: 'milestones',
+          operation: 'get-upcoming-milestones',
           days_ahead: 30,
         }),
         executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'project-tasks',
-          operation: 'get-by-project',
+          entity_type: 'project-tasks',
+          operation: 'get-project-tasks-by-project',
           project_id: 1,
         }),
         executeToolWithRetry('manage-project-workflow', {
-          workflow_type: 'allocations',
+          entity_type: 'allocations',
           operation: 'list',
-          person_id: 1,
+          people_id: 1,
         }),
       ];
 
@@ -768,7 +768,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
       for (const workflowType of workflowTypes) {
         const result = await executeToolWithRetry('manage-project-workflow', {
-          workflow_type: workflowType,
+          entity_type: workflowType,
           operation: 'list',
           'per-page': 2,
         });
@@ -813,7 +813,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
     it('should validate date fields in workflow items', async () => {
       const result = await executeToolWithRetry('manage-project-workflow', {
-        workflow_type: 'phases',
+        entity_type: 'phases',
         operation: 'list',
         'per-page': 5,
       });
@@ -830,7 +830,7 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
 
     it('should validate allocation hours and dates', async () => {
       const result = await executeToolWithRetry('manage-project-workflow', {
-        workflow_type: 'allocations',
+        entity_type: 'allocations',
         operation: 'list',
         'per-page': 5,
       });
@@ -848,8 +848,8 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
           expect(allocation.end_date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
         }
 
-        expect(allocation.person_id).toBeDefined();
-        expect(typeof allocation.person_id).toBe('number');
+        expect(allocation.people_id).toBeDefined();
+        expect(typeof allocation.people_id).toBe('number');
       });
     });
   });
