@@ -1,8 +1,12 @@
 #!/bin/sh
 echo "🔍 Running pre-commit checks..."
 
-# Run lint-staged for formatting and linting
+# Run lint-staged for formatting and linting on staged files
 npx lint-staged
+
+# Run full prettier check on all files
+echo "🎨 Checking prettier formatting on all files..."
+npx prettier --check .
 
 # Run type checking
 echo "🔧 Type checking..."
