@@ -368,7 +368,7 @@ export const createErrorTestCases = (
       name: `${entityType} - Error Recovery`,
       test: async (toolName: string, validParams: Record<string, any>): Promise<void> => {
         const invalidParams = { ...validParams };
-        
+
         // Handle special cases for different entity types
         if (entityType === 'report') {
           // Reports don't have ID fields, so use invalid report_type instead
