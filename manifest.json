@@ -161,7 +161,6 @@
       "description": "Your Float.com API key. Get this from Team Settings > Integrations tab in your Float workspace. See https://support.float.com/en/articles/55483-api for detailed instructions.",
       "sensitive": true,
       "required": true,
-      "placeholder": "your_float_api_key_here"
     },
     "float_api_base_url": {
       "type": "string",
@@ -175,7 +174,6 @@
       "title": "Log Level",
       "description": "Logging level for debugging and monitoring",
       "default": "info",
-      "enum": ["error", "warn", "info", "debug"],
       "required": false
     },
     "max_retries": {
