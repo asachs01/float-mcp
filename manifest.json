@@ -2,7 +2,7 @@
   "dxt_version": "0.1",
   "name": "float-mcp",
   "display_name": "Float.com Resource Management MCP Server",
-  "version": "0.3.2",
+  "version": "1.0.0",
   "description": "A comprehensive MCP server providing seamless integration with Float.com for project management, resource allocation, time tracking, and team coordination.",
   "long_description": "Float MCP Server enables AI assistants to interact with Float.com's complete API suite through the Model Context Protocol. Optimized from 246+ granular tools to 4 efficient decision-tree tools (manage-entity, manage-project-workflow, manage-time-tracking, generate-report) while maintaining 100% functionality. Provides full coverage of Float's resource management capabilities including people management, project planning, task coordination, time tracking, allocations, reporting, and team collaboration. Features include built-in rate limiting, type safety with Zod validation, comprehensive error handling, and extensive testing. Perfect for automating workforce planning, project management workflows, and resource optimization.",
   "author": {
