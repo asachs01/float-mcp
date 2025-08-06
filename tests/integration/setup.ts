@@ -21,7 +21,7 @@ export const TEST_CONFIG = {
 };
 
 // Test environment validation
-export const validateTestEnvironment = () => {
+export const validateTestEnvironment = (): void => {
   const errors: string[] = [];
 
   // Check for required environment variables
@@ -34,8 +34,8 @@ export const validateTestEnvironment = () => {
   }
 
   // Validate API key format if provided
-  if (process.env.FLOAT_API_KEY && !process.env.FLOAT_API_KEY.startsWith('flt_')) {
-    errors.push('FLOAT_API_KEY should start with "flt_" prefix');
+  if (process.env.FLOAT_API_KEY && process.env.FLOAT_API_KEY.length < 10) {
+    errors.push('FLOAT_API_KEY appears to be too short to be valid');
   }
 
   if (errors.length > 0) {
@@ -44,7 +44,7 @@ export const validateTestEnvironment = () => {
 };
 
 // Global setup functions
-export const setupIntegrationTests = async () => {
+export const setupIntegrationTests = async (): Promise<void> => {
   // Validate test environment
   validateTestEnvironment();
 
@@ -66,7 +66,7 @@ export const setupIntegrationTests = async () => {
   }
 };
 
-export const teardownIntegrationTests = async () => {
+export const teardownIntegrationTests = async (): Promise<void> => {
   // Clean up rate limiting
   stopCleanup();
 
@@ -105,7 +105,9 @@ export const retryOperation = async <T>(
 };
 
 // Mock data generator
-export const generateTestData = (prefix: string = TEST_CONFIG.testDataPrefix) => {
+export const generateTestData = (
+  prefix: string = TEST_CONFIG.testDataPrefix
+): Record<string, unknown> => {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8);
 
@@ -126,7 +128,7 @@ export const testDataTracker = {
   createdClients: [] as number[],
   createdAllocations: [] as number[],
 
-  track: (type: string, id: number) => {
+  track: (type: string, id: number): void => {
     switch (type) {
       case 'project':
         testDataTracker.createdProjects.push(id);
@@ -146,7 +148,7 @@ export const testDataTracker = {
     }
   },
 
-  clear: () => {
+  clear: (): void => {
     testDataTracker.createdProjects = [];
     testDataTracker.createdPeople = [];
     testDataTracker.createdTasks = [];

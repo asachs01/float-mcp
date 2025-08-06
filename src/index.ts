@@ -134,7 +134,7 @@ if (!isMCPServer) {
 const stopHealthChecks = startHealthChecks();
 
 // Set up transport and run server
-async function main() {
+async function main(): Promise<void> {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
@@ -145,7 +145,7 @@ async function main() {
 }
 
 // Handle process termination
-const gracefulShutdown = (signal: string) => {
+const gracefulShutdown = (signal: string): void => {
   if (!isMCPServer) {
     logger.info(`${signal} received. Shutting down gracefully...`);
   }

@@ -241,7 +241,7 @@ export const listTimeOffTypes = createTool(
   }),
   async (params) => {
     const response = await floatApi.getPaginated(
-      '/timeoff-types',
+      '/timeoffs-types',
       params,
       timeOffTypesResponseSchema
     );

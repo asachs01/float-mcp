@@ -41,14 +41,14 @@ export const TEST_ENV = {
 } as const;
 
 // Apply test environment variables
-export const applyTestEnvironment = () => {
+export const applyTestEnvironment = (): void => {
   Object.entries(TEST_ENV).forEach(([key, value]) => {
     process.env[key] = String(value);
   });
 };
 
 // Validate test environment
-export const validateTestEnvironment = () => {
+export const validateTestEnvironment = (): void => {
   const errors: string[] = [];
 
   if (TEST_ENV.TEST_REAL_API) {
@@ -68,7 +68,7 @@ export const validateTestEnvironment = () => {
 
 // Mock environment for testing
 export const mockEnvironment = {
-  FLOAT_API_KEY: 'flt_test_key_12345',
+  FLOAT_API_KEY: 'atest_float_api_key_mock_12345=',
   FLOAT_API_BASE_URL: 'https://api.float.com/v3',
   NODE_ENV: 'test',
   LOG_LEVEL: 'error',
@@ -80,7 +80,7 @@ export const mockEnvironment = {
 };
 
 // Setup test environment
-export const setupTestEnvironment = () => {
+export const setupTestEnvironment = (): void => {
   // Apply test environment
   applyTestEnvironment();
 
@@ -92,7 +92,7 @@ export const setupTestEnvironment = () => {
 };
 
 // Teardown test environment
-export const teardownTestEnvironment = () => {
+export const teardownTestEnvironment = (): void => {
   // Reset environment variables if needed
   Object.keys(TEST_ENV).forEach((key) => {
     delete process.env[key];

@@ -1,7 +1,11 @@
 import { z } from 'zod';
 import { createTool } from '../base.js';
 import { floatApi } from '../../services/float-api.js';
-import { projectTaskSchema, projectTasksResponseSchema } from '../../types/float.js';
+import {
+  projectTaskSchema,
+  projectTasksResponseSchema,
+  type ProjectTask,
+} from '../../types/float.js';
 
 // List project tasks
 export const listProjectTasks = createTool(
@@ -71,7 +75,7 @@ export const createProjectTask = createTool(
     status: z.number().optional().describe('Task status (numeric)'),
   }),
   async (params) => {
-    const projectTask = await floatApi.post('/project_tasks', params, projectTaskSchema);
+    const projectTask = await floatApi.post('/project-tasks', params, projectTaskSchema);
     return projectTask;
   }
 );
@@ -317,23 +321,30 @@ export const getProjectTaskDependencies = createTool(
 
     if (params.project_task_id) {
       const specificTask = response.find(
-        (task: any) => task.project_task_id === params.project_task_id
+        (task: ProjectTask) => task.project_task_id === params.project_task_id
       );
       return {
         task: specificTask,
         dependencies: specificTask?.dependencies || [],
-        dependents: response.filter((task: any) =>
-          task.dependencies?.includes(params.project_task_id)
+        dependents: response.filter(
+          (task: ProjectTask) =>
+            params.project_task_id !== undefined &&
+            task.dependencies?.includes(params.project_task_id)
         ),
       };
     }
 
     return {
       tasks: response,
-      dependency_map: response.reduce((acc: any, task: any) => {
-        acc[task.project_task_id] = task.dependencies || [];
-        return acc;
-      }, {}),
+      dependency_map: response.reduce(
+        (acc: Record<number, number[]>, task: ProjectTask) => {
+          if (task.project_task_id) {
+            acc[task.project_task_id] = task.dependencies || [];
+          }
+          return acc;
+        },
+        {} as Record<number, number[]>
+      ),
     };
   }
 );

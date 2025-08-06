@@ -264,15 +264,23 @@ export const milestoneSchema = z.object({
 export const timeOffSchema = z.object({
   timeoff_id: z.number().optional(), // Float API uses timeoff_id
   people_id: z.number().optional(), // Float API uses people_id, not person_id
+  people_ids: z.array(z.number()).optional(), // Array of people IDs (returned by API)
   timeoff_type_id: z.number().optional(), // Reference to time off type
+  timeoff_type_name: z.string().optional(), // Time off type name (returned by API)
   start_date: z.string().nullable().optional(), // ISO date format (YYYY-MM-DD)
   end_date: z.string().nullable().optional(), // ISO date format (YYYY-MM-DD)
+  start_time: z.string().nullable().optional(), // Start time (returned by API)
   hours: z.number().nullable().optional(), // Hours of time off (null for full day)
+  timeoff_notes: z.string().nullable().optional(), // Notes field (returned by API)
   full_day: z.number().nullable().optional(), // 1 for full day, 0 for partial day
-  status: z.string().nullable().optional(), // pending, approved, rejected
+  status: z.number().nullable().optional(), // Numeric status: 1=pending, 2=approved, 3=rejected
+  status_note: z.string().nullable().optional(), // Status note (returned by API)
+  status_creator_id: z.number().nullable().optional(), // Who set the status (returned by API)
   notes: z.string().nullable().optional(), // Optional notes
   created: z.string().nullable().optional(), // Float API uses 'created', not 'created_at'
+  created_by: z.number().nullable().optional(), // User ID who created (returned by API)
   modified: z.string().nullable().optional(), // Float API uses 'modified', not 'updated_at'
+  modified_by: z.number().nullable().optional(), // User ID who modified (returned by API)
   approved_by: z.number().nullable().optional(), // User ID who approved
   approved_at: z.string().nullable().optional(), // Approval timestamp
   rejected_by: z.number().nullable().optional(), // User ID who rejected

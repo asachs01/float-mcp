@@ -260,7 +260,10 @@ export const bulkUpdateAccountPermissions = createTool(
     );
 
     const successful = results
-      .filter((result): result is PromiseFulfilledResult<any> => result.status === 'fulfilled')
+      .filter(
+        (result): result is PromiseFulfilledResult<z.infer<typeof accountSchema>> =>
+          result.status === 'fulfilled'
+      )
       .map((result) => result.value);
 
     const failed = results
