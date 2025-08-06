@@ -399,12 +399,12 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
         });
 
         expect(result).toBeDefined();
-        
+
         // Handle different response structures from real API
         const results = result.results || result.data || result;
         if (Array.isArray(results)) {
           expect(results.length).toBe(2);
-          
+
           // Track for cleanup
           results.forEach((task: any) => {
             const taskId = task.project_task_id || task.task_id || task.id;
@@ -414,9 +414,14 @@ describe('Manage Project Workflow Tool Integration Tests', () => {
           });
         } else {
           // If not an array, might be a single response or different format
-          console.log('Bulk create project tasks returned non-array response - API behavior may differ');
+          console.log(
+            'Bulk create project tasks returned non-array response - API behavior may differ'
+          );
           if (result.project_task_id || result.task_id || result.id) {
-            createdEntities.push({ type: 'project-task', id: result.project_task_id || result.task_id || result.id });
+            createdEntities.push({
+              type: 'project-task',
+              id: result.project_task_id || result.task_id || result.id,
+            });
           }
         }
       });

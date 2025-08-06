@@ -127,7 +127,10 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
         expect(result.hours).toBe(params.hours);
 
         // Track for cleanup
-        createdEntities.push({ type: 'logged-time', id: result.logged_time_id || result.timeentry_id || result.id });
+        createdEntities.push({
+          type: 'logged-time',
+          id: result.logged_time_id || result.timeentry_id || result.id,
+        });
       });
 
       it('should create logged time with task and notes', async () => {
@@ -152,7 +155,10 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
         expect(result.task_id).toBe(params.task_id);
 
         // Track for cleanup
-        createdEntities.push({ type: 'logged-time', id: result.logged_time_id || result.timeentry_id || result.id });
+        createdEntities.push({
+          type: 'logged-time',
+          id: result.logged_time_id || result.timeentry_id || result.id,
+        });
       });
     });
 
@@ -189,21 +195,22 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
         });
 
         expect(result).toBeDefined();
-        
+
         // Handle different response structures from real API
         if (result.success !== undefined) {
           expect(result.success).toBeDefined();
         }
-        
+
         // Check for results in different possible formats
         const results = result.results || result.data || result;
         if (Array.isArray(results)) {
           expect(results.length).toBe(2);
-          
+
           // Track for cleanup
           results.forEach((entry: any) => {
             const entryData = entry.success ? entry.data : entry;
-            const loggedTimeId = entryData?.logged_time_id || entryData?.timeentry_id || entryData?.id;
+            const loggedTimeId =
+              entryData?.logged_time_id || entryData?.timeentry_id || entryData?.id;
             if (loggedTimeId) {
               createdEntities.push({ type: 'logged-time', id: loggedTimeId });
             }
@@ -212,7 +219,10 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
           // If not an array, might be a single response or different format
           console.log('Bulk create returned non-array response - API behavior may differ');
           if (result.logged_time_id || result.timeentry_id || result.id) {
-            createdEntities.push({ type: 'logged-time', id: result.logged_time_id || result.timeentry_id || result.id });
+            createdEntities.push({
+              type: 'logged-time',
+              id: result.logged_time_id || result.timeentry_id || result.id,
+            });
           }
         }
       });
@@ -438,17 +448,17 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
         });
 
         expect(result).toBeDefined();
-        
+
         // Handle different response structures from real API
         if (result.success !== undefined) {
           expect(result.success).toBeDefined();
         }
-        
+
         // Check for results in different possible formats
         const results = result.results || result.data || result;
         if (Array.isArray(results)) {
           expect(results.length).toBe(2);
-          
+
           // Track for cleanup
           results.forEach((request: any) => {
             const requestData = request.success ? request.data : request;
