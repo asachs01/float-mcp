@@ -204,6 +204,7 @@ async function handlePhaseOperations(
   format: WorkflowFormat
 ): Promise<unknown> {
   const { id, project_id, start_date, end_date, ...otherParams } = params;
+  const createUpdateParams = { ...otherParams, project_id, start_date, end_date };
 
   switch (operation) {
     case 'list':
@@ -211,9 +212,9 @@ async function handlePhaseOperations(
     case 'get':
       return floatApi.get(`/phases/${id}`, phaseSchema, format);
     case 'create':
-      return floatApi.post('/phases', otherParams, phaseSchema, format);
+      return floatApi.post('/phases', createUpdateParams, phaseSchema, format);
     case 'update':
-      return floatApi.patch(`/phases/${id}`, otherParams, phaseSchema, format);
+      return floatApi.patch(`/phases/${id}`, createUpdateParams, phaseSchema, format);
     case 'delete':
       await floatApi.delete(`/phases/${id}`, undefined, format);
       return { success: true, message: 'Phase deleted successfully' };
@@ -254,6 +255,7 @@ async function handleMilestoneOperations(
   format: WorkflowFormat
 ): Promise<unknown> {
   const { id, project_id, ...otherParams } = params;
+  const createUpdateParams = { ...otherParams, project_id };
 
   switch (operation) {
     case 'list':
@@ -261,9 +263,9 @@ async function handleMilestoneOperations(
     case 'get':
       return floatApi.get(`/milestones/${id}`, milestoneSchema, format);
     case 'create':
-      return floatApi.post('/milestones', otherParams, milestoneSchema, format);
+      return floatApi.post('/milestones', createUpdateParams, milestoneSchema, format);
     case 'update':
-      return floatApi.patch(`/milestones/${id}`, otherParams, milestoneSchema, format);
+      return floatApi.patch(`/milestones/${id}`, createUpdateParams, milestoneSchema, format);
     case 'delete':
       await floatApi.delete(`/milestones/${id}`, undefined, format);
       return { success: true, message: 'Milestone deleted successfully' };
@@ -336,6 +338,7 @@ async function handleProjectTaskOperations(
   format: WorkflowFormat
 ): Promise<unknown> {
   const { id, project_id, phase_id, project_tasks, task_order, ...otherParams } = params;
+  const createUpdateParams = { ...otherParams, project_id, phase_id };
 
   switch (operation) {
     case 'list':
@@ -348,9 +351,9 @@ async function handleProjectTaskOperations(
     case 'get':
       return floatApi.get(`/project_tasks/${id}`, projectTaskSchema, format);
     case 'create':
-      return floatApi.post('/project_tasks', otherParams, projectTaskSchema, format);
+      return floatApi.post('/project_tasks', createUpdateParams, projectTaskSchema, format);
     case 'update':
-      return floatApi.patch(`/project_tasks/${id}`, otherParams, projectTaskSchema, format);
+      return floatApi.patch(`/project_tasks/${id}`, createUpdateParams, projectTaskSchema, format);
     case 'delete':
       await floatApi.delete(`/project_tasks/${id}`, undefined, format);
       return { success: true, message: 'Project task deleted successfully' };
