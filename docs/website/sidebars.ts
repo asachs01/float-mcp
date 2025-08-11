@@ -13,15 +13,23 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
  Create as many sidebars as you want.
  */
 const sidebars: SidebarsConfig = {
-  // Main documentation sidebar
+  // Main documentation sidebar - optimized for project managers
   tutorialSidebar: [
     'intro',
+    'quick-start',
     {
       type: 'category',
-      label: 'Getting Started',
+      label: 'Project Management',
       items: [
+        'project-manager-guide',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Setup & Configuration',
+      items: [
+        'claude-setup',
         'guides/CLAUDE_INTEGRATION_GUIDE',
-        'guides/API_USAGE_GUIDE',
       ],
     },
     {
@@ -34,15 +42,10 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Testing',
+      label: 'Advanced',
       items: [
+        'guides/API_USAGE_GUIDE',
         'testing/INTEGRATION_TESTING',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Contributing',
-      items: [
         'contributing/contributing',
       ],
     },

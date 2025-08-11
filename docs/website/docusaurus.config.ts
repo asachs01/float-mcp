@@ -42,26 +42,13 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
+          routeBasePath: '/', // Serve docs at site's root
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/asachs01/float-mcp/tree/main/docs/',
         },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ['rss', 'atom'],
-            xslt: true,
-          },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/asachs01/float-mcp/tree/main/docs/website/blog/',
-          // Useful options to enforce blogging best practices
-          onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
-        },
+        blog: false, // Disable the blog plugin
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -77,6 +64,7 @@ const config: Config = {
       logo: {
         alt: 'Float MCP Logo',
         src: 'img/logo.svg',
+        href: '/intro', // Redirect to intro page instead of home
       },
       items: [
         {
@@ -85,7 +73,6 @@ const config: Config = {
           position: 'left',
           label: 'Documentation',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
         {
           href: 'https://github.com/asachs01/float-mcp',
           label: 'GitHub',
@@ -101,15 +88,15 @@ const config: Config = {
           items: [
             {
               label: 'Getting Started',
-              to: '/docs/intro',
+              to: '/intro',
             },
             {
               label: 'API Reference',
-              to: '/docs/api/API_DOCUMENTATION',
+              to: '/api/API_DOCUMENTATION',
             },
             {
               label: 'Integration Guide',
-              to: '/docs/guides/CLAUDE_INTEGRATION_GUIDE',
+              to: '/guides/CLAUDE_INTEGRATION_GUIDE',
             },
           ],
         },
@@ -129,10 +116,6 @@ const config: Config = {
         {
           title: 'More',
           items: [
-            {
-              label: 'Blog',
-              to: '/blog',
-            },
             {
               label: 'GitHub',
               href: 'https://github.com/asachs01/float-mcp',

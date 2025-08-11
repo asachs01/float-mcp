@@ -1,417 +1,326 @@
-# Task Master AI - Claude Code Integration Guide
+# Claude Desktop + Float MCP Setup Guide
 
-## Essential Commands
+Complete guide for integrating Float.com with Claude Desktop for powerful project management conversations.
 
-### Core Workflow Commands
+## Overview
 
-```bash
-# Project Setup
-task-master init                                    # Initialize Task Master in current project
-task-master parse-prd .taskmaster/docs/prd.txt      # Generate tasks from PRD document
-task-master models --setup                        # Configure AI models interactively
+The Float MCP (Model Context Protocol) server enables Claude Desktop to directly access your Float.com data for intelligent project management assistance. This guide covers both basic setup and advanced configuration options.
 
-# Daily Development Workflow
-task-master list                                   # Show all tasks with status
-task-master next                                   # Get next available task to work on
-task-master show <id>                             # View detailed task information (e.g., task-master show 1.2)
-task-master set-status --id=<id> --status=done    # Mark task complete
+## Prerequisites
 
-# Task Management
-task-master add-task --prompt="description" --research        # Add new task with AI assistance
-task-master expand --id=<id> --research --force              # Break task into subtasks
-task-master update-task --id=<id> --prompt="changes"         # Update specific task
-task-master update --from=<id> --prompt="changes"            # Update multiple tasks from ID onwards
-task-master update-subtask --id=<id> --prompt="notes"        # Add implementation notes to subtask
+- **Claude Desktop application** (latest version)
+- **Float.com account** with appropriate permissions
+- **Float API token** with read/write access
+- **Administrative access** to Claude Desktop settings
 
-# Analysis & Planning
-task-master analyze-complexity --research          # Analyze task complexity
-task-master complexity-report                      # View complexity analysis
-task-master expand --all --research               # Expand all eligible tasks
+## Basic Setup
 
-# Dependencies & Organization
-task-master add-dependency --id=<id> --depends-on=<id>       # Add task dependency
-task-master move --from=<id> --to=<id>                       # Reorganize task hierarchy
-task-master validate-dependencies                            # Check for dependency issues
-task-master generate                                         # Update task markdown files (usually auto-called)
+### 1. Obtain Float API Credentials
+
+#### For Float Administrators
+1. Log into your Float account
+2. Navigate to **Settings > Integrations > API**
+3. Click **"Generate New Token"**
+4. Configure the token:
+   - **Name**: "Claude Desktop Integration" 
+   - **Permissions**: "Read & Write" (recommended for full functionality)
+   - **Scope**: "All Projects" or specific project access as needed
+5. **Copy and securely store** the generated token
+
+#### For Team Members
+Request an API token from your Float administrator with these specifications:
+- **Read access**: For project viewing and reporting
+- **Write access**: For creating/updating projects and time entries (optional)
+- **Scope**: Appropriate to your role and responsibilities
+
+### 2. Install Float MCP Server
+
+#### Method A: DXT Package (Recommended)
+
+**Download and Install**
+1. Download the latest [Float MCP Extension (.dxt)](https://github.com/asachs01/float-mcp/releases/latest)
+2. Open Claude Desktop
+3. Go to **Settings > Extensions**
+4. Click **"Install Extension"** and select the .dxt file
+5. Confirm installation when prompted
+
+**Configure Connection**
+1. In Claude Desktop, locate the Float MCP extension settings
+2. Enter your Float API token
+3. Test the connection
+4. Save the configuration
+
+#### Method B: Manual MCP Server Configuration
+
+**Add Server Configuration**
+1. Open Claude Desktop
+2. Navigate to **Settings > Developer > MCP Servers**
+3. Add a new server with these settings:
+   ```json
+   {
+     "name": "float-mcp",
+     "command": "npx",
+     "args": ["float-mcp"],
+     "env": {
+       "FLOAT_API_TOKEN": "your_api_token_here"
+     }
+   }
+   ```
+4. Replace `your_api_token_here` with your actual Float API token
+5. Save configuration and restart Claude Desktop
+
+### 3. Verify Connection
+
+**Test Basic Connectivity**
+Open a new conversation with Claude and try:
+```
+Hi Claude, can you access my Float account? Please show me a summary of active projects.
 ```
 
-## Key Files & Project Structure
-
-### Core Files
-
-- `.taskmaster/tasks/tasks.json` - Main task data file (auto-managed)
-- `.taskmaster/config.json` - AI model configuration (use `task-master models` to modify)
-- `.taskmaster/docs/prd.txt` - Product Requirements Document for parsing
-- `.taskmaster/tasks/*.txt` - Individual task files (auto-generated from tasks.json)
-- `.env` - API keys for CLI usage
-
-### Claude Code Integration Files
-
-- `CLAUDE.md` - Auto-loaded context for Claude Code (this file)
-- `.claude/settings.json` - Claude Code tool allowlist and preferences
-- `.claude/commands/` - Custom slash commands for repeated workflows
-- `.mcp.json` - MCP server configuration (project-specific)
-
-### Directory Structure
-
+**Expected Response**
 ```
-project/
-├── .taskmaster/
-│   ├── tasks/              # Task files directory
-│   │   ├── tasks.json      # Main task database
-│   │   ├── task-1.md      # Individual task files
-│   │   └── task-2.md
-│   ├── docs/              # Documentation directory
-│   │   ├── prd.txt        # Product requirements
-│   ├── reports/           # Analysis reports directory
-│   │   └── task-complexity-report.json
-│   ├── templates/         # Template files
-│   │   └── example_prd.txt  # Example PRD template
-│   └── config.json        # AI models & settings
-├── .claude/
-│   ├── settings.json      # Claude Code configuration
-│   └── commands/         # Custom slash commands
-├── .env                  # API keys
-├── .mcp.json            # MCP configuration
-└── CLAUDE.md            # This file - auto-loaded by Claude Code
+✅ Connected to Float successfully!
+
+Here's your current project summary:
+• Active Projects: 12
+• Team Members: 8
+• Current Week Utilization: 89%
+• Projects Requiring Attention: 2
+
+Would you like me to dive deeper into any specific area?
 ```
 
-## MCP Integration
+## Advanced Configuration
 
-Task Master provides an MCP server that Claude Code can connect to. Configure in `.mcp.json`:
+### Environment Variables
+
+For enhanced functionality, configure these optional environment variables:
 
 ```json
 {
-  "mcpServers": {
-    "task-master-ai": {
-      "command": "npx",
-      "args": ["-y", "--package=task-master-ai", "task-master-ai"],
-      "env": {
-        "ANTHROPIC_API_KEY": "your_key_here",
-        "PERPLEXITY_API_KEY": "your_key_here",
-        "OPENAI_API_KEY": "OPENAI_API_KEY_HERE",
-        "GOOGLE_API_KEY": "GOOGLE_API_KEY_HERE",
-        "XAI_API_KEY": "XAI_API_KEY_HERE",
-        "OPENROUTER_API_KEY": "OPENROUTER_API_KEY_HERE",
-        "MISTRAL_API_KEY": "MISTRAL_API_KEY_HERE",
-        "AZURE_OPENAI_API_KEY": "AZURE_OPENAI_API_KEY_HERE",
-        "OLLAMA_API_KEY": "OLLAMA_API_KEY_HERE"
-      }
-    }
+  "env": {
+    "FLOAT_API_TOKEN": "your_token_here",
+    "FLOAT_API_URL": "https://api.float.com/v3",
+    "FLOAT_TIMEOUT": "30000",
+    "FLOAT_CACHE_DURATION": "300",
+    "DEBUG_FLOAT_MCP": "false"
   }
 }
 ```
 
-### Essential MCP Tools
+**Variable Descriptions:**
+- `FLOAT_API_URL`: Float API endpoint (default: standard Float API)
+- `FLOAT_TIMEOUT`: Request timeout in milliseconds (default: 30000)
+- `FLOAT_CACHE_DURATION`: Cache duration in seconds (default: 300)
+- `DEBUG_FLOAT_MCP`: Enable debug logging (default: false)
 
-```javascript
-help; // = shows available taskmaster commands
-// Project setup
-initialize_project; // = task-master init
-parse_prd; // = task-master parse-prd
+### Multi-Environment Setup
 
-// Daily workflow
-get_tasks; // = task-master list
-next_task; // = task-master next
-get_task; // = task-master show <id>
-set_task_status; // = task-master set-status
-
-// Task management
-add_task; // = task-master add-task
-expand_task; // = task-master expand
-update_task; // = task-master update-task
-update_subtask; // = task-master update-subtask
-update; // = task-master update
-
-// Analysis
-analyze_project_complexity; // = task-master analyze-complexity
-complexity_report; // = task-master complexity-report
-```
-
-## Claude Code Workflow Integration
-
-### Standard Development Workflow
-
-#### 1. Project Initialization
-
-```bash
-# Initialize Task Master
-task-master init
-
-# Create or obtain PRD, then parse it
-task-master parse-prd .taskmaster/docs/prd.txt
-
-# Analyze complexity and expand tasks
-task-master analyze-complexity --research
-task-master expand --all --research
-```
-
-If tasks already exist, another PRD can be parsed (with new information only!) using parse-prd with --append flag. This will add the generated tasks to the existing list of tasks..
-
-#### 2. Daily Development Loop
-
-```bash
-# Start each session
-task-master next                           # Find next available task
-task-master show <id>                     # Review task details
-
-# During implementation, check in code context into the tasks and subtasks
-task-master update-subtask --id=<id> --prompt="implementation notes..."
-
-# Complete tasks
-task-master set-status --id=<id> --status=done
-```
-
-#### 3. Multi-Claude Workflows
-
-For complex projects, use multiple Claude Code sessions:
-
-```bash
-# Terminal 1: Main implementation
-cd project && claude
-
-# Terminal 2: Testing and validation
-cd project-test-worktree && claude
-
-# Terminal 3: Documentation updates
-cd project-docs-worktree && claude
-```
-
-### Custom Slash Commands
-
-Create `.claude/commands/taskmaster-next.md`:
-
-```markdown
-Find the next available Task Master task and show its details.
-
-Steps:
-
-1. Run `task-master next` to get the next task
-2. If a task is available, run `task-master show <id>` for full details
-3. Provide a summary of what needs to be implemented
-4. Suggest the first implementation step
-```
-
-Create `.claude/commands/taskmaster-complete.md`:
-
-```markdown
-Complete a Task Master task: $ARGUMENTS
-
-Steps:
-
-1. Review the current task with `task-master show $ARGUMENTS`
-2. Verify all implementation is complete
-3. Run any tests related to this task
-4. Mark as complete: `task-master set-status --id=$ARGUMENTS --status=done`
-5. Show the next available task with `task-master next`
-```
-
-## Tool Allowlist Recommendations
-
-Add to `.claude/settings.json`:
+For organizations with multiple Float accounts or environments:
 
 ```json
 {
-  "allowedTools": [
-    "Edit",
-    "Bash(task-master *)",
-    "Bash(git commit:*)",
-    "Bash(git add:*)",
-    "Bash(npm run *)",
-    "mcp__task_master_ai__*"
-  ]
+  "name": "float-mcp-production",
+  "command": "npx",
+  "args": ["float-mcp"],
+  "env": {
+    "FLOAT_API_TOKEN": "prod_token_here",
+    "ENVIRONMENT_NAME": "Production"
+  }
 }
 ```
 
-## Configuration & Setup
+### Performance Optimization
 
-### API Keys Required
-
-At least **one** of these API keys must be configured:
-
-- `ANTHROPIC_API_KEY` (Claude models) - **Recommended**
-- `PERPLEXITY_API_KEY` (Research features) - **Highly recommended**
-- `OPENAI_API_KEY` (GPT models)
-- `GOOGLE_API_KEY` (Gemini models)
-- `MISTRAL_API_KEY` (Mistral models)
-- `OPENROUTER_API_KEY` (Multiple models)
-- `XAI_API_KEY` (Grok models)
-
-An API key is required for any provider used across any of the 3 roles defined in the `models` command.
-
-### Model Configuration
-
-```bash
-# Interactive setup (recommended)
-task-master models --setup
-
-# Set specific models
-task-master models --set-main claude-3-5-sonnet-20241022
-task-master models --set-research perplexity-llama-3.1-sonar-large-128k-online
-task-master models --set-fallback gpt-4o-mini
-```
-
-## Task Structure & IDs
-
-### Task ID Format
-
-- Main tasks: `1`, `2`, `3`, etc.
-- Subtasks: `1.1`, `1.2`, `2.1`, etc.
-- Sub-subtasks: `1.1.1`, `1.1.2`, etc.
-
-### Task Status Values
-
-- `pending` - Ready to work on
-- `in-progress` - Currently being worked on
-- `done` - Completed and verified
-- `deferred` - Postponed
-- `cancelled` - No longer needed
-- `blocked` - Waiting on external factors
-
-### Task Fields
+#### Caching Configuration
+Optimize response times by configuring intelligent caching:
 
 ```json
 {
-  "id": "1.2",
-  "title": "Implement user authentication",
-  "description": "Set up JWT-based auth system",
-  "status": "pending",
-  "priority": "high",
-  "dependencies": ["1.1"],
-  "details": "Use bcrypt for hashing, JWT for tokens...",
-  "testStrategy": "Unit tests for auth functions, integration tests for login flow",
-  "subtasks": []
+  "env": {
+    "FLOAT_CACHE_DURATION": "600",
+    "FLOAT_CACHE_STRATEGY": "intelligent",
+    "FLOAT_PRELOAD_DATA": "projects,people,recent_time"
+  }
 }
 ```
 
-## Claude Code Best Practices with Task Master
+#### Connection Pool Settings
+For high-usage scenarios:
 
-### Context Management
-
-- Use `/clear` between different tasks to maintain focus
-- This CLAUDE.md file is automatically loaded for context
-- Use `task-master show <id>` to pull specific task context when needed
-
-### Iterative Implementation
-
-1. `task-master show <subtask-id>` - Understand requirements
-2. Explore codebase and plan implementation
-3. `task-master update-subtask --id=<id> --prompt="detailed plan"` - Log plan
-4. `task-master set-status --id=<id> --status=in-progress` - Start work
-5. Implement code following logged plan
-6. `task-master update-subtask --id=<id> --prompt="what worked/didn't work"` - Log progress
-7. `task-master set-status --id=<id> --status=done` - Complete task
-
-### Complex Workflows with Checklists
-
-For large migrations or multi-step processes:
-
-1. Create a markdown PRD file describing the new changes: `touch task-migration-checklist.md` (prds can be .txt or .md)
-2. Use Taskmaster to parse the new prd with `task-master parse-prd --append` (also available in MCP)
-3. Use Taskmaster to expand the newly generated tasks into subtasks. Consdier using `analyze-complexity` with the correct --to and --from IDs (the new ids) to identify the ideal subtask amounts for each task. Then expand them.
-4. Work through items systematically, checking them off as completed
-5. Use `task-master update-subtask` to log progress on each task/subtask and/or updating/researching them before/during implementation if getting stuck
-
-### Git Integration
-
-Task Master works well with `gh` CLI:
-
-```bash
-# Create PR for completed task
-gh pr create --title "Complete task 1.2: User authentication" --body "Implements JWT auth system as specified in task 1.2"
-
-# Reference task in commits
-git commit -m "feat: implement JWT auth (task 1.2)"
+```json
+{
+  "env": {
+    "FLOAT_MAX_CONCURRENT_REQUESTS": "5",
+    "FLOAT_REQUEST_RETRY_COUNT": "3",
+    "FLOAT_REQUEST_RETRY_DELAY": "1000"
+  }
+}
 ```
 
-### Parallel Development with Git Worktrees
+## Conversation Optimization
 
-```bash
-# Create worktrees for parallel task development
-git worktree add ../project-auth feature/auth-system
-git worktree add ../project-api feature/api-refactor
+### Best Practices for Project Management Queries
 
-# Run Claude Code in each worktree
-cd ../project-auth && claude    # Terminal 1: Auth work
-cd ../project-api && claude     # Terminal 2: API work
+**Effective Query Patterns:**
+```
+✅ "Show me capacity for the design team next month"
+✅ "Which projects are over budget and by how much?"
+✅ "Create a status report for projects due this quarter"
+
+❌ "Show me everything"
+❌ "What's the status?" (too vague)
+❌ "Give me all the data" (overwhelming)
+```
+
+**Progressive Conversation Techniques:**
+1. **Start broad**: "What needs my attention today?"
+2. **Get specific**: "Tell me more about the ABC project risks"
+3. **Take action**: "Create a task to address the resource conflict"
+
+### Conversation Templates
+
+#### Daily Management Routine
+```
+Morning Check-in:
+"Hi Claude, what should I prioritize today based on project deadlines and team availability?"
+
+Midday Status:
+"Any urgent issues or conflicts that have come up since this morning?"
+
+End-of-day Wrap-up:
+"Summarize today's project progress and flag anything for tomorrow's attention."
+```
+
+#### Weekly Planning Session
+```
+"Let's review this week:
+1. Show me utilization rates for all team members
+2. Identify any projects falling behind schedule
+3. Preview next week's capacity and potential conflicts
+4. Suggest priority adjustments based on current status"
+```
+
+## Security Configuration
+
+### Token Management
+- **Store tokens securely** using Claude Desktop's encrypted storage
+- **Rotate tokens regularly** (recommended: every 90 days)  
+- **Use minimum required permissions** for each user role
+- **Monitor token usage** through Float's admin dashboard
+
+### Access Control
+```json
+{
+  "env": {
+    "FLOAT_READ_ONLY_MODE": "false",
+    "FLOAT_ALLOWED_OPERATIONS": "read,write,report",
+    "FLOAT_RESTRICTED_ENDPOINTS": "users,billing"
+  }
+}
+```
+
+### Audit Logging
+Enable comprehensive logging for compliance and debugging:
+
+```json
+{
+  "env": {
+    "FLOAT_AUDIT_LOG": "true",
+    "FLOAT_LOG_LEVEL": "info",
+    "FLOAT_LOG_FILE": "/var/log/float-mcp.log"
+  }
+}
 ```
 
 ## Troubleshooting
 
-### AI Commands Failing
+### Common Connection Issues
 
-```bash
-# Check API keys are configured
-cat .env                           # For CLI usage
+**Problem: "Authentication Failed"**
+- Verify API token is correct and hasn't expired
+- Check token permissions in Float admin panel
+- Ensure token has appropriate scope for requested operations
 
-# Verify model configuration
-task-master models
+**Problem: "Timeout Errors"**
+- Increase timeout value: `"FLOAT_TIMEOUT": "60000"`
+- Check network connectivity to Float API
+- Verify Float service status
 
-# Test with different model
-task-master models --set-fallback gpt-4o-mini
+**Problem: "Rate Limiting"**
+- Implement request throttling: `"FLOAT_REQUEST_DELAY": "100"`
+- Consider caching frequently accessed data
+- Contact Float support for rate limit increases
+
+### Performance Troubleshooting
+
+**Slow Response Times:**
+1. Enable caching with longer duration
+2. Preload commonly accessed data
+3. Use more specific queries to reduce data transfer
+4. Check network latency to Float servers
+
+**High Memory Usage:**
+1. Reduce cache duration
+2. Limit concurrent requests
+3. Implement data pagination for large datasets
+4. Clear cache periodically
+
+### Debug Mode
+
+Enable detailed logging for troubleshooting:
+
+```json
+{
+  "env": {
+    "DEBUG_FLOAT_MCP": "true",
+    "FLOAT_LOG_LEVEL": "debug"
+  }
+}
 ```
 
-### MCP Connection Issues
+Check Claude Desktop's developer console for detailed error messages and API call traces.
 
-- Check `.mcp.json` configuration
-- Verify Node.js installation
-- Use `--mcp-debug` flag when starting Claude Code
-- Use CLI as fallback if MCP unavailable
+## System Verification
 
-### Task File Sync Issues
+### Health Check Commands
 
-```bash
-# Regenerate task files from tasks.json
-task-master generate
+Verify your setup with these Claude conversations:
 
-# Fix dependency issues
-task-master fix-dependencies
+**Connection Test:**
+```
+"Test my Float connection and show system status"
 ```
 
-DO NOT RE-INITIALIZE. That will not do anything beyond re-adding the same Taskmaster core files.
+**Data Integrity Check:**
+```  
+"Verify that project data is syncing correctly from Float"
+```
 
-## Important Notes
+**Performance Test:**
+```
+"Show me response times for the last few queries and overall system performance"
+```
 
-### AI-Powered Operations
+### Automated Monitoring
 
-These commands make AI calls and may take up to a minute:
+Set up automated health checks:
 
-- `parse_prd` / `task-master parse-prd`
-- `analyze_project_complexity` / `task-master analyze-complexity`
-- `expand_task` / `task-master expand`
-- `expand_all` / `task-master expand --all`
-- `add_task` / `task-master add-task`
-- `update` / `task-master update`
-- `update_task` / `task-master update-task`
-- `update_subtask` / `task-master update-subtask`
+```json
+{
+  "env": {
+    "FLOAT_HEALTH_CHECK_INTERVAL": "300",
+    "FLOAT_HEALTH_CHECK_ENABLED": "true",
+    "FLOAT_AUTO_RECONNECT": "true"
+  }
+}
+```
 
-### File Management
+## Getting Support
 
-- Never manually edit `tasks.json` - use commands instead
-- Never manually edit `.taskmaster/config.json` - use `task-master models`
-- Task markdown files in `tasks/` are auto-generated
-- Run `task-master generate` after manual changes to tasks.json
+- **Claude Desktop Issues**: Check [Claude Desktop documentation](https://claude.ai/desktop/help)
+- **Float API Problems**: Consult [Float API documentation](https://developer.float.com)
+- **Integration Questions**: Ask Claude directly for help with specific setup issues
+- **Bug Reports**: Submit issues to the [Float MCP GitHub repository](https://github.com/asachs01/float-mcp/issues)
 
-### Claude Code Session Management
-
-- Use `/clear` frequently to maintain focused context
-- Create custom slash commands for repeated Task Master workflows
-- Configure tool allowlist to streamline permissions
-- Use headless mode for automation: `claude -p "task-master next"`
-
-### Multi-Task Updates
-
-- Use `update --from=<id>` to update multiple future tasks
-- Use `update-task --id=<id>` for single task updates
-- Use `update-subtask --id=<id>` for implementation logging
-
-### Research Mode
-
-- Add `--research` flag for research-based AI enhancement
-- Requires a research model API key like Perplexity (`PERPLEXITY_API_KEY`) in environment
-- Provides more informed task creation and updates
-- Recommended for complex technical tasks
-
----
-
-_This guide ensures Claude Code has immediate access to Task Master's essential functionality for agentic development workflows._
+Your Float + Claude integration should now be fully operational and optimized for professional project management workflows.
