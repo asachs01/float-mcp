@@ -687,7 +687,7 @@ Tools support complex relationships:
 1. **Invalid Date Formats**
 
    - Use YYYY-MM-DD format for all dates
-   - Validate date ranges (start_date <= end_date)
+   - Validate date ranges (start_date must be before or equal to end_date)
 
 2. **Permission Errors**
 

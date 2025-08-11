@@ -105,11 +105,11 @@ const config: Config = {
             },
             {
               label: 'API Reference',
-              to: '/docs/api',
+              to: '/docs/api/API_DOCUMENTATION',
             },
             {
               label: 'Integration Guide',
-              to: '/docs/guides',
+              to: '/docs/guides/CLAUDE_INTEGRATION_GUIDE',
             },
           ],
         },
