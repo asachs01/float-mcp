@@ -2,7 +2,7 @@
 
 // Quick test script to verify time off creation works with corrected endpoint
 const { config } = require('dotenv');
-const { FloatApi } = require('./dist/services/float-api.js');
+const { FloatApi } = require('../../dist/services/float-api.js');
 
 // Load environment variables
 config();

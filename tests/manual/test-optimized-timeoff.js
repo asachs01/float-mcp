@@ -2,7 +2,7 @@
 
 // Test the optimized time off tool to see if it works
 const { config } = require('dotenv');
-const { manageTimeTracking } = require('./dist/tools/optimized/manage-time-tracking.js');
+const { manageTimeTracking } = require('../../dist/tools/optimized/manage-time-tracking.js');
 
 // Load environment variables
 config();
