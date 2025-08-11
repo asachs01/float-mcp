@@ -26,7 +26,12 @@
     "prepare": "husky",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "npm run build && changeset publish"
+    "release": "npm run build && changeset publish",
+    "docs:dev": "cd docs/website && npm start",
+    "docs:build": "cd docs/website && npm run build",
+    "docs:serve": "cd docs/website && npm run serve",
+    "docs:deploy": "cd docs/website && npm run deploy",
+    "docs:install": "cd docs/website && npm install"
   },
   "keywords": [
     "mcp",
