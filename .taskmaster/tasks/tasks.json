@@ -147,5 +147,154 @@
       "updated": "2025-07-10T17:30:50.955Z",
       "description": "Implement MCP Streamable HTTP transport (2025-03-26 spec) for HTTP/SSE support in the MCP server."
     }
+  },
+  "bug-fixes-code-quality": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Remove API Keys from Repository History",
+        "description": "Critical security fix: Remove actual API keys that were committed to .env file and clean git history",
+        "details": "Use git filter-branch to remove .env file from all history. Update .env with placeholder values. Verify no API keys remain in git log.",
+        "testStrategy": "Verify git log shows no API keys, test that placeholder .env still allows development",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Fix Race Conditions in Rate Limiting",
+        "description": "Critical bug fix: Resolve race conditions in global requestQueue that could bypass rate limiting",
+        "details": "Implement proper synchronization for requestQueue access. Replace busy-waiting with event-driven approach. Add concurrency tests.",
+        "testStrategy": "Concurrent request tests, rate limit bypass prevention verification",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Standardize ID Types Across Schemas",
+        "description": "Fix type inconsistencies where IDs are sometimes strings, sometimes numbers, causing API call failures",
+        "details": "Audit all ID fields in src/types/float.ts. Choose consistent type (recommend string). Update all API calls and validation.",
+        "testStrategy": "Type checking, API integration tests with different ID formats",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Eliminate Unsafe Type Assertions",
+        "description": "Replace type assertions with proper type guards throughout codebase to prevent runtime type errors",
+        "details": "Find all 'as T' assertions, particularly in format conversion and API response handling. Replace with proper type guards and validation.",
+        "testStrategy": "Type guard unit tests, runtime type validation tests",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Fix Memory Leaks in Request Queue",
+        "description": "Resolve memory leaks in global requestQueue and cleanup interval management",
+        "details": "Implement proper cleanup of requestQueue and intervals. Add bounds checking. Ensure cleanup on graceful shutdown.",
+        "testStrategy": "Memory usage tests, long-running process verification, graceful shutdown tests",
+        "status": "pending",
+        "dependencies": [
+          "2"
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Add Request Timeout Configuration",
+        "description": "Implement proper timeout handling for HTTP requests to prevent hanging connections",
+        "details": "Add timeout configuration to fetch calls. Handle timeout errors appropriately. Test timeout scenarios.",
+        "testStrategy": "Timeout simulation tests, error handling verification",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement API Response Caching",
+        "description": "Add caching layer to reduce redundant API calls and improve performance",
+        "details": "Design cache strategy with TTL. Implement for frequently accessed endpoints like projects, people, statuses. Add cache invalidation.",
+        "testStrategy": "Cache hit/miss tests, TTL expiration tests, performance benchmarks",
+        "status": "pending",
+        "dependencies": [
+          "6"
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Fix Date Handling Vulnerabilities",
+        "description": "Resolve critical date handling bugs that could cause runtime failures",
+        "details": "Fix date construction from null values, invalid date arithmetic, and unsafe date sorting operations throughout codebase.",
+        "testStrategy": "Date validation tests, edge case testing with null/invalid dates",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Consolidate Dual Tool Architecture",
+        "description": "Choose single tool pattern and deprecate the hybrid architecture that has 246+ legacy tools plus 4 optimized tools",
+        "details": "Analyze both approaches. Recommend decision-tree pattern. Create migration plan for legacy tools. Implement consolidation strategy.",
+        "testStrategy": "Integration tests for tool functionality, performance comparisons",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement Proper Error Context Preservation",
+        "description": "Fix error handling gaps where original error context and stack traces are lost",
+        "details": "Review error wrapping patterns. Preserve original stack traces. Add error correlation IDs. Standardize error logging.",
+        "testStrategy": "Error propagation tests, debugging experience verification",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Add Circuit Breaker Patterns",
+        "description": "Implement circuit breaker to prevent cascading failures when external APIs are down",
+        "details": "Design circuit breaker for Float API calls. Add failure thresholds and recovery logic. Include monitoring and alerting.",
+        "testStrategy": "Failure simulation tests, recovery time verification",
+        "status": "pending",
+        "dependencies": [
+          "6"
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Refactor God Objects and Implement Dependency Injection",
+        "description": "Break down FloatApi class and implement proper dependency injection patterns",
+        "details": "Split FloatApi into focused services. Create DI container. Abstract external dependencies. Enable proper testing and mocking.",
+        "testStrategy": "Unit tests for each service, mocking verification, integration tests",
+        "status": "pending",
+        "dependencies": [
+          "9"
+        ],
+        "priority": "medium",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-08T02:10:55.003Z",
+      "updated": "2025-08-08T02:12:17.765Z",
+      "description": "Code review bug fixes and quality improvements"
+    }
   }
 }

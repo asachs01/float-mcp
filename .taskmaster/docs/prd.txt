@@ -1,184 +1,109 @@
-# Float MCP Server - Complete API Implementation PRD
+# Float MCP Server - Bug Fixes and Code Quality Improvements
 
-## Project Overview
-This project aims to implement a comprehensive Float MCP (Model Context Protocol) server that provides complete coverage of the Float API v3 endpoints. Currently, the project has partial implementation covering basic CRUD operations for Projects, People, Tasks/Allocations, Clients, Departments, and Reports. However, many critical Float API endpoints are missing.
+## Executive Summary
 
-## Current Implementation Status
-**✅ Implemented Endpoints:**
-- Projects (CRUD)
-- People (CRUD) 
-- Tasks/Allocations (CRUD)
-- Clients (CRUD)
-- Departments (CRUD)
-- Reports (Time, Project, People Utilization)
+The Float MCP Server code review has identified 89+ critical issues requiring systematic resolution across security, performance, architecture, and maintainability. This PRD outlines a structured approach to address these issues through phased implementation.
 
-**❌ Missing Endpoints (Based on Official Float API Documentation):**
-- Accounts
-- Roles  
-- Statuses
-- Time Off
-- Time Off Types
-- Public Holidays
-- Team Holidays
-- Phases
-- Project Tasks (distinct from general Tasks)
-- Milestones
-- Logged Time (distinct from Time Reports)
+## Project Goals
 
-## Technical Requirements
+1. **Security Hardening**: Eliminate all critical security vulnerabilities including API key exposure, race conditions, and information leakage
+2. **Performance Optimization**: Resolve memory leaks, implement caching, and optimize algorithmic complexity
+3. **Architecture Consolidation**: Unify dual tool architecture and implement proper separation of concerns
+4. **Type Safety Enhancement**: Fix type inconsistencies and unsafe assertions throughout codebase
+5. **Production Readiness**: Ensure robust error handling, resource cleanup, and scalability
 
-### Architecture Constraints
-- Maintain existing Zod schema validation approach
-- Use current TypeScript/Node.js stack with Docker deployment
-- Follow existing patterns in `src/tools/` for new endpoints
-- Maintain compatibility with existing Claude Desktop MCP integration
-- All endpoints must handle Float API's nullable field patterns
-- Support both JSON and XML formats as per Float API specification
+## Scope
 
-### API Specifications
-Based on official Float API v3 documentation (https://developer.float.com/api_reference.html):
+### In Scope
+- Fix all 8 critical security vulnerabilities
+- Resolve 22 high-priority performance and runtime issues  
+- Address 40+ medium-priority architectural and maintainability concerns
+- Implement comprehensive testing strategy
+- Documentation and deployment improvements
 
-**1. Accounts Endpoint**
-- List accounts
-- Get account details
-- Update account information
-- Account permissions management
-
-**2. Roles Endpoint**
-- List roles
-- Create, read, update, delete roles
-- Role-based access control integration
-
-**3. Statuses Endpoint**
-- List project/task statuses
-- Create custom statuses
-- Status management operations
-
-**4. Time Off Management**
-- List time off requests
-- Create/approve/reject time off
-- Time off calendar integration
-- Bulk time off operations
-
-**5. Time Off Types**
-- List time off types (vacation, sick, etc.)
-- Create custom time off types
-- Type configuration management
-
-**6. Holiday Management**
-- Public holidays listing
-- Team-specific holidays
-- Holiday calendar management
-- Multi-region holiday support
-
-**7. Phases**
-- Project phase management
-- Phase CRUD operations
-- Phase scheduling and dependencies
-
-**8. Project Tasks (Enhanced)**
-- Distinct from general allocations
-- Task-specific operations
-- Project task hierarchies
-- Task dependencies
-
-**9. Milestones**
-- Project milestone management
-- Milestone tracking
-- Date-based milestone operations
-
-**10. Logged Time**
-- Time entry logging
-- Time tracking operations
-- Timesheet management
-- Billable/non-billable time tracking
-
-## Implementation Goals
-
-### Primary Objectives
-1. **Complete API Coverage**: Implement all missing Float API v3 endpoints
-2. **Schema Accuracy**: Create proper Zod schemas that handle Float's nullable field patterns
-3. **Type Safety**: Maintain strict TypeScript typing throughout
-4. **Error Handling**: Robust error handling for all Float API response patterns
-5. **Documentation**: Comprehensive tool descriptions for MCP integration
-
-### Secondary Objectives
-1. **Performance**: Efficient API calls with proper pagination support
-2. **Testing**: Comprehensive test coverage for new endpoints
-3. **Compatibility**: Maintain backward compatibility with existing tools
-4. **Extensibility**: Clean architecture for future Float API updates
-
-## Technical Implementation Details
-
-### Schema Design Patterns
-- Use nullable schemas for fields that Float API returns as null
-- Implement proper union types for ID fields (string | number)
-- Handle Float's inconsistent date/timestamp field naming
-- Support both detailed and summary response formats
-
-### Tool Architecture
-- Follow existing `createTool` pattern from `src/tools/base.ts`
-- Implement consistent naming: `list*`, `get*`, `create*`, `update*`, `delete*`
-- Provide comprehensive parameter validation
-- Include proper error handling and response validation
-
-### API Integration Points
-- Extend existing `FloatApi` service in `src/services/float-api.js`
-- Maintain pagination support using `getPaginated` method
-- Handle Float API authentication and rate limiting
-- Support filtering, sorting, and field selection parameters
+### Out of Scope
+- Major feature additions or API changes
+- Complete rewrite or technology stack changes
+- Third-party integrations beyond Float API
 
 ## Success Criteria
 
-### Functional Requirements
-1. All 10 missing endpoint categories fully implemented
-2. 100% compatibility with Float API v3 specification
-3. Proper handling of all Float API response formats
-4. Complete CRUD operations where supported by Float API
-5. Comprehensive parameter validation and error handling
+1. **Security**: Zero high-risk vulnerabilities in security audit
+2. **Performance**: Sub-500ms response times for 95% of API calls
+3. **Reliability**: 99.9% uptime with proper error handling and recovery
+4. **Maintainability**: Consolidated architecture with single tool pattern
+5. **Type Safety**: Zero `any` types and proper generic constraints throughout
 
-### Quality Requirements
-1. Zero breaking changes to existing functionality
-2. Complete TypeScript type coverage
-3. Consistent tool naming and parameter patterns
-4. Proper Zod schema validation for all responses
-5. Docker image builds successfully with new endpoints
+## Technical Requirements
 
-### Integration Requirements
-1. Seamless Claude Desktop MCP integration
-2. All tools appear correctly in MCP tool listings
-3. Proper tool descriptions and parameter documentation
-4. Consistent error handling across all endpoints
-5. Maintains existing authentication patterns
+### Phase 1: Critical Security & Bug Fixes (Week 1)
+- Remove API keys from repository history
+- Fix race conditions in rate limiting
+- Resolve parameter destructuring bugs
+- Implement proper resource cleanup
+- Add request timeout handling
 
-## Project Phases
+### Phase 2: Performance & Memory Optimization (Weeks 2-3)  
+- Implement caching layer for API responses
+- Add connection pooling and request deduplication
+- Fix memory leaks in global state management
+- Optimize algorithmic complexity issues
+- Add circuit breaker patterns
 
-### Phase 1: Core User Management (Accounts, Roles, Statuses)
-Implement fundamental user and permission management endpoints that support other features.
+### Phase 3: Architecture Consolidation (Weeks 4-6)
+- Choose and implement single tool pattern
+- Refactor God objects and implement dependency injection
+- Separate transport from business logic
+- Standardize error handling across layers
+- Implement proper configuration management
 
-### Phase 2: Time Management (Time Off, Time Off Types, Holidays)
-Add comprehensive time-off and holiday management capabilities.
+### Phase 4: Type Safety & Quality Improvements (Weeks 7-8)
+- Eliminate unsafe type assertions
+- Standardize ID types across schemas
+- Add comprehensive generic type constraints
+- Implement runtime validation improvements
+- Add integration and performance tests
 
-### Phase 3: Advanced Project Features (Phases, Milestones, Project Tasks)
-Enhance project management with detailed tracking capabilities.
+## Risk Assessment
 
-### Phase 4: Time Tracking (Logged Time)
-Implement detailed time logging and tracking features.
+### High Risk Areas
+- API key removal from git history (potential service disruption)
+- Rate limiting refactoring (could affect API quota management)
+- Architecture consolidation (large code changes)
+- Memory leak fixes (require careful testing)
 
-### Phase 5: Integration & Testing
-Comprehensive testing, documentation, and integration verification.
+### Mitigation Strategies
+- Staged rollout with comprehensive testing
+- Feature flags for new implementations
+- Rollback plans for each major change
+- Extensive monitoring and logging during deployment
+
+## Success Metrics
+
+1. **Code Quality**: ESLint/TypeScript errors reduced to zero
+2. **Test Coverage**: 90%+ coverage for critical paths  
+3. **Performance**: Memory usage stable under load testing
+4. **Security**: Clean security audit results
+5. **Developer Experience**: Reduced cognitive complexity metrics
+
+## Timeline
+
+- **Phase 1**: 1 week (Critical fixes)
+- **Phase 2**: 2 weeks (Performance optimization)  
+- **Phase 3**: 3 weeks (Architecture consolidation)
+- **Phase 4**: 2 weeks (Quality improvements)
+- **Total**: 8 weeks for complete resolution
+
+## Resources Required
+
+- Senior TypeScript/Node.js developer (primary)
+- Security review specialist (consulting)
+- QA engineer for testing strategy
+- DevOps engineer for deployment pipeline
 
 ## Dependencies
-- Existing Float API authentication and service layer
-- Current Docker and TypeScript build system
-- Zod schema validation library
-- Existing MCP tools infrastructure
 
-## Risk Mitigation
-1. **API Changes**: Monitor Float API documentation for version updates
-2. **Schema Validation**: Implement flexible schemas that handle Float's nullable patterns
-3. **Rate Limiting**: Respect Float API rate limits in implementation
-4. **Backward Compatibility**: Ensure existing tools continue to function
-5. **Error Handling**: Comprehensive error scenarios and graceful degradation
-
-This PRD outlines the complete implementation of missing Float API endpoints to achieve full API coverage in the Float MCP server. 
+- Float API access maintained during refactoring
+- No breaking changes to MCP protocol interface
+- Backwards compatibility for existing tool configurations
+- Coordination with any concurrent feature development 

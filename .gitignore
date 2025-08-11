@@ -59,10 +59,10 @@ dev-debug.log
 *.sw?
 # OS specific
 
-# Task files
-# tasks.json
-# tasks/ 
-
 # DXT packages
 *.dxt
 .serena
+
+# Task files
+# tasks.json
+# tasks/ 
