@@ -1,0 +1,22 @@
+# Trivy Ignore File
+# This file contains CVEs that are either false positives or accepted risks
+
+# Base image vulnerabilities that don't affect our application
+# These are OS-level vulnerabilities in the base image that are not exploitable
+# in our containerized Node.js application context
+
+# Low severity issues in system utilities we don't use
+CVE-2022-0563 # util-linux - chfn/chsh utilities not used
+CVE-2005-2541 # tar - setuid/setgid extraction warning
+TEMP-0290435-0B57B5 # tar rmt command side effects
+TEMP-0517018-A83CE6 # sysvinit - not relevant in container
+
+# Perl vulnerabilities - Perl is not used by our application
+CVE-2011-4116 # Perl File::Temp
+CVE-2023-31486 # Perl HTTP::Tiny TLS
+
+# These require physical/local access which is not applicable in our container
+CVE-2023-45853 # zlib MiniZip - requires crafted zip files, we don't process zips
+
+# npm bundled dependencies - will be fixed when Node.js updates npm
+CVE-2025-5889 # brace-expansion - ReDoS vulnerability, low risk in our context
