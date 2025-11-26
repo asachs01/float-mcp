@@ -104,7 +104,10 @@ const timeTrackingCreateUpdateDataSchema = z
   .object({
     // Logged time fields
     hours: z.number().optional().describe('Hours logged or time off hours'),
-    note: z.string().optional().describe('Note or description'),
+    notes: z
+      .string()
+      .optional()
+      .describe('Notes or description for logged time entries or holidays'),
     reference_date: z.string().optional().describe('Reference date for UI suggestions'),
 
     // Time off fields
@@ -128,7 +131,6 @@ const timeTrackingCreateUpdateDataSchema = z
     type: z.string().optional().describe('Holiday type'),
     moveable: z.number().optional().describe('Moveable flag (0=fixed, 1=moveable)'),
     year: z.number().optional().describe('Year for the holiday'),
-    notes: z.string().optional().describe('Additional notes'),
     holiday_type: z.number().optional().describe('Holiday type (0=full day, 1=partial day)'),
     recurrence_pattern: z.string().optional().describe('Recurrence pattern'),
     created_by: z.number().optional().describe('User ID who created'),
@@ -145,7 +147,7 @@ const timeTrackingCreateUpdateDataSchema = z
           date: z.string(),
           hours: z.number(),
           billable: z.union([z.string(), z.number()]).optional(),
-          note: z.string().optional(),
+          notes: z.string().optional(),
           reference_date: z.string().optional(),
         })
       )

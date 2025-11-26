@@ -61,7 +61,7 @@ export const createLoggedTime = createTool(
       .union([z.string(), z.number()])
       .optional()
       .describe('Whether the time is billable (1 = billable, 0 = non-billable)'),
-    note: z.string().optional().describe('Optional note describing the work done'),
+    notes: z.string().optional().describe('Optional notes describing the work done'),
     reference_date: z.string().optional().describe('Reference date for UI suggestions'),
   }),
   async (params) => {
@@ -91,7 +91,7 @@ export const updateLoggedTime = createTool(
       .union([z.string(), z.number()])
       .optional()
       .describe('Whether the time is billable (1 = billable, 0 = non-billable)'),
-    note: z.string().optional().describe('Optional note describing the work done'),
+    notes: z.string().optional().describe('Optional notes describing the work done'),
     reference_date: z.string().optional().describe('Reference date for UI suggestions'),
   }),
   async (params) => {
@@ -139,7 +139,7 @@ export const bulkCreateLoggedTime = createTool(
             .union([z.string(), z.number()])
             .optional()
             .describe('Whether the time is billable (1 = billable, 0 = non-billable)'),
-          note: z.string().optional().describe('Optional note describing the work done'),
+          notes: z.string().optional().describe('Optional notes describing the work done'),
           reference_date: z.string().optional().describe('Reference date for UI suggestions'),
         })
       )
