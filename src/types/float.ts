@@ -319,7 +319,7 @@ export const loggedTimeSchema = z.object({
   date: z.string().nullable().optional(), // Date the time was logged (YYYY-MM-DD)
   hours: z.number().nullable().optional(), // Hours logged
   billable: z.number().nullable().optional(), // 1 = billable, 0 = non-billable
-  note: z.string().nullable().optional(), // Optional note describing the work
+  notes: z.string().nullable().optional(), // Optional notes describing the work
   reference_date: z.string().nullable().optional(), // Reference date for UI suggestions
   locked: z.number().nullable().optional(), // 1 = locked, 0 = unlocked
   created: z.string().nullable().optional(), // Float API uses 'created', not 'created_at'

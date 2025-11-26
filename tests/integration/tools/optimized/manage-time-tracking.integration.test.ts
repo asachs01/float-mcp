@@ -176,7 +176,7 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
             task_id: 1,
             hours: 4,
             date: '2024-01-01',
-            note: 'Morning work',
+            notes: 'Morning work',
           },
           {
             people_id: 1,
@@ -184,7 +184,7 @@ describe('Manage Time Tracking Tool Integration Tests', () => {
             task_id: 1,
             hours: 4,
             date: '2024-01-02',
-            note: 'Afternoon work',
+            notes: 'Afternoon work',
           },
         ];
 
