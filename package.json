@@ -1,6 +1,6 @@
 {
   "name": "float-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MCP server for Float.com integration",
   "type": "commonjs",
   "main": "dist/index.js",
