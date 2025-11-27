@@ -6,6 +6,10 @@
 
 A comprehensive **Model Context Protocol (MCP) server** that provides seamless integration with [Float.com](https://float.com) - the resource management and project planning platform. This server exposes Float's complete API as MCP tools, enabling AI assistants like Claude to interact with Float for project management, resource allocation, time tracking, and team coordination.
 
+<a href="https://glama.ai/mcp/servers/@asachs01/float-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@asachs01/float-mcp/badge" alt="float-mcp MCP server" />
+</a>
+
 ## 🌟 Features
 
 ### **Complete Float API Coverage**
