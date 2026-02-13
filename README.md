@@ -1,3 +1,14 @@
+> [!IMPORTANT]
+> ## 📦 This project is now archived
+>
+> Float has released their own [first-class MCP server](https://www.float.com/whats-new/float-mcp-ask-float-in-chatgpt-or-claude), and we're archiving this community project in favor of it. Float has the resources and direct API access to continue this work far better than we can.
+>
+> A huge thank you to the community for the contributions, feedback, and support — and to the Float team for embracing MCP natively. 🙌
+>
+> **👉 Use Float's official MCP server going forward:** [float.com/whats-new/float-mcp-ask-float-in-chatgpt-or-claude](https://www.float.com/whats-new/float-mcp-ask-float-in-chatgpt-or-claude)
+
+---
+
 # Float MCP Server
 
 [![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
